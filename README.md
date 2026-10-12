@@ -25,7 +25,8 @@ npm run gen:map    # rebuild src/data/map-dots.json from Natural Earth
 | Network | Country board: 17 tiles grouped by region, each with the country outline, English/Arabic name and live local clock; Dubai HQ tile in red. |
 | Industries | Hover accordion of seven industries with photos and a line on what Niche does there. |
 | Group | Company cards beside an orbit diagram (Niche at the core, three group companies). |
-| Contact + footer | Next-steps strip, form with a success state, footer CTA with Dubai clock and a logo reveal. |
+| Contact | Brief builder in 3 steps: service chips, a clickable MENA map to pick countries (GCC / All 17 shortcuts), details; live summary line and progress bar; rotating headline word. |
+| Footer | "Let's talk.", big email that fills red on hover with copy button, Dubai clock, social icons, and a NICHE logo revealed in red under a cursor spotlight. |
 
 Assets: `public/work/` (case photos) and `public/logos/` are extracted from *Niche - Company Presentation 2026.pdf*.
 Logo: `public/brand/niche-logo.png` from the live nicheme.com. Fonts: Inter Tight, Noto Kufi Arabic (intro).

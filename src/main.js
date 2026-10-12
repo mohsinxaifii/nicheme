@@ -36,7 +36,7 @@ initLogos(ctx)
 initSteps(ctx)
 initBento(ctx)
 initReveals(ctx)
-initForm()
+initForm(ctx)
 
 // Hero: transparent globe that settles on MENA, loaded after first paint.
 const hero = document.querySelector('.hero')

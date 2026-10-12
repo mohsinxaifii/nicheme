@@ -163,7 +163,7 @@ export function initServices({ lenis }) {
     if (e.target.closest('[data-x]')) close()
     const st = e.target.closest('[data-step]'); if (st) fill(cur + +st.dataset.step)
     const q = e.target.closest('[data-quote]')
-    if (q) { const sel = $('[data-service-select]'); if (sel) sel.value = q.dataset.quote; close() }
+    if (q) { dispatchEvent(new CustomEvent('niche:service', { detail: q.dataset.quote })); close() }
     const f = e.target.closest('[data-filter-to]')
     if (f) { close(); document.querySelector(`[data-filter="${f.dataset.filterTo}"]`)?.click() }
   })
@@ -179,8 +179,6 @@ export function initServices({ lenis }) {
     }
   })
 
-  const select$ = $('[data-service-select]')
-  if (select$) select$.insertAdjacentHTML('beforeend', all.map(s => `<option>${s.name}</option>`).join(''))
 }
 
 // ---------------------------------------------------------------- client logos
@@ -221,15 +219,96 @@ export function initLogos({ reduced }) {
 // ---------------------------------------------------------------- reveals
 export function initReveals({ reduced }) {
   if (reduced) return
-  $$('.section-head, .proof__grid, .bt, .sg, .steps li, .reporting__grid > *, .why__grid article, .net__facts, .acc, .gcards li, .orbit, .next li, .form').forEach(el => {
+  $$('.section-head, .proof__grid, .bt, .sg, .steps li, .reporting__grid > *, .why__grid article, .net__facts, .acc, .gcards li, .orbit, .brief').forEach(el => {
     gsap.from(el, { y: 30, opacity: 0, duration: 1, ease: 'power3.out', scrollTrigger: { trigger: el, start: 'top 90%' } })
   })
 }
 
-// ---------------------------------------------------------------- form
-export function initForm() {
+// ---------------------------------------------------------------- contact: brief builder
+const SHORT = ['Retail audits', 'Mystery shopping', 'Market research', 'Real-time reporting', 'Merchandising', 'Brand ambassadors', 'Fixtures & installation', 'Promotions & activations', 'Product sampling', 'Events & roadshows', 'Production & POSM', 'Logistics', 'Digital marketing', 'Vehicle tracking']
+const GCC = ['784', '682', '634', '414', '512', '048']
+const NAMES = Object.fromEntries(COUNTRY_LIST().map(([id, en]) => [id, en]))
+function COUNTRY_LIST() {
+  return [['784', 'UAE'], ['682', 'KSA'], ['634', 'Qatar'], ['414', 'Kuwait'], ['512', 'Oman'], ['048', 'Bahrain'], ['400', 'Jordan'], ['422', 'Lebanon'], ['760', 'Syria'], ['368', 'Iraq'], ['818', 'Egypt'], ['504', 'Morocco'], ['788', 'Tunisia'], ['012', 'Algeria'], ['887', 'Yemen'], ['586', 'Pakistan'], ['480', 'Mauritius']]
+}
+const listText = a => a.length < 2 ? a.join('') : `${a.slice(0, -1).join(', ')} and ${a[a.length - 1]}`
+
+export async function initForm({ reduced } = {}) {
   const form = $('[data-form]')
   if (!form) return
+  const full = groups.flatMap(g => g.services.map(s => s.name))
+  const icons = SVC_ICONS
+  const svcPicked = new Set(), where = new Set()
+
+  // 1. service chips
+  const chipsEl = $('[data-svc-chips]', form)
+  chipsEl.innerHTML = SHORT.map((n, i) => `<button type="button" class="chip2" data-svc="${i}" aria-pressed="false">${icon(icons[i])}${n}</button>`).join('')
+  const setSvc = (i, on) => {
+    on ? svcPicked.add(i) : svcPicked.delete(i)
+    const b = chipsEl.querySelector(`[data-svc="${i}"]`)
+    b.classList.toggle('is-on', on); b.setAttribute('aria-pressed', on)
+    update()
+  }
+  chipsEl.addEventListener('click', e => { const b = e.target.closest('[data-svc]'); if (b) setSvc(+b.dataset.svc, !svcPicked.has(+b.dataset.svc)) })
+  addEventListener('niche:service', e => { const i = full.indexOf(e.detail); if (i > -1) setSvc(i, true) })
+
+  // 2. map picker
+  const pick = $('[data-pick]', form)
+  const { COUNTRIES, CITIES } = await import('../data/mena.js')
+  pick.innerHTML = `<svg viewBox="40 30 880 330">${COUNTRIES.map(c => c.net
+      ? `<path d="${c.d}" class="net" data-id="${c.id}"><title>${NAMES[c.id]}</title></path>`
+      : `<path d="${c.d}"/>`).join('')}
+    <circle cx="${CITIES.manama[0]}" cy="${CITIES.manama[1]}" r="7" class="net dot" data-id="048"><title>Bahrain</title></circle>
+    <circle cx="${CITIES.portlouis[0]}" cy="${CITIES.portlouis[1] - 0}" r="9" class="net dot" data-id="480"><title>Mauritius</title></circle></svg>
+    <span class="pick__tip" data-pick-tip></span>`
+  const tip = $('[data-pick-tip]', pick)
+  const paint = () => $$('.net', pick).forEach(p => p.classList.toggle('is-on', where.has(p.dataset.id)))
+  const toggle = id => { where.has(id) ? where.delete(id) : where.add(id); paint(); update() }
+  pick.addEventListener('click', e => { const p = e.target.closest('.net'); if (p) toggle(p.dataset.id) })
+  pick.addEventListener('pointermove', e => {
+    const p = e.target.closest('.net'), r = pick.getBoundingClientRect()
+    tip.textContent = p ? NAMES[p.dataset.id] : ''
+    tip.classList.toggle('is-on', !!p)
+    tip.style.transform = `translate(${e.clientX - r.left + 12}px, ${e.clientY - r.top - 30}px)`
+  })
+  pick.addEventListener('pointerleave', () => tip.classList.remove('is-on'))
+  $$('[data-quick]', form).forEach(b => b.addEventListener('click', () => {
+    where.clear()
+    if (b.dataset.quick === 'gcc') GCC.forEach(id => where.add(id))
+    if (b.dataset.quick === 'all') COUNTRY_LIST().forEach(([id]) => where.add(id))
+    paint(); update()
+  }))
+
+  // summary + progress
+  const sum = $('[data-sum]', form), list = $('[data-pick-list]', form)
+  const bars = $$('[data-step-bar]', form)
+  function update() {
+    const svcs = [...svcPicked].sort((a, b) => a - b).map(i => SHORT[i])
+    const places = COUNTRY_LIST().filter(([id]) => where.has(id)).map(([, n]) => n)
+    list.textContent = places.length ? (places.length === 17 ? 'All 17 countries' : listText(places)) : 'No countries yet'
+    const svcTxt = svcs.length ? listText(svcs).toLowerCase().replace(/^./, c => c.toUpperCase()) : 'Field marketing'
+    sum.innerHTML = svcs.length || places.length
+      ? `<b>${svcTxt}</b> in <b>${places.length ? (places.length === 17 ? 'all 17 countries' : listText(places)) : 'your markets'}</b>.`
+      : 'Pick a service and a country to start your brief.'
+    const who = ['name', 'company', 'email'].every(n => form.elements[n].value.trim())
+    ;[svcs.length > 0, places.length > 0, who].forEach((ok, i) => bars[i].classList.toggle('is-on', ok))
+  }
+  form.addEventListener('input', update)
+
+  // rotating word in the headline
+  const rot = $('[data-rot]')
+  if (rot && !reduced) {
+    const words = ['shelves.', 'showrooms.', 'promoters.', 'stores.', 'brand.']
+    let k = 0
+    setInterval(() => {
+      const old = rot.firstElementChild, nw = document.createElement('span')
+      nw.textContent = words[++k % words.length]
+      rot.appendChild(nw)
+      old.animate([{ transform: 'none', opacity: 1 }, { transform: 'translateY(-100%)', opacity: 0 }], { duration: 500, easing: 'cubic-bezier(.6,0,.2,1)' }).onfinish = () => old.remove()
+      nw.animate([{ transform: 'translateY(100%)', opacity: 0 }, { transform: 'none', opacity: 1 }], { duration: 500, easing: 'cubic-bezier(.6,0,.2,1)' })
+    }, 2200)
+  }
+
   form.addEventListener('submit', e => {
     e.preventDefault()
     let ok = true
@@ -240,13 +319,16 @@ export function initForm() {
     })
     if (!ok) { toast('Please add your name, company and work email.'); form.querySelector('.is-bad input')?.focus(); return }
     const fd = new FormData(form)
-    const body = `Name: ${fd.get('name')}\nCompany: ${fd.get('company')}\nEmail: ${fd.get('email')}\nPhone: ${fd.get('phone')}\nService: ${fd.get('service') || 'Not specified'}\nMarkets: ${fd.get('markets') || 'Not specified'}\n\n${fd.get('message')}`
+    const svcs = [...svcPicked].map(i => full[i]).join(', ') || 'Not specified'
+    const places = COUNTRY_LIST().filter(([id]) => where.has(id)).map(([, n]) => n).join(', ') || 'Not specified'
+    const body = `Name: ${fd.get('name')}\nCompany: ${fd.get('company')}\nEmail: ${fd.get('email')}\nPhone: ${fd.get('phone')}\nServices: ${svcs}\nCountries: ${places}\n\n${fd.get('message')}`
     toast('Thank you. Opening your email app to send the brief.')
     const done = $('[data-done]', form)
     if (done) { done.hidden = false; done.animate([{ opacity: 0, transform: 'translateY(10px)' }, { opacity: 1, transform: 'none' }], { duration: 400 }) }
     // TODO: swap for the real endpoint (CRM / email service) before launch.
-    setTimeout(() => { location.href = `mailto:info@nicheme.com?subject=${encodeURIComponent(`Brief: ${fd.get('service') || 'New enquiry'}`)}&body=${encodeURIComponent(body)}` }, 700)
+    setTimeout(() => { location.href = `mailto:info@nicheme.com?subject=${encodeURIComponent(`Brief: ${svcs}`)}&body=${encodeURIComponent(body)}` }, 700)
   })
+  update()
 }
 
 // ---------------------------------------------------------------- steps progress line
@@ -401,9 +483,33 @@ export function initAccordion() {
   })
 }
 
-// ---------------------------------------------------------------- footer reveal
+// ---------------------------------------------------------------- footer
+// The big logo is a grey outline; a spotlight under the cursor reveals it in red.
 export function initFooter({ reduced }) {
+  const spot = $('[data-spot]')
+  if (spot) {
+    let tx = 50, ty = 50, x = 50, y = 50, r = 0, tr = 0, raf = 0
+    const loop = () => {
+      x += (tx - x) * 0.15; y += (ty - y) * 0.15; r += (tr - r) * 0.12
+      spot.style.setProperty('--mx', `${x}%`); spot.style.setProperty('--my', `${y}%`); spot.style.setProperty('--r', `${r}px`)
+      raf = Math.abs(tr - r) > 0.5 || Math.abs(tx - x) > 0.1 ? requestAnimationFrame(loop) : 0
+    }
+    const kick = () => { if (!raf) raf = requestAnimationFrame(loop) }
+    spot.addEventListener('pointermove', e => {
+      const b = spot.getBoundingClientRect()
+      tx = (e.clientX - b.left) / b.width * 100; ty = (e.clientY - b.top) / b.height * 100; tr = 260; kick()
+    })
+    spot.addEventListener('pointerleave', () => { tr = 0; kick() })
+    // touch / no hover: slowly sweep the light across once in view
+    if (!matchMedia('(hover: hover)').matches && !reduced) {
+      new IntersectionObserver(([e], io) => { if (!e.isIntersecting) return; io.disconnect(); tr = 9999; kick() }).observe(spot)
+    }
+  }
+  $$('[data-copy]').forEach(b => b.addEventListener('click', async () => {
+    try { await navigator.clipboard.writeText(b.dataset.copy); b.textContent = 'Copied'; toast('Email copied.') } catch { toast(b.dataset.copy) }
+    setTimeout(() => { b.textContent = 'Copy' }, 1800)
+  }))
   if (reduced) return
-  gsap.from('.foot__big', { yPercent: 30, opacity: 0, duration: 1.2, ease: 'expo.out', scrollTrigger: { trigger: '.foot', start: 'top 80%' } })
-  gsap.fromTo('[data-footword] img', { clipPath: 'inset(100% 0 0 0)', y: 40 }, { clipPath: 'inset(0% 0 0 0)', y: 0, duration: 1.4, ease: 'expo.out', scrollTrigger: { trigger: '[data-footword]', start: 'top 95%' } })
+  gsap.from('.foot__say', { yPercent: 40, opacity: 0, duration: 1.2, ease: 'expo.out', scrollTrigger: { trigger: '.foot', start: 'top 80%' } })
+  gsap.from('.foot__mail', { y: 30, opacity: 0, duration: 1, delay: 0.15, ease: 'power3.out', scrollTrigger: { trigger: '.foot', start: 'top 80%' } })
 }

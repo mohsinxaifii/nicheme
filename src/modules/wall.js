@@ -218,8 +218,7 @@ function initModal({ lenis }) {
       const c = cases[order[pos]]
       const msg = document.querySelector('[name="message"]')
       if (msg && !msg.value) msg.value = `We'd like something similar to your ${c.brand} ${c.title} programme.`
-      const sel = document.querySelector('[data-service-select]')
-      if (sel) sel.value = FORM_SERVICE[c.service]
+      dispatchEvent(new CustomEvent('niche:service', { detail: FORM_SERVICE[c.service] }))
       close()
     }
   })
