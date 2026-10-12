@@ -17,7 +17,7 @@ npm run gen:map    # rebuild src/data/map-dots.json from Natural Earth
 |---|---|
 | Intro | Once per session: the MENA map draws itself, the 17 countries light up from Dubai, English/Arabic lines, then the logo. Skippable. |
 | Hero | Transparent globe (d3-geo, canvas) that spins in and settles on MENA; drag to rotate, it springs back. 17 countries fill red, sonar pulses, English/Arabic names on hover, live audit chip. |
-| About + stats | Bento grid: Red Bull photo card, 2003→2026 timeline, 17 dots, 250 people dots, du monthly bars, offices. |
+| About + stats | Bento grid about Niche itself (no client names): stores audited, 23 years with ghost '2003', mini MENA map cycling the 17 countries in English/Arabic, a crowd of people figures, field force, offices. |
 | Client logos | 35 logos from the presentation's Client References slides, two rows. |
 | Services | Card grid: all 14 services at a glance (icon, name, one line, proof). Hover fades in the photo; click opens a side drawer with photo, description, what's included, CTA and prev/next. |
 | Case studies | Tilted 3D wall of the 30 projects drifting sideways, curved network lines linking same-service projects (hover lights a project's network, filters light a service), drag to scrub, popup with gallery. |

@@ -273,19 +273,53 @@ export function initActiveNav() {
 }
 
 // ---------------------------------------------------------------- bento stats
-export function initBento({ reduced }) {
-  const people = $('[data-people]')
-  if (people) people.innerHTML = '<i></i>'.repeat(250)
-  const dots = people ? [...people.children] : []
+// Countries: a mini MENA map that lights each network country in turn with its
+// English and Arabic name. People: a crowd of figures that steps in row by row.
+const COUNTRY_NAMES = [
+  ['784', 'United Arab Emirates', 'الإمارات'], ['682', 'Saudi Arabia', 'السعودية'], ['634', 'Qatar', 'قطر'],
+  ['414', 'Kuwait', 'الكويت'], ['512', 'Oman', 'عُمان'], ['048', 'Bahrain', 'البحرين'], ['400', 'Jordan', 'الأردن'],
+  ['422', 'Lebanon', 'لبنان'], ['760', 'Syria', 'سوريا'], ['368', 'Iraq', 'العراق'], ['818', 'Egypt', 'مصر'],
+  ['504', 'Morocco', 'المغرب'], ['788', 'Tunisia', 'تونس'], ['012', 'Algeria', 'الجزائر'], ['887', 'Yemen', 'اليمن'],
+  ['586', 'Pakistan', 'باكستان'], ['480', 'Mauritius', 'موريشيوس'],
+]
+const PERSON = '<path d="M12 11.2a4.1 4.1 0 1 0 0-8.2 4.1 4.1 0 0 0 0 8.2zM3.5 24c0-5.2 3.8-9.4 8.5-9.4s8.5 4.2 8.5 9.4z"/>'
+
+export async function initBento({ reduced }) {
+  // crowd: 3 rows, back rows smaller and dimmer
+  const crowd = $('[data-crowd]')
+  if (crowd) {
+    const rows = [[7, .72, .3], [7, .86, .55], [6, 1, 1]]
+    crowd.innerHTML = rows.map(([n, sc, op], r) => `<div class="crowd__row" style="--s:${sc};--o:${op}">${Array.from({ length: n }, (_, i) =>
+      `<svg viewBox="0 0 24 24" class="${r === 2 && i === 2 ? 'is-red' : ''}" style="--d:${(r * 0.18 + i * 0.04).toFixed(2)}s">${PERSON}</svg>`).join('')}</div>`).join('')
+  }
+
+  // countries: mini map + cycling names
+  const cmap = $('[data-cmap]'), cname = $('[data-cname]')
+  let order = []
+  if (cmap) {
+    const { COUNTRIES, CITIES } = await import('../data/mena.js')
+    const x0 = 40, y0 = 30, w = 880, h = 330                 // crop: Morocco to Pakistan
+    cmap.innerHTML = `<svg viewBox="${x0} ${y0} ${w} ${h}">${COUNTRIES.map(c => `<path d="${c.d}" ${c.net ? `class="net" data-id="${c.id}"` : ''}/>`).join('')}
+      <circle cx="${CITIES.portlouis[0]}" cy="${CITIES.portlouis[1]}" r="9" class="net dot" data-id="480"/>
+      <circle cx="${CITIES.manama[0]}" cy="${CITIES.manama[1]}" r="6" class="net dot" data-id="048"/></svg>`
+    order = COUNTRY_NAMES.map(([id, en, ar]) => ({ en, ar, els: $$(`[data-id="${id}"]`, cmap) }))
+  }
+  let ci = 0, cycle = 0
+  const step = () => {
+    if (!order.length) return
+    order.forEach(o => o.els.forEach(e => e.classList.remove('is-on')))
+    const o = order[ci++ % order.length]
+    o.els.forEach(e => e.classList.add('is-on'))
+    cname.innerHTML = `<b>${o.en}</b><span lang="ar" dir="rtl">${o.ar}</span>`
+    if (!reduced) cname.animate([{ opacity: 0, transform: 'translateY(8px)' }, { opacity: 1, transform: 'none' }], { duration: 350, easing: 'cubic-bezier(.2,.7,.1,1)' })
+  }
+
   const io = new IntersectionObserver(entries => entries.forEach(e => {
-    if (!e.isIntersecting) return
-    e.target.classList.add('is-in')
-    io.unobserve(e.target)
-    if (e.target.classList.contains('bt--people')) {
-      if (reduced) { dots.forEach(d => d.classList.add('on')); return }
-      let k = 0
-      const t = setInterval(() => { for (let n = 0; n < 8 && k < dots.length; n++) dots[k++].classList.add('on'); if (k >= dots.length) clearInterval(t) }, 30)
+    if (e.target.classList.contains('bt--countries')) {
+      clearInterval(cycle)
+      if (e.isIntersecting) { step(); if (!reduced) cycle = setInterval(step, 1700) }
     }
+    if (e.isIntersecting) e.target.classList.add('is-in')
   }), { threshold: 0.35 })
   $$('.bt').forEach(b => io.observe(b))
 }
