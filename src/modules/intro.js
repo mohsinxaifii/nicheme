@@ -1,14 +1,12 @@
 // Intro: the MENA map draws itself, Niche's 17 countries light up from Dubai,
-// English and Arabic lines alternate, then the NICHE logo resolves and the
-// curtain lifts. Plays once per session; skippable; off for reduced motion.
+// one English/Arabic line shows, then the NICHE logo resolves and the curtain
+// lifts (~2.6 s). Plays once per session; skippable; off for reduced motion.
 import { gsap } from 'gsap'
 
 const KEY = 'niche-intro-seen'
 // Arabic lines to be checked by Niche's Arabic copywriter before launch.
 const LINES = [
   ['The eyes and ears of great brands', 'عيون وآذان العلامات التجارية الكبرى'],
-  ['17 countries · 20+ offices', '١٧ دولة · أكثر من ٢٠ مكتباً'],
-  ['On the shop floor since 2003', 'في قلب المتاجر منذ ٢٠٠٣'],
 ]
 
 export async function playIntro({ reduced, logoSrc, onReveal = () => {} }) {
@@ -47,22 +45,18 @@ export async function playIntro({ reduced, logoSrc, onReveal = () => {} }) {
 
   return new Promise(resolve => {
     const tl = gsap.timeline({ onComplete: finish })
-    tl.to(land, { strokeDashoffset: 0, duration: 1.3, ease: 'power2.inOut', stagger: { amount: 0.5, from: 'random' } }, 0)
-      .to(el.querySelectorAll('.intro__land .net'), { fillOpacity: 1, duration: 0.5, stagger: { amount: 0.6, from: 'end' } }, 0.9)
-      .from(el.querySelectorAll('.intro__dots circle'), { scale: 0, transformOrigin: 'center', duration: 0.4, stagger: 0.04, ease: 'back.out(3)' }, 1.0)
-      .to(arcs, { strokeDashoffset: 0, duration: 0.7, stagger: 0.04, ease: 'power2.out' }, 1.1)
-      .fromTo(el.querySelector('.intro__ring'), { attr: { r: 8 }, opacity: 0.9 }, { attr: { r: 60 }, opacity: 0, duration: 1.2, repeat: 2, ease: 'power2.out' }, 1.0)
-      .from(el.querySelector('.intro__meta'), { opacity: 0, y: 10, duration: 0.6 }, 0.6)
-    lines.forEach((p, i) => {
-      const at = 0.5 + i * 0.85
-      tl.fromTo(p, { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.45, ease: 'power3.out' }, at)
-      if (i < lines.length - 1) tl.to(p, { opacity: 0, y: -18, duration: 0.35, ease: 'power2.in' }, at + 0.6)
-    })
-    tl.to(lines[lines.length - 1], { opacity: 0, duration: 0.3 }, 3.1)
-      .to(el.querySelector('.intro__map'), { opacity: 0.25, scale: 1.08, duration: 0.8, ease: 'power2.inOut' }, 3.0)
-      .fromTo(el.querySelector('.intro__logo'), { opacity: 0, scale: 0.92, filter: 'blur(8px)' }, { opacity: 1, scale: 1, filter: 'blur(0px)', duration: 0.7, ease: 'power3.out' }, 3.2)
-      .call(() => { document.documentElement.classList.remove('is-intro'); onReveal() }, null, 4.25)
-      .to(el, { clipPath: 'inset(0 0 100% 0)', duration: 0.9, ease: 'expo.inOut' }, 4.2)
+    tl.to(land, { strokeDashoffset: 0, duration: 0.8, ease: 'power2.inOut', stagger: { amount: 0.25, from: 'random' } }, 0)
+      .to(el.querySelectorAll('.intro__land .net'), { fillOpacity: 1, duration: 0.35, stagger: { amount: 0.3, from: 'end' } }, 0.45)
+      .from(el.querySelectorAll('.intro__dots circle'), { scale: 0, transformOrigin: 'center', duration: 0.3, stagger: 0.015, ease: 'back.out(3)' }, 0.5)
+      .to(arcs, { strokeDashoffset: 0, duration: 0.45, stagger: 0.015, ease: 'power2.out' }, 0.55)
+      .fromTo(el.querySelector('.intro__ring'), { attr: { r: 8 }, opacity: 0.9 }, { attr: { r: 60 }, opacity: 0, duration: 0.9, ease: 'power2.out' }, 0.5)
+      .from(el.querySelector('.intro__meta'), { opacity: 0, duration: 0.4 }, 0.2)
+      .fromTo(lines[0], { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.4, ease: 'power3.out' }, 0.35)
+      .to(lines[0], { opacity: 0, y: -14, duration: 0.25, ease: 'power2.in' }, 1.25)
+      .to(el.querySelector('.intro__map'), { opacity: 0.2, scale: 1.06, duration: 0.6, ease: 'power2.inOut' }, 1.2)
+      .fromTo(el.querySelector('.intro__logo'), { opacity: 0, scale: 0.94, filter: 'blur(6px)' }, { opacity: 1, scale: 1, filter: 'blur(0px)', duration: 0.45, ease: 'power3.out' }, 1.35)
+      .call(() => { document.documentElement.classList.remove('is-intro'); onReveal() }, null, 1.95)
+      .to(el, { clipPath: 'inset(0 0 100% 0)', duration: 0.7, ease: 'expo.inOut' }, 1.9)
 
     let revealed = false
     const reveal = onReveal

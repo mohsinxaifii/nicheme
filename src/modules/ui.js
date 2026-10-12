@@ -59,7 +59,9 @@ export function initAnchors({ lenis }) {
 export function initHeroIntro({ reduced }) {
   if (reduced) return
   gsap.from('.hero__title .line > span', { yPercent: 105, duration: 1.2, ease: 'expo.out', stagger: 0.08, delay: 0.1 })
-  gsap.from(['.kicker', '.hero__sub', '.hero__ctas', '.hero__legend'], { opacity: 0, y: 16, duration: 1, ease: 'power3.out', stagger: 0.08, delay: 0.5 })
+  gsap.from(['.kicker', '.hero__sub', '.hero__ctas'], { opacity: 0, y: 16, duration: 1, ease: 'power3.out', stagger: 0.08, delay: 0.4 })
+  gsap.from('.hero__window', { opacity: 0, y: 40, scale: 0.97, duration: 1.3, ease: 'expo.out', delay: 0.25 })
+  gsap.from('.hero__badge', { scale: 0, rotate: -90, duration: 1, ease: 'back.out(1.6)', delay: 0.9, transformOrigin: 'center' })
 }
 
 // ---------------------------------------------------------------- counters
@@ -243,7 +245,7 @@ export function initHeroFeed({ reduced }) {
     el.innerHTML = `<span>${msg}<small>${where} · ${time()}</small></span>`
     feed.appendChild(el)
     el.animate([{ opacity: 0, transform: 'translateY(14px) scale(.96)' }, { opacity: 1, transform: 'none' }], { duration: 450, easing: 'cubic-bezier(.2,.7,.1,1)' })
-    while (feed.children.length > 3) {
+    while (feed.children.length > 1) {
       const old = feed.firstElementChild
       old.animate([{ opacity: 1 }, { opacity: 0, transform: 'translateY(-10px)' }], { duration: 300, fill: 'forwards' }).onfinish = () => old.remove()
       break

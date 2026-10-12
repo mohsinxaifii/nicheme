@@ -7,7 +7,7 @@ import { cases, SERVICE_LABEL } from '../data/cases.js'
 
 const BASE = import.meta.env.BASE_URL
 const ROWS = [-1.55, 0.2, 1.95]         // shelf heights
-const SIZE = 1.45                        // photo size (world units)
+const SIZE = 1.3                        // photo size (world units)
 const STEP = 1.85                        // spacing along the aisle
 const COLS = 18                          // photos per row per side
 const LEN = COLS * STEP                  // aisle length before it loops
@@ -113,14 +113,14 @@ export function initAisle({ canvas, label, reduced }) {
     new THREE.ShaderMaterial({ vertexShader: fogVert, fragmentShader: flatFrag, uniforms: { uColor: { value: new THREE.Color(color) }, uNear: { value: near }, uFar: { value: far } } }))
   for (const side of [-1, 1]) {
     ROWS.forEach(y => {
-      const s = strip(0.5, 0.07, LEN * 2, 0xE4231B)
-      s.position.set(side * (HALF + 0.05), y - SIZE / 2 - 0.08, -LEN / 2)
+      const s = strip(0.04, 0.03, LEN * 2, 0xE4231B)
+      s.position.set(side * (HALF - 0.02), y - SIZE / 2 - 0.06, -LEN / 2)
       world.add(s)
     })
   }
   const lights = []
   for (let i = 0; i < 12; i++) {
-    const l = strip(1.4, 0.03, 0.5, 0xf2f2f2, 2, 30)
+    const l = strip(0.7, 0.02, 0.18, 0xdddddd, 2, 24)
     l.position.set(0, 3.4, -i * 3.2)
     world.add(l); lights.push(l)
   }
@@ -131,17 +131,16 @@ export function initAisle({ canvas, label, reduced }) {
   world.add(floor)
 
   // ---- layout
-  let W = 1, H = 1, mobile = false
+  let W = 1, H = 1
   function resize() {
     W = canvas.clientWidth; H = canvas.clientHeight
-    mobile = W < 900
     renderer.setPixelRatio(Math.min(devicePixelRatio, 2))
     renderer.setSize(W, H, false)
     camera.aspect = W / H
-    camera.fov = mobile ? 70 : 58
-    // push the vanishing point to the right on desktop so the headline has room
-    if (!mobile) camera.setViewOffset(W * 1.5, H, 0, 0, W, H)
-    else camera.clearViewOffset()
+    const aspect = W / H
+    camera.fov = aspect < 0.9 ? 62 : 54
+    // narrow windows: bring the shelves in so the photos fill the frame
+    world.scale.x = aspect < 0.9 ? 0.55 : aspect < 1.3 ? 0.75 : 1
     camera.updateProjectionMatrix()
   }
   resize()

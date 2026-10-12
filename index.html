@@ -70,7 +70,7 @@
     <!-- HERO -->
     <section class="hero" id="top" aria-labelledby="hero-title">
       <div class="hero__copy">
-        <p class="kicker"><span class="kicker__dot"></span>Field marketing across MENA · Since 2003</p>
+        <p class="kicker"><span class="kicker__dot"></span>Field marketing across MENA</p>
         <h1 id="hero-title" class="hero__title">
           <span class="line"><span>The eyes and ears</span></span>
           <span class="line"><span>of great brands</span></span>
@@ -81,16 +81,18 @@
           <a class="btn btn--red btn--lg" href="#contact">Get a proposal <i data-icon="arrow"></i></a>
           <a class="btn btn--ghost btn--lg" href="#work">See our work</a>
         </div>
-        <ul class="hero__facts">
-          <li><b>20,000+</b><span>stores audited<br>for Red Bull</span></li>
-          <li><b>17</b><span>countries,<br>one invoice</span></li>
-          <li><b>23</b><span>years on the<br>shop floor</span></li>
-        </ul>
       </div>
-      <canvas class="hero__aisle" data-aisle aria-hidden="true"></canvas>
-      <div class="hero__label" data-aisle-label aria-hidden="true"></div>
-      <div class="hero__feed" data-hero-feed aria-hidden="true"></div>
-      <p class="hero__hint" aria-hidden="true"><i data-icon="mystery"></i>Walk the aisle: hover a shelf, click to open the case</p>
+      <div class="hero__window" aria-hidden="true">
+        <canvas class="hero__aisle" data-aisle></canvas>
+        <div class="hero__label" data-aisle-label></div>
+        <div class="hero__chip" data-hero-feed></div>
+        <svg class="hero__badge" viewBox="0 0 120 120">
+          <defs><path id="badge-path" d="M60 60m-45 0a45 45 0 1 1 90 0a45 45 0 1 1-90 0"/></defs>
+          <circle cx="60" cy="60" r="59" class="hero__badge-bg"/>
+          <g class="hero__badge-ring"><text><textPath href="#badge-path" textLength="280" lengthAdjust="spacing">EYES ON EVERY SHELF · SINCE 2003 ·</textPath></text></g>
+          <path class="hero__badge-arrow" d="M51 69 69 51M55 51h14v14"/>
+        </svg>
+      </div>
     </section>
 
     <!-- ABOUT + STATS STRIP -->
