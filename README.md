@@ -20,7 +20,7 @@ npm run gen:map    # rebuild src/data/map-dots.json from Natural Earth
 | About + stats | Bento grid: Red Bull photo card, 2003→2026 timeline, 17 dots, 250 people dots, du monthly bars, offices. |
 | Client logos | 35 logos from the presentation's Client References slides, two rows. |
 | Services | Explorer: 4 group tabs, a numbered list that auto-advances (pauses on hover), and a panel per service with photo, counting proof figure, summary, animated checklist and CTAs. |
-| Case studies | Bento grid of real photos (grayscale → colour), filters, show all, popup with gallery. |
+| Case studies | Tilted 3D wall of the 30 projects drifting sideways, curved network lines linking same-service projects (hover lights a project's network, filters light a service), drag to scrub, popup with gallery. |
 | How we work, Reporting, Why | Step line that fills on scroll; real shelf photo with floating report chips; four reasons. |
 | Network | WebGL MENA dot map with arcs and pings. |
 | Industries, Group, Contact | Icon lists and the enquiry form. |
