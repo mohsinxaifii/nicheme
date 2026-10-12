@@ -22,8 +22,10 @@ npm run gen:map    # rebuild src/data/map-dots.json from Natural Earth
 | Services | Card grid: all 14 services at a glance (icon, name, one line, proof). Hover fades in the photo; click opens a side drawer with photo, description, what's included, CTA and prev/next. |
 | Case studies | Tilted 3D wall of the 30 projects drifting sideways, curved network lines linking same-service projects (hover lights a project's network, filters light a service), drag to scrub, popup with gallery. |
 | How we work, Reporting, Why | Step line that fills on scroll; real shelf photo with floating report chips; four reasons. |
-| Network | WebGL MENA dot map with arcs and pings. |
-| Industries, Group, Contact | Icon lists and the enquiry form. |
+| Network | Country board: 17 tiles grouped by region, each with the country outline, English/Arabic name and live local clock; Dubai HQ tile in red. |
+| Industries | Hover accordion of seven industries with photos and a line on what Niche does there. |
+| Group | Company cards beside an orbit diagram (Niche at the core, three group companies). |
+| Contact + footer | Next-steps strip, form with a success state, footer CTA with Dubai clock and a logo reveal. |
 
 Assets: `public/work/` (case photos) and `public/logos/` are extracted from *Niche - Company Presentation 2026.pdf*.
 Logo: `public/brand/niche-logo.png` from the live nicheme.com. Fonts: Inter Tight, Noto Kufi Arabic (intro).

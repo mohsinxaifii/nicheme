@@ -221,7 +221,7 @@ export function initLogos({ reduced }) {
 // ---------------------------------------------------------------- reveals
 export function initReveals({ reduced }) {
   if (reduced) return
-  $$('.section-head, .proof__grid, .bt, .sg, .steps li, .reporting__grid > *, .why__grid article, .regions > div, .ind li, .group__list li, .form').forEach(el => {
+  $$('.section-head, .proof__grid, .bt, .sg, .steps li, .reporting__grid > *, .why__grid article, .net__facts, .acc, .gcards li, .orbit, .next li, .form').forEach(el => {
     gsap.from(el, { y: 30, opacity: 0, duration: 1, ease: 'power3.out', scrollTrigger: { trigger: el, start: 'top 90%' } })
   })
 }
@@ -242,6 +242,8 @@ export function initForm() {
     const fd = new FormData(form)
     const body = `Name: ${fd.get('name')}\nCompany: ${fd.get('company')}\nEmail: ${fd.get('email')}\nPhone: ${fd.get('phone')}\nService: ${fd.get('service') || 'Not specified'}\nMarkets: ${fd.get('markets') || 'Not specified'}\n\n${fd.get('message')}`
     toast('Thank you. Opening your email app to send the brief.')
+    const done = $('[data-done]', form)
+    if (done) { done.hidden = false; done.animate([{ opacity: 0, transform: 'translateY(10px)' }, { opacity: 1, transform: 'none' }], { duration: 400 }) }
     // TODO: swap for the real endpoint (CRM / email service) before launch.
     setTimeout(() => { location.href = `mailto:info@nicheme.com?subject=${encodeURIComponent(`Brief: ${fd.get('service') || 'New enquiry'}`)}&body=${encodeURIComponent(body)}` }, 700)
   })
@@ -322,4 +324,86 @@ export async function initBento({ reduced }) {
     if (e.isIntersecting) e.target.classList.add('is-in')
   }), { threshold: 0.35 })
   $$('.bt').forEach(b => io.observe(b))
+}
+
+// ---------------------------------------------------------------- network board
+// 17 tiles grouped by region: each shows the country's own outline, its name in
+// English and Arabic, and a live local clock.
+const REGIONS = [
+  ['GCC', [['784', 'United Arab Emirates', 'الإمارات', 'Asia/Dubai', 'Dubai · HQ'], ['682', 'Saudi Arabia', 'السعودية', 'Asia/Riyadh', 'Riyadh'], ['634', 'Qatar', 'قطر', 'Asia/Qatar', 'Doha'], ['414', 'Kuwait', 'الكويت', 'Asia/Kuwait', 'Kuwait City'], ['512', 'Oman', 'عُمان', 'Asia/Muscat', 'Muscat'], ['048', 'Bahrain', 'البحرين', 'Asia/Bahrain', 'Manama']]],
+  ['Levant & Iraq', [['400', 'Jordan', 'الأردن', 'Asia/Amman', 'Amman'], ['422', 'Lebanon', 'لبنان', 'Asia/Beirut', 'Beirut'], ['760', 'Syria', 'سوريا', 'Asia/Damascus', 'Damascus'], ['368', 'Iraq', 'العراق', 'Asia/Baghdad', 'Baghdad']]],
+  ['North Africa', [['818', 'Egypt', 'مصر', 'Africa/Cairo', 'Cairo'], ['504', 'Morocco', 'المغرب', 'Africa/Casablanca', 'Casablanca'], ['788', 'Tunisia', 'تونس', 'Africa/Tunis', 'Tunis'], ['012', 'Algeria', 'الجزائر', 'Africa/Algiers', 'Algiers']]],
+  ['Asia & beyond', [['887', 'Yemen', 'اليمن', 'Asia/Aden', "Sana'a"], ['586', 'Pakistan', 'باكستان', 'Asia/Karachi', 'Karachi'], ['480', 'Mauritius', 'موريشيوس', 'Indian/Mauritius', 'Port Louis']]],
+]
+function bbox(d) {
+  const n = d.match(/-?\d+(\.\d+)?/g).map(Number)
+  let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9
+  for (let i = 0; i < n.length - 1; i += 2) { x0 = Math.min(x0, n[i]); x1 = Math.max(x1, n[i]); y0 = Math.min(y0, n[i + 1]); y1 = Math.max(y1, n[i + 1]) }
+  return [x0, y0, x1 - x0, y1 - y0]
+}
+export async function initBoard({ reduced }) {
+  const root = $('[data-board]')
+  if (!root) return
+  const { COUNTRIES } = await import('../data/mena.js')
+  const shapes = Object.fromEntries(COUNTRIES.filter(c => c.net).map(c => [c.id, c.d]))
+  const shape = id => {
+    const d = shapes[id]
+    if (!d) return '<svg viewBox="0 0 40 40" class="tile__shape"><circle cx="20" cy="20" r="6"/><circle cx="20" cy="20" r="14" class="ring"/></svg>'
+    const [x, y, w, h] = bbox(d), pad = Math.max(w, h) * 0.08
+    return `<svg viewBox="${x - pad} ${y - pad} ${w + pad * 2} ${h + pad * 2}" class="tile__shape"><path d="${d}"/></svg>`
+  }
+  root.innerHTML = REGIONS.map(([name, list]) => `
+    <div class="region"><h3>${name}<small>${list.length}</small></h3>
+      <ul>${list.map(([id, en, ar, tz, city]) => `<li class="tile${id === '784' ? ' tile--hq' : ''}">
+        ${shape(id)}
+        <span class="tile__name"><b>${en}</b><span lang="ar" dir="rtl">${ar}</span></span>
+        <span class="tile__meta"><span>${city}</span><b data-clock="${tz}">--:--</b></span>
+      </li>`).join('')}</ul>
+    </div>`).join('')
+  if (!reduced) {
+    const io = new IntersectionObserver(([e]) => {
+      if (!e.isIntersecting) return
+      io.disconnect()
+      gsap.from($$('.tile', root), { y: 24, opacity: 0, duration: 0.6, stagger: 0.035, ease: 'power3.out' })
+      gsap.from($$('.tile__shape path, .tile__shape circle', root), { scale: 0.6, transformOrigin: 'center', opacity: 0, duration: 0.8, stagger: 0.035, ease: 'back.out(2)', delay: 0.1 })
+    }, { threshold: 0.15 })
+    io.observe(root)
+  }
+  startClocks()
+}
+
+// ---------------------------------------------------------------- clocks (board + footer)
+let clocksOn = false
+export function startClocks() {
+  if (clocksOn) return
+  clocksOn = true
+  const fmts = {}
+  const tick = () => {
+    const now = new Date()
+    $$('[data-clock]').forEach(el => {
+      const tz = el.dataset.clock || 'Asia/Dubai'
+      try { el.textContent = (fmts[tz] ||= new Intl.DateTimeFormat('en-GB', { hour: '2-digit', minute: '2-digit', timeZone: tz })).format(now) } catch {}
+    })
+  }
+  tick(); setInterval(tick, 15000)
+}
+
+// ---------------------------------------------------------------- industries accordion
+export function initAccordion() {
+  const root = $('[data-acc]')
+  if (!root) return
+  const items = $$('li', root)
+  const set = li => items.forEach(x => x.classList.toggle('is-on', x === li))
+  items.forEach(li => {
+    li.addEventListener('pointerenter', () => { if (matchMedia('(hover: hover)').matches) set(li) })
+    li.querySelector('button').addEventListener('click', () => set(li))
+    li.querySelector('button').addEventListener('focus', () => set(li))
+  })
+}
+
+// ---------------------------------------------------------------- footer reveal
+export function initFooter({ reduced }) {
+  if (reduced) return
+  gsap.from('.foot__big', { yPercent: 30, opacity: 0, duration: 1.2, ease: 'expo.out', scrollTrigger: { trigger: '.foot', start: 'top 80%' } })
+  gsap.fromTo('[data-footword] img', { clipPath: 'inset(100% 0 0 0)', y: 40 }, { clipPath: 'inset(0% 0 0 0)', y: 0, duration: 1.4, ease: 'expo.out', scrollTrigger: { trigger: '[data-footword]', start: 'top 95%' } })
 }

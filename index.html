@@ -44,6 +44,7 @@
         <a href="#industries">Industries</a>
         <a href="#about">About</a>
         <a href="#network">Network</a>
+        <a href="#contact">Contact</a>
       </nav>
       <div class="nav__right">
         <button class="nav__lang" type="button" data-toast="The Arabic site is coming with launch." lang="ar">عربي</button>
@@ -247,20 +248,20 @@
 
     <!-- NETWORK -->
     <section class="network" id="network" aria-labelledby="network-title">
-      <canvas class="network__map" data-map aria-hidden="true"></canvas>
-      <div class="network__pings" data-pings aria-hidden="true"></div>
-      <div class="wrap network__inner">
-        <div class="section-head">
-          <p class="label">Our network</p>
-          <h2 id="network-title" class="h2">20+ offices across 17 countries.</h2>
-          <p class="lead">Headquartered in Dubai, with warehousing in the UAE and Saudi Arabia. One key contact for the whole region.</p>
+      <div class="wrap">
+        <div class="net__head">
+          <div class="section-head">
+            <p class="label">Our network</p>
+            <h2 id="network-title" class="h2">On the ground in 17 countries, right now.</h2>
+            <p class="lead">20+ offices, headquartered in Dubai, with warehousing in the UAE and Saudi Arabia. One key contact for the whole region.</p>
+          </div>
+          <ul class="net__facts">
+            <li><b>17</b><span>countries</span></li>
+            <li><b>20+</b><span>offices</span></li>
+            <li><b>4</b><span>regions</span></li>
+          </ul>
         </div>
-        <div class="regions">
-          <div><h3>GCC</h3><ul><li>United Arab Emirates <small>HQ</small></li><li>Saudi Arabia</li><li>Qatar</li><li>Kuwait</li><li>Oman</li><li>Bahrain</li></ul></div>
-          <div><h3>Levant &amp; Iraq</h3><ul><li>Jordan</li><li>Lebanon</li><li>Syria</li><li>Iraq</li></ul></div>
-          <div><h3>North Africa</h3><ul><li>Egypt</li><li>Morocco</li><li>Tunisia</li><li>Algeria</li></ul></div>
-          <div><h3>Asia &amp; beyond</h3><ul><li>Yemen</li><li>Pakistan</li><li>Mauritius</li></ul></div>
-        </div>
+        <div class="board" data-board></div>
       </div>
     </section>
 
@@ -271,30 +272,45 @@
           <p class="label">Industries</p>
           <h2 id="industries-title" class="h2">Seven industries, one way of working.</h2>
         </div>
-        <ul class="ind">
-          <li><i data-icon="basket" class="ind__ico"></i><h3>FMCG &amp; Food</h3><p>Shelf audits, merchandising and sampling</p></li>
-          <li><i data-icon="bottle" class="ind__ico"></i><h3>Beverages &amp; Spirits</h3><p>Cooler audits and on-premise checks</p></li>
-          <li><i data-icon="phone" class="ind__ico"></i><h3>Telecom &amp; Electronics</h3><p>Field forces and POSM roll-outs</p></li>
-          <li><i data-icon="car" class="ind__ico"></i><h3>Automotive</h3><p>Showroom mystery shopping</p></li>
-          <li><i data-icon="cart" class="ind__ico"></i><h3>Retail &amp; Hypermarkets</h3><p>Fit-outs, shelving and customer journeys</p></li>
-          <li><i data-icon="media" class="ind__ico"></i><h3>Media &amp; Payments</h3><p>Retailer branding and acceptance checks</p></li>
-          <li><i data-icon="diamond" class="ind__ico"></i><h3>Luxury, Fashion &amp; Lifestyle</h3><p>Shop-in-shops and premium displays</p></li>
+        <ul class="acc" data-acc>
+          <li class="is-on"><button type="button"><img src="/work/unilever-retail-audits/03.webp" alt="" loading="lazy"><i data-icon="basket"></i><span class="acc__v">FMCG &amp; Food</span><span class="acc__body"><b>FMCG &amp; Food</b><span>Shelf audits, merchandising and sampling that keep fast-moving brands visible in every outlet.</span></span></button></li>
+          <li><button type="button"><img src="/work/william-grant-mystery-shopping/01.webp" alt="" loading="lazy"><i data-icon="bottle"></i><span class="acc__v">Beverages &amp; Spirits</span><span class="acc__body"><b>Beverages &amp; Spirits</b><span>Cooler audits, perfect-serve checks and on-premise mystery visits in bars, hotels and stores.</span></span></button></li>
+          <li><button type="button"><img src="/work/intel-innovate-display-zone/03.webp" alt="" loading="lazy"><i data-icon="phone"></i><span class="acc__v">Telecom &amp; Electronics</span><span class="acc__body"><b>Telecom &amp; Electronics</b><span>Field forces, POSM roll-outs and display zones for launches that change every month.</span></span></button></li>
+          <li><button type="button"><img src="/work/automotive-mystery-shopping/01.webp" alt="" loading="lazy"><i data-icon="car"></i><span class="acc__v">Automotive</span><span class="acc__body"><b>Automotive</b><span>Showroom mystery shopping that scores courtesy, product knowledge and brand standards.</span></span></button></li>
+          <li><button type="button"><img src="/work/ajman-coop-electronics-zone/01.webp" alt="" loading="lazy"><i data-icon="cart"></i><span class="acc__v">Retail &amp; Hypermarkets</span><span class="acc__body"><b>Retail &amp; Hypermarkets</b><span>Fit-outs, shelving, checkouts and full customer-journey audits for retailers themselves.</span></span></button></li>
+          <li><button type="button"><img src="/work/bein-retailer-branding/01.webp" alt="" loading="lazy"><i data-icon="media"></i><span class="acc__v">Media &amp; Payments</span><span class="acc__body"><b>Media &amp; Payments</b><span>Retailer branding and merchant acceptance checks across thousands of points of sale.</span></span></button></li>
+          <li><button type="button"><img src="/work/dkny-rag-bone-shop-in-shop/02.webp" alt="" loading="lazy"><i data-icon="diamond"></i><span class="acc__v">Luxury &amp; Lifestyle</span><span class="acc__body"><b>Luxury, Fashion &amp; Lifestyle</b><span>Shop-in-shops, premium displays and installations finished to brand standard.</span></span></button></li>
         </ul>
       </div>
     </section>
 
     <!-- GROUP -->
     <section class="group" id="group" aria-labelledby="group-title">
-      <div class="wrap">
-        <div class="section-head">
-          <p class="label">The Niche Group</p>
-          <h2 id="group-title" class="h2">Specialist companies, one partner.</h2>
+      <div class="wrap group__grid">
+        <div>
+          <div class="section-head">
+            <p class="label">The Niche Group</p>
+            <h2 id="group-title" class="h2">Specialist companies, one partner.</h2>
+            <p class="lead">Production, shipping and tracking sit inside the group, so your programme never waits on an outside supplier.</p>
+          </div>
+          <ul class="gcards">
+            <li><i data-icon="production"></i><div><b>Niche Star Advertising</b><span>In-house production of POSM, displays, signage, shop-in-shops and packaging.</span></div></li>
+            <li><i data-icon="logistics"></i><div><b>Niche Cape Shipping</b><span>Sea and air cargo, freight brokerage, land transport and warehousing.</span></div></li>
+            <li><a href="https://www.connexistechnologies.com" target="_blank" rel="noopener"><i data-icon="vehicle"></i><div><b>Connexis <i data-icon="arrow" class="ico gcards__out"></i></b><span>Vehicle tracking and fuel monitoring, operating independently.</span></div></a></li>
+          </ul>
         </div>
-        <ul class="group__list">
-          <li><i data-icon="production" class="grp__ico"></i><b>Niche Star Advertising</b><span>In-house production of POSM, displays, signage, shop-in-shops and packaging.</span></li>
-          <li><i data-icon="logistics" class="grp__ico"></i><b>Niche Cape Shipping</b><span>Sea and air cargo, freight brokerage, land transport and warehousing.</span></li>
-          <li><a href="https://www.connexistechnologies.com" target="_blank" rel="noopener"><i data-icon="vehicle" class="grp__ico"></i><b>Connexis</b><span>Vehicle tracking and fuel monitoring.</span></a></li>
-        </ul>
+        <div class="orbit" aria-hidden="true">
+          <svg viewBox="0 0 400 400">
+            <circle cx="200" cy="200" r="150" class="orbit__ring"/>
+            <circle cx="200" cy="200" r="95" class="orbit__ring orbit__ring--in"/>
+            <path d="M200 200 L200 50" class="orbit__link"/><path d="M200 200 L330 275" class="orbit__link"/><path d="M200 200 L70 275" class="orbit__link"/>
+            <path d="M200 200 L200 50" class="orbit__flow"/><path d="M200 200 L330 275" class="orbit__flow"/><path d="M200 200 L70 275" class="orbit__flow"/>
+          </svg>
+          <div class="orbit__core"><img src="/brand/niche-logo.png" alt=""><small>Marketing Management</small></div>
+          <div class="orbit__node" style="--x:50%;--y:12.5%"><i data-icon="production"></i><span>Niche Star</span></div>
+          <div class="orbit__node" style="--x:82.5%;--y:68.75%"><i data-icon="logistics"></i><span>Niche Cape</span></div>
+          <div class="orbit__node" style="--x:17.5%;--y:68.75%"><i data-icon="vehicle"></i><span>Connexis</span></div>
+        </div>
       </div>
     </section>
 
@@ -303,8 +319,13 @@
       <div class="wrap contact__grid">
         <div>
           <p class="label">Contact</p>
-          <h2 id="contact-title" class="contact__title">Need eyes and ears in 17 markets? Tell us your brief.</h2>
+          <h2 id="contact-title" class="contact__title">Need eyes and ears in 17 markets?</h2>
           <p class="lead">We reply within one working day with a plan and a price.</p>
+          <ol class="next">
+            <li><i data-icon="mail"></i><b>Today</b><span>You send the brief</span></li>
+            <li><i data-icon="clock"></i><b>Within 1 day</b><span>We reply with a plan and a price</span></li>
+            <li><i data-icon="users"></i><b>Go-live</b><span>Your team is trained and in store</span></li>
+          </ol>
           <ul class="contact__direct">
             <li><i data-icon="call"></i><a href="tel:+97142978868">+971 4 297 8868</a></li>
             <li><i data-icon="mail"></i><a href="mailto:info@nicheme.com">info@nicheme.com</a></li>
@@ -328,12 +349,20 @@
           </div>
           <label class="field"><span>Your brief</span><textarea name="message" rows="4" placeholder="Outlets, timing and what success looks like"></textarea></label>
           <button class="btn btn--ink btn--lg" type="submit">Send brief <i data-icon="arrow"></i></button>
+          <div class="form__done" data-done hidden><i data-icon="check"></i><b>Brief ready to send</b><span>Your email app is opening with everything filled in. We reply within one working day.</span></div>
         </form>
       </div>
     </section>
   </main>
 
   <footer class="foot">
+    <div class="wrap foot__cta">
+      <p class="foot__big">Let's put eyes on<br>your <em>shelves.</em></p>
+      <div class="foot__side">
+        <a class="btn btn--red btn--lg" href="#contact">Get a proposal <i data-icon="arrow"></i></a>
+        <p class="foot__clock"><i class="kicker__dot"></i>Dubai HQ · <b data-clock>--:--</b></p>
+      </div>
+    </div>
     <div class="wrap foot__cols">
       <div>
         <p class="foot__h">Services</p>
@@ -349,10 +378,10 @@
       </div>
       <div>
         <p class="foot__h">Follow</p>
-        <ul><li><a href="https://www.linkedin.com/company/niche-marketing-management" target="_blank" rel="noopener">LinkedIn</a></li><li><a href="https://www.instagram.com/niche_marketing_management" target="_blank" rel="noopener">Instagram</a></li><li><a href="https://www.facebook.com/Niche.MME" target="_blank" rel="noopener">Facebook</a></li></ul>
+        <ul class="foot__social"><li><a href="https://www.linkedin.com/company/niche-marketing-management" target="_blank" rel="noopener">LinkedIn <i data-icon="arrow"></i></a></li><li><a href="https://www.instagram.com/niche_marketing_management" target="_blank" rel="noopener">Instagram <i data-icon="arrow"></i></a></li><li><a href="https://www.facebook.com/Niche.MME" target="_blank" rel="noopener">Facebook <i data-icon="arrow"></i></a></li></ul>
       </div>
     </div>
-    <div class="wrap foot__word" aria-hidden="true"><img src="/brand/niche-logo.png" alt="" width="2030" height="361" loading="lazy"></div>
+    <div class="wrap foot__word" aria-hidden="true" data-footword><img src="/brand/niche-logo.png" alt="" width="2030" height="361" loading="lazy"></div>
     <div class="wrap foot__bar">
       <span>© 2026 Niche Marketing Management</span>
       <a href="#top">Back to top</a>

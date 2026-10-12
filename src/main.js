@@ -8,7 +8,7 @@ import { initWall } from './modules/wall.js'
 import { playIntro } from './modules/intro.js'
 import {
   initNav, initAnchors, initHeroIntro, initCounters, initServices, initLogos, initReveals, initForm,
-  initSteps, initActiveNav, initBento,
+  initSteps, initActiveNav, initBento, initBoard, initAccordion, initFooter,
 } from './modules/ui.js'
 
 gsap.registerPlugin(ScrollTrigger)
@@ -48,14 +48,9 @@ requestAnimationFrame(async () => {
 ScrollTrigger.create({ trigger: hero, start: 'top top', end: 'bottom top', onUpdate: s => globe?.setScroll(s.progress) })
 gsap.to('.hero__copy', { yPercent: -10, opacity: 0, ease: 'none', scrollTrigger: { trigger: hero, start: 'top top', end: '75% top', scrub: true } })
 
-// Network: the MENA map with live pings, loaded when the section gets close.
-const network = document.querySelector('#network')
-new IntersectionObserver(async ([e], io) => {
-  if (!e.isIntersecting) return
-  io.disconnect()
-  const { initMap } = await import('./modules/map.js')
-  initMap({ canvas: network.querySelector('[data-map]'), pingLayer: network.querySelector('[data-pings]'), reduced })
-}, { rootMargin: '600px 0px' }).observe(network)
+initBoard(ctx)
+initAccordion()
+initFooter(ctx)
 
 // Intro (first visit per session), then the hero animates in.
 lenis?.stop()
