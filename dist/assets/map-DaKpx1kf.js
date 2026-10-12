@@ -1,4 +1,4 @@
-import{_ as Xo}from"./index-Wt4UeyUS.js";/**
+import{_ as Xo}from"./index-DyDyJSAm.js";/**
  * @license
  * Copyright 2010-2024 Three.js Authors
  * SPDX-License-Identifier: MIT
@@ -3875,7 +3875,7 @@ void main() {
     vec4 mv = modelViewMatrix * vec4(p, 1.0);
     gl_Position = projectionMatrix * mv;
 
-    float s = uSize * (0.75 + aFlag * 0.45 + lens * 1.5 + ping * 1.3 + wave * 0.6);
+    float s = uSize * (0.75 + aFlag * 0.45 + lens * 1.5 + ping * 1.0 + wave * 0.2);
     s = mix(s, uSize * 1.05, m);
     gl_PointSize = s * uScale / -mv.z * intro;
 
