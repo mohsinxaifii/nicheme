@@ -12,7 +12,7 @@
   <meta property="og:type" content="website">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=Noto+Kufi+Arabic:wght@500&display=swap" rel="stylesheet">
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -36,17 +36,20 @@
   <a class="skip" href="#main">Skip to content</a>
 
   <header class="nav" data-nav>
-    <a class="logo" href="#top"><img src="/brand/niche-logo.png" alt="Niche Marketing Management" width="2030" height="361"></a>
-    <nav class="nav__links" aria-label="Main">
-      <a href="#services">Services</a>
-      <a href="#work">Case studies</a>
-      <a href="#about">About</a>
-      <a href="#network">Network</a>
-    </nav>
-    <div class="nav__right">
-      <button class="nav__lang" type="button" data-toast="The Arabic site is coming with launch." lang="ar">عربي</button>
-      <a class="btn btn--red btn--sm" href="#contact">Get a proposal</a>
-      <button class="nav__burger" type="button" aria-label="Open menu" aria-expanded="false" data-burger><span></span><span></span></button>
+    <div class="nav__bar">
+      <a class="logo" href="#top"><img src="/brand/niche-logo.png" alt="Niche Marketing Management" width="2030" height="361"></a>
+      <nav class="nav__links" aria-label="Main">
+        <a href="#services">Services</a>
+        <a href="#work">Case studies</a>
+        <a href="#industries">Industries</a>
+        <a href="#about">About</a>
+        <a href="#network">Network</a>
+      </nav>
+      <div class="nav__right">
+        <button class="nav__lang" type="button" data-toast="The Arabic site is coming with launch." lang="ar">عربي</button>
+        <a class="btn btn--red btn--sm" href="#contact">Get a proposal <i data-icon="arrow"></i></a>
+        <button class="nav__burger" type="button" aria-label="Open menu" aria-expanded="false" data-burger><span></span><span></span></button>
+      </div>
     </div>
   </header>
 
@@ -54,6 +57,7 @@
     <nav aria-label="Mobile">
       <a href="#services">Services</a>
       <a href="#work">Case studies</a>
+      <a href="#industries">Industries</a>
       <a href="#about">About</a>
       <a href="#network">Network</a>
       <a href="#contact" class="menu__cta">Get a proposal</a>
@@ -65,40 +69,51 @@
 
     <!-- HERO -->
     <section class="hero" id="top" aria-labelledby="hero-title">
-      <canvas class="hero__map" data-map aria-hidden="true"></canvas>
       <div class="hero__copy">
-        <p class="kicker">Field marketing across MENA since 2003</p>
+        <p class="kicker"><span class="kicker__dot"></span>Field marketing across MENA · Since 2003</p>
         <h1 id="hero-title" class="hero__title">
           <span class="line"><span>The eyes and ears</span></span>
           <span class="line"><span>of great brands</span></span>
-          <span class="line"><span>across MENA.</span></span>
+          <span class="line"><span>across <em>MENA.</em></span></span>
         </h1>
         <p class="hero__sub">Retail audits, merchandising, mystery shopping and activations in 17 countries, reported in real time.</p>
         <div class="hero__ctas">
-          <a class="btn btn--red" href="#contact">Get a proposal</a>
-          <a class="btn btn--ghost" href="#services">Our services</a>
+          <a class="btn btn--red btn--lg" href="#contact">Get a proposal <i data-icon="arrow"></i></a>
+          <a class="btn btn--ghost btn--lg" href="#work">See our work</a>
         </div>
+        <ul class="hero__facts">
+          <li><b>20,000+</b><span>stores audited<br>for Red Bull</span></li>
+          <li><b>17</b><span>countries,<br>one invoice</span></li>
+          <li><b>23</b><span>years on the<br>shop floor</span></li>
+        </ul>
       </div>
-      <p class="hero__legend" aria-hidden="true"><i></i>The Niche network: 17 countries, 20+ offices</p>
+      <canvas class="hero__aisle" data-aisle aria-hidden="true"></canvas>
+      <div class="hero__label" data-aisle-label aria-hidden="true"></div>
+      <div class="hero__feed" data-hero-feed aria-hidden="true"></div>
+      <p class="hero__hint" aria-hidden="true"><i data-icon="mystery"></i>Walk the aisle: hover a shelf, click to open the case</p>
     </section>
 
-    <!-- ABOUT + STATS -->
-    <section class="about" id="about" aria-labelledby="about-title">
-      <div class="wrap about__grid">
+    <!-- ABOUT + STATS STRIP -->
+    <section class="proof" id="about" aria-labelledby="about-title">
+      <div class="wrap proof__grid">
         <p class="label">About Niche</p>
         <div>
-          <h2 id="about-title" class="about__lead">Niche Marketing Management is a Dubai-based field marketing company. For more than 20 years our teams have audited shelves, merchandised stores, run promotions and scored showrooms for the world's biggest brands, from one key contact and one invoice.</h2>
-          <p class="about__body">Privately owned and headquartered in Dubai, with branches across the Middle East, North Africa and Asia and warehousing in the UAE and Saudi Arabia.</p>
+          <h2 id="about-title" class="proof__lead">A Dubai-based field marketing company, privately owned since 2003. Our teams audit shelves, merchandise stores, run promotions and score showrooms for the world's great brands, with one key contact and one invoice for the whole region.</h2>
         </div>
       </div>
       <dl class="wrap stats">
-        <div><dt>Years in the region</dt><dd data-count="23">23</dd></div>
-        <div><dt>Countries</dt><dd data-count="17">17</dd></div>
-        <div><dt>Offices</dt><dd data-count="20" data-suffix="+">20+</dd></div>
-        <div><dt>People</dt><dd data-count="250" data-suffix="+">250+</dd></div>
-        <div><dt>Stores audited for Red Bull</dt><dd data-count="20000" data-suffix="+">20,000+</dd></div>
-        <div><dt>Store visits a month for du</dt><dd data-count="11000">11,000</dd></div>
+        <div><i data-icon="calendar" class="stat__ico"></i><dt>Years in MENA</dt><dd data-count="23">23</dd></div>
+        <div><i data-icon="globe" class="stat__ico"></i><dt>Countries</dt><dd data-count="17">17</dd></div>
+        <div><i data-icon="building" class="stat__ico"></i><dt>Offices</dt><dd data-count="20" data-suffix="+">20+</dd></div>
+        <div><i data-icon="users" class="stat__ico"></i><dt>Employees</dt><dd data-count="250" data-suffix="+">250+</dd></div>
+        <div><i data-icon="store" class="stat__ico"></i><dt>Stores audited for Red Bull</dt><dd data-count="20000" data-suffix="+">20,000+</dd></div>
+        <div><i data-icon="route" class="stat__ico"></i><dt>Store visits a month for du</dt><dd data-count="11000">11,000</dd></div>
       </dl>
+    </section>
+
+    <!-- CLIENT LOGOS -->
+    <section class="clients" aria-label="Client references">
+      <div class="logos" data-logos></div>
     </section>
 
     <!-- SERVICES -->
@@ -106,38 +121,33 @@
       <div class="wrap">
         <div class="section-head">
           <p class="label">Services</p>
-          <h2 id="services-title" class="h2">Everything a brand needs at the point of sale.</h2>
-          <p class="lead">Fourteen services in four groups, all run by our own people and reported through one system. Open any service to see what it includes.</p>
+          <h2 id="services-title" class="h2">What we do best, on the shop floor.</h2>
+          <p class="lead">Fourteen services in four groups, run by our own people and reported through one system. Open any service to see what it includes.</p>
         </div>
         <div class="svc" data-services></div>
       </div>
     </section>
 
     <!-- CASE STUDIES -->
-    <section class="wall" id="work" aria-labelledby="work-title">
-      <div class="wrap wall__head">
+    <section class="work" id="work" aria-labelledby="work-title">
+      <div class="wrap">
         <div class="section-head">
           <p class="label">Case studies</p>
-          <h2 id="work-title" class="h2">Work for the world's great brands.</h2>
-          <p class="lead">Thirty programmes from our company profile. Drag to browse and select any project for the details.</p>
+          <h2 id="work-title" class="h2">23 years of work for the world's great brands.</h2>
+          <p class="lead">Select any project to see the brief, what we did and the result.</p>
         </div>
-        <div class="wall__controls">
-          <div class="chips" role="group" aria-label="Filter case studies">
-            <button class="chip is-on" type="button" data-filter="all">All</button>
-            <button class="chip" type="button" data-filter="audits">Retail audits</button>
-            <button class="chip" type="button" data-filter="merch">Merchandising</button>
-            <button class="chip" type="button" data-filter="mystery">Mystery shopping</button>
-            <button class="chip" type="button" data-filter="activation">Activations &amp; sampling</button>
-            <button class="chip" type="button" data-filter="install">Installation</button>
-            <button class="chip" type="button" data-filter="production">Production</button>
-          </div>
-          <button class="chip chip--ghost" type="button" data-view-toggle aria-pressed="false">List view</button>
+        <div class="chips" role="group" aria-label="Filter case studies">
+          <button class="chip is-on" type="button" data-filter="all">All</button>
+          <button class="chip" type="button" data-filter="audits">Retail audits</button>
+          <button class="chip" type="button" data-filter="merch">Merchandising</button>
+          <button class="chip" type="button" data-filter="mystery">Mystery shopping</button>
+          <button class="chip" type="button" data-filter="activation">Activations &amp; sampling</button>
+          <button class="chip" type="button" data-filter="install">Installation</button>
+          <button class="chip" type="button" data-filter="production">Production</button>
         </div>
+        <ul class="grid" data-grid></ul>
+        <div class="work__more"><button class="btn btn--ghost-dark" type="button" data-more>Show all 30 projects</button></div>
       </div>
-      <div class="wall__stage" data-wall>
-        <div class="wall__plane" data-plane></div>
-      </div>
-      <ol class="wrap wall__list" data-list hidden></ol>
     </section>
 
     <!-- HOW WE WORK -->
@@ -147,12 +157,40 @@
           <p class="label">How we work</p>
           <h2 id="how-title" class="h2">One process, in every market.</h2>
         </div>
+        <div class="steps__line" aria-hidden="true"><i data-steps-fill></i></div>
         <ol class="steps">
-          <li><span>01</span><h3>Brief</h3><p>We agree objectives, outlets and KPIs with one key contact on your side.</p></li>
-          <li><span>02</span><h3>Deploy</h3><p>Trained field teams are assigned to each market with a route plan.</p></li>
-          <li><span>03</span><h3>Execute</h3><p>Audits, merchandising and promotions run on schedule. Every visit is geo-tagged and time-stamped.</p></li>
-          <li><span>04</span><h3>Report</h3><p>Results reach your dashboard within 24 hours, with an action list for the week ahead.</p></li>
+          <li><span>01</span><i data-icon="brief" class="step__ico"></i><h3>Brief</h3><p>Objectives, outlets and KPIs agreed with one key contact.</p></li>
+          <li><span>02</span><i data-icon="users" class="step__ico"></i><h3>Deploy</h3><p>Trained field teams assigned by route plan across your markets.</p></li>
+          <li><span>03</span><i data-icon="camera" class="step__ico"></i><h3>Execute &amp; capture</h3><p>Audits, merchandising and promotions, with geo-tagged, time-stamped photos.</p></li>
+          <li><span>04</span><i data-icon="dashboard" class="step__ico"></i><h3>Report</h3><p>Live dashboard on web portal and app, with an action list within 24 hours.</p></li>
         </ol>
+      </div>
+    </section>
+
+    <!-- REPORTING -->
+    <section class="reporting" id="reporting" aria-labelledby="reporting-title">
+      <div class="wrap reporting__grid">
+        <figure class="reporting__photo">
+          <div class="reporting__frame">
+            <img src="/work/reckitt-retail-audits/02.webp" alt="Shelf audited by Niche for Reckitt Benckiser" width="960" height="866" loading="lazy">
+            <div class="chip-float chip-float--a" aria-hidden="true"><i data-icon="check" class="chip-float__ico"></i><span><b>Visit verified</b><small>25.2048°N 55.2708°E · 09:42</small></span></div>
+            <div class="chip-float chip-float--b" aria-hidden="true"><span><small>Shelf compliance</small><b data-comp>96%</b></span><i class="bar"><i></i></i></div>
+            <div class="chip-float chip-float--c" aria-hidden="true"><i data-icon="camera" class="chip-float__ico"></i><span><b>4 photos uploaded</b><small>Planogram check</small></span></div>
+          </div>
+          <figcaption>Reckitt Benckiser: monthly audits across 3,000+ outlets in 8 countries, from 2003 to 2024.</figcaption>
+        </figure>
+        <div>
+          <p class="label">Real-time reporting</p>
+          <h2 id="reporting-title" class="h2">See every store, every day.</h2>
+          <p class="lead">Field staff report from hand-held devices. Our data team in Dubai turns each visit into a client-ready report within 24 hours, or on your schedule. Data is held securely in Dubai with an independent off-site backup.</p>
+          <ul class="ticks">
+            <li>Photo evidence with GPS and time stamps</li>
+            <li>Planogram compliance and share of shelf</li>
+            <li>Out-of-stock and pricing alerts</li>
+            <li>Competitor activity tracking</li>
+            <li>Device apps and web portals</li>
+          </ul>
+        </div>
       </div>
     </section>
 
@@ -160,32 +198,27 @@
     <section class="why" aria-labelledby="why-title">
       <div class="wrap">
         <div class="section-head">
-          <p class="label">Why Niche</p>
+          <p class="label">Why work with us</p>
           <h2 id="why-title" class="h2">Why brands stay with us for decades.</h2>
         </div>
         <div class="why__grid">
-          <article><b>21 years</b><h3>Long partnerships</h3><p>Reckitt has used our retail audits since 2003. Red Bull since 2009.</p></article>
-          <article><b>1 invoice</b><h3>One partner for the region</h3><p>A single key contact and centralised billing across 17 countries.</p></article>
-          <article><b>24 h</b><h3>Proof on every visit</h3><p>Photo, GPS and time evidence for each visit, reported within a day.</p></article>
-          <article><b>In-house</b><h3>Production and logistics</h3><p>Our own production studio and shipping company. No waiting on suppliers.</p></article>
+          <article><i data-icon="handshake" class="why__ico"></i><b>21 years</b><h3>Long partnerships</h3><p>Reckitt Benckiser from 2003 to 2024. Red Bull since 2009.</p></article>
+          <article><i data-icon="receipt" class="why__ico"></i><b>1 invoice</b><h3>One partner for MENA</h3><p>One key contact and centralised billing for the whole Middle East and North Africa.</p></article>
+          <article><i data-icon="clock" class="why__ico"></i><b>24 h</b><h3>Fast, accurate reporting</h3><p>Real-time reporting through device apps and web portals.</p></article>
+          <article><i data-icon="factory" class="why__ico"></i><b>In-house</b><h3>Production and logistics</h3><p>Niche Star Advertising and Niche Cape Shipping, inside the group.</p></article>
         </div>
-      </div>
-    </section>
-
-    <!-- BRANDS -->
-    <section class="brands" aria-label="Brands we have worked for">
-      <div class="marquee" data-marquee>
-        <div class="marquee__row"><span>Red Bull</span><span>Unilever</span><span>Mars</span><span>Reckitt</span><span>du</span><span>beIN</span><span>Electrolux</span><span>IFFCO</span><span>Nespresso</span><span>BMW</span><span>Tesla</span><span>Ford</span><span>William Grant &amp; Sons</span><span>Mentos</span><span>Dabur</span><span>Intel</span><span>Home Centre</span><span>Discover</span></div>
       </div>
     </section>
 
     <!-- NETWORK -->
     <section class="network" id="network" aria-labelledby="network-title">
-      <div class="wrap">
+      <canvas class="network__map" data-map aria-hidden="true"></canvas>
+      <div class="network__pings" data-pings aria-hidden="true"></div>
+      <div class="wrap network__inner">
         <div class="section-head">
-          <p class="label">Network</p>
-          <h2 id="network-title" class="h2">On the ground in 17 countries.</h2>
-          <p class="lead">Headquartered in Dubai since 2003, with warehousing in the UAE and Saudi Arabia.</p>
+          <p class="label">Our network</p>
+          <h2 id="network-title" class="h2">20+ offices across 17 countries.</h2>
+          <p class="lead">Headquartered in Dubai, with warehousing in the UAE and Saudi Arabia. One key contact for the whole region.</p>
         </div>
         <div class="regions">
           <div><h3>GCC</h3><ul><li>United Arab Emirates <small>HQ</small></li><li>Saudi Arabia</li><li>Qatar</li><li>Kuwait</li><li>Oman</li><li>Bahrain</li></ul></div>
@@ -196,18 +229,36 @@
       </div>
     </section>
 
+    <!-- INDUSTRIES -->
+    <section class="industries" id="industries" aria-labelledby="industries-title">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="label">Industries</p>
+          <h2 id="industries-title" class="h2">Seven industries, one way of working.</h2>
+        </div>
+        <ul class="ind">
+          <li><i data-icon="basket" class="ind__ico"></i><h3>FMCG &amp; Food</h3><p>Unilever, Mars, Reckitt, IFFCO</p></li>
+          <li><i data-icon="bottle" class="ind__ico"></i><h3>Beverages &amp; Spirits</h3><p>Red Bull, William Grant &amp; Sons</p></li>
+          <li><i data-icon="phone" class="ind__ico"></i><h3>Telecom &amp; Electronics</h3><p>du, Electrolux, Intel</p></li>
+          <li><i data-icon="car" class="ind__ico"></i><h3>Automotive</h3><p>BMW, Ford, Tesla, Chrysler, RAM</p></li>
+          <li><i data-icon="cart" class="ind__ico"></i><h3>Retail &amp; Hypermarkets</h3><p>Home Centre, HMY, Ajman Coop</p></li>
+          <li><i data-icon="media" class="ind__ico"></i><h3>Media &amp; Payments</h3><p>beIN Sports, Discover</p></li>
+          <li><i data-icon="diamond" class="ind__ico"></i><h3>Luxury, Fashion &amp; Lifestyle</h3><p>DKNY, Nespresso, Jet Aviation</p></li>
+        </ul>
+      </div>
+    </section>
+
     <!-- GROUP -->
     <section class="group" id="group" aria-labelledby="group-title">
       <div class="wrap">
         <div class="section-head">
           <p class="label">The Niche Group</p>
-          <h2 id="group-title" class="h2">Specialist companies, one group.</h2>
+          <h2 id="group-title" class="h2">Specialist companies, one partner.</h2>
         </div>
         <ul class="group__list">
-          <li><b>Niche Star Advertising</b><span>In-house production of POSM, displays, signage and shop-in-shops.</span></li>
-          <li><b>Niche Cape Shipping</b><span>Sea and air cargo, freight brokerage, land transport and warehousing.</span></li>
-          <li><a href="https://www.connexistechnologies.com" target="_blank" rel="noopener"><b>Connexis</b><span>Vehicle tracking and fuel monitoring.</span></a></li>
-          <li><b>Niche Company KSA</b><span>Our company in Saudi Arabia.</span></li>
+          <li><i data-icon="production" class="grp__ico"></i><b>Niche Star Advertising</b><span>In-house production of POSM, displays, signage, shop-in-shops and packaging.</span></li>
+          <li><i data-icon="logistics" class="grp__ico"></i><b>Niche Cape Shipping</b><span>Sea and air cargo, freight brokerage, land transport and warehousing.</span></li>
+          <li><a href="https://www.connexistechnologies.com" target="_blank" rel="noopener"><i data-icon="vehicle" class="grp__ico"></i><b>Connexis</b><span>Vehicle tracking and fuel monitoring.</span></a></li>
         </ul>
       </div>
     </section>
@@ -217,12 +268,12 @@
       <div class="wrap contact__grid">
         <div>
           <p class="label">Contact</p>
-          <h2 id="contact-title" class="contact__title">Tell us what you need, and where.</h2>
+          <h2 id="contact-title" class="contact__title">Need eyes and ears in 17 markets? Tell us your brief.</h2>
           <p class="lead">We reply within one working day with a plan and a price.</p>
           <ul class="contact__direct">
-            <li><a href="tel:+97142978868">+971 4 297 8868</a></li>
-            <li><a href="mailto:info@nicheme.com">info@nicheme.com</a></li>
-            <li>PO Box 81605, Dubai, UAE</li>
+            <li><i data-icon="call"></i><a href="tel:+97142978868">+971 4 297 8868</a></li>
+            <li><i data-icon="mail"></i><a href="mailto:info@nicheme.com">info@nicheme.com</a></li>
+            <li><i data-icon="pin"></i>PO Box 81605, Dubai, UAE</li>
           </ul>
         </div>
         <form class="form" data-form novalidate>
@@ -238,10 +289,10 @@
             <label class="field"><span>Service</span>
               <select name="service" data-service-select><option value="">Select a service</option></select>
             </label>
-            <label class="field"><span>Markets</span><input name="markets" placeholder="e.g. UAE, KSA, Qatar"></label>
+            <label class="field"><span>Countries</span><input name="markets" placeholder="e.g. UAE, KSA, Qatar"></label>
           </div>
           <label class="field"><span>Your brief</span><textarea name="message" rows="4" placeholder="Outlets, timing and what success looks like"></textarea></label>
-          <button class="btn btn--ink btn--lg" type="submit">Send brief</button>
+          <button class="btn btn--ink btn--lg" type="submit">Send brief <i data-icon="arrow"></i></button>
         </form>
       </div>
     </section>
@@ -255,7 +306,7 @@
       </div>
       <div>
         <p class="foot__h">Company</p>
-        <ul><li><a href="#about">About</a></li><li><a href="#group">Group companies</a></li><li><a href="#work">Case studies</a></li><li><a href="#contact">Careers</a></li></ul>
+        <ul><li><a href="#about">About</a></li><li><a href="#group">Group companies</a></li><li><a href="#work">Case studies</a></li><li><a href="#industries">Industries</a></li><li><a href="#contact">Careers</a></li></ul>
       </div>
       <div>
         <p class="foot__h">Contact</p>
@@ -277,10 +328,14 @@
     <div class="modal__backdrop" data-close></div>
     <article class="modal__panel" data-panel>
       <button class="modal__close" type="button" data-close aria-label="Close case study">✕</button>
-      <div class="modal__side" data-modal-side></div>
+      <div class="gallery" data-gallery>
+        <div class="gallery__stage"><img data-gallery-img alt=""></div>
+        <div class="gallery__thumbs" data-gallery-thumbs></div>
+      </div>
       <div class="modal__body">
         <p class="modal__kicker" data-modal-kicker></p>
         <h2 id="modal-title" class="modal__title" data-modal-title></h2>
+        <div class="modal__pills" data-modal-pills></div>
         <div class="modal__stats" data-modal-stats></div>
         <div class="modal__text" data-modal-text></div>
         <div class="modal__foot">

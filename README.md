@@ -15,24 +15,29 @@ npm run gen:map    # rebuild src/data/map-dots.json from Natural Earth
 
 | Section | What it does |
 |---|---|
-| Hero | WebGL map of MENA in ~20k dots. Niche's 17 countries in red, arcs from Dubai, a soft cursor lens. On scroll the dots settle into a shelf grid. |
-| About | Company summary and six key figures. |
-| Services | All 14 services in 4 groups, each expandable with a description, what's included and a proof figure (`src/data/services.js`). |
-| Case studies | Draggable wall of 30 case cards, filters, list view, detail popup with deep links `#case/<slug>`. |
-| How we work / Why Niche | Four steps; four reasons with proof. |
-| Network, Group, Contact | Countries by region, group companies, enquiry form. |
+| Intro | Once per session: the MENA map draws itself, the 17 countries light up from Dubai, English/Arabic lines, then the logo. Skippable. |
+| Hero | WebGL supermarket aisle stocked with the 30 real case photos. Hover a photo for colour + label, click to open the case. Live audit chips. |
+| About + stats | Dark strip with company summary and six figures with icons. |
+| Client logos | 35 logos from the presentation's Client References slides, two rows. |
+| Services | All 14 services in 4 groups; each opens with a photo, description, inclusions and proof. Cursor-follow photo preview. |
+| Case studies | Bento grid of real photos (grayscale → colour), filters, show all, popup with gallery. |
+| How we work, Reporting, Why | Step line that fills on scroll; real shelf photo with floating report chips; four reasons. |
+| Network | WebGL MENA dot map with arcs and pings. |
+| Industries, Group, Contact | Icon lists and the enquiry form. |
 
-Logo: `public/brand/niche-logo.png`, taken from the live nicheme.com. Fonts: Inter Tight.
+Assets: `public/work/` (case photos) and `public/logos/` are extracted from *Niche - Company Presentation 2026.pdf*.
+Logo: `public/brand/niche-logo.png` from the live nicheme.com. Fonts: Inter Tight, Noto Kufi Arabic (intro).
 
 ## Content rules followed
 
 - All case-study figures come from the Niche company profile, via the developer brief. Nothing invented.
 - No Apple anywhere. No testimonials until real, approved quotes exist.
-- No stock photos. Case cards are typographic until real project photos arrive.
+- No stock photos: every image comes from the company presentation. Slides with Apple products or the confidential client (DULA, Multibrand, White Fixtures, Confidential) are excluded, as is a du photo showing a phone poster.
 
 ## Before launch
 
-- Add real project photos to the case cards and popup.
+- Get original high-res photos from Niche: many PDF images are small (e.g. Red Bull shelves ~200 px).
+- Have an Arabic copywriter check the intro lines in `src/modules/intro.js`.
 - Ask Niche for the logo as SVG (the PNG from the live site is used today).
 - Wire the form to a real endpoint (it opens a mailto today). See `initForm` in `src/modules/ui.js`.
 - Confirm headcount/countries with management. The live site says 300+ / 14; the profile says 250+ / 17 / 20+ offices. This build uses the profile.

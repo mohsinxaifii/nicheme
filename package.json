@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "gen:map": "node scripts/gen-map.js"
+    "gen:map": "node scripts/gen-map.js && node scripts/gen-mena.js"
   },
   "dependencies": {
     "gsap": "^3.12.5",

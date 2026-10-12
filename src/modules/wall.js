@@ -1,147 +1,78 @@
-// Case studies: an endless, draggable wall of clean typographic cards.
-// The same cases render as a plain list (accessible fallback + list view).
+// Case studies: a bento grid of real project photos (grayscale at rest, colour
+// on hover), filters, "show all", and a popup with a photo gallery.
 import { cases, SERVICE_LABEL } from '../data/cases.js'
+import { photos } from '../data/photos.js'
 
-const FEATURED = new Set(['red-bull-perfect-store-audits', 'du-field-force-merchandising', 'mentos-air-action-sampling', 'labour-camp-carnival-of-games'])
-const COLS = 6
+const BASE = import.meta.env.BASE_URL
+const img = (slug, file) => `${BASE}work/${slug}/${file}`
+const FEATURED = new Set(['red-bull-perfect-store-audits', 'du-field-force-merchandising', 'labour-camp-carnival-of-games', 'reckitt-retail-audits'])
+const FIRST = 18
 const FORM_SERVICE = {
   audits: 'Retail & Perfect Store Audits', merch: 'Merchandising & Field Force', mystery: 'Mystery Shopping',
   activation: 'Promotions & Activations', install: 'Fixture Installation, Shelving & Maintenance', production: 'Production, Branding & Advertising',
 }
 
-export function initWall({ lenis, reduced }) {
+export function initWall({ lenis }) {
   const section = document.querySelector('#work')
-  const stage = section.querySelector('[data-wall]')
-  const plane = section.querySelector('[data-plane]')
-  const list = section.querySelector('[data-list]')
+  const grid = section.querySelector('[data-grid]')
+  const more = section.querySelector('[data-more]')
   const modal = initModal({ lenis })
-  let moved = 0
+  let filter = 'all', expanded = false
 
-  const cards = cases.map((c, i) => {
-    const el = document.createElement('button')
-    el.type = 'button'
-    el.className = `card${FEATURED.has(c.slug) ? ' is-feat' : ''}`
-    el.setAttribute('aria-label', `${c.brand}: ${c.title}. ${c.stat} ${c.statLabel}. Open case study`)
-    el.innerHTML = `
-      <span class="card__top"><span>${SERVICE_LABEL[c.service]}</span><span>${c.where}</span></span>
-      <span class="card__stat"><b>${c.stat}</b><span>${c.statLabel}</span></span>
-      <span><span class="card__brand">${c.brand}</span><span class="card__title">${c.title}</span></span>`
-    el.addEventListener('click', e => { if (moved > 6) { e.preventDefault(); return } modal.open(i, el) })
-    plane.appendChild(el)
-    return { el, c, i, x: 0, y: 0 }
+  grid.innerHTML = cases.map((c, i) => `
+    <li class="tile-wrap${FEATURED.has(c.slug) ? ' is-feat' : ''}" data-i="${i}" data-service="${c.service}">
+      <a class="tile" href="#case/${c.slug}" data-open="${i}">
+        <img src="${img(c.slug, 'cover.webp')}" alt="${c.brand}: ${c.title}" loading="lazy" decoding="async">
+        <span class="tile__wash" aria-hidden="true"></span>
+        <span class="tile__pill">${SERVICE_LABEL[c.service]}</span>
+        <span class="tile__body">
+          <span class="tile__stat"><b>${c.stat}</b> ${c.statLabel}</span>
+          <span class="tile__brand">${c.brand}</span>
+          <span class="tile__title">${c.title}</span>
+        </span>
+      </a>
+    </li>`).join('')
+
+  grid.addEventListener('click', e => {
+    const a = e.target.closest('[data-open]')
+    if (!a) return
+    e.preventDefault()
+    modal.open(+a.dataset.open, a, () => visibleIndexes())
   })
 
-  // list view
-  list.innerHTML = cases.map((c, i) => `
-    <li data-service="${c.service}"><button type="button" data-open="${i}">
-      <span class="n">${String(i + 1).padStart(2, '0')}</span>
-      <span class="b">${c.brand}</span>
-      <span class="t">${c.title}</span>
-      <span class="s">${SERVICE_LABEL[c.service]} · ${c.where}</span>
-      <span class="k">${c.stat} ${c.statLabel}</span>
-    </button></li>`).join('')
-  list.addEventListener('click', e => {
-    const b = e.target.closest('[data-open]')
-    if (b) modal.open(+b.dataset.open, b)
-  })
-  const toggle = section.querySelector('[data-view-toggle]')
-  toggle.addEventListener('click', () => {
-    const on = !section.classList.contains('is-list')
-    section.classList.toggle('is-list', on)
-    list.hidden = !on
-    toggle.setAttribute('aria-pressed', on)
-    toggle.textContent = on ? 'Wall view' : 'List view'
+  const items = [...grid.children]
+  function visibleIndexes() { return items.filter(li => !li.hidden).map(li => +li.dataset.i) }
+  function apply() {
+    let shown = 0
+    items.forEach(li => {
+      const match = filter === 'all' || li.dataset.service === filter
+      const show = match && (expanded || filter !== 'all' || shown < FIRST)
+      if (show) shown++
+      li.hidden = !show
+    })
+    more.hidden = expanded || filter !== 'all'
+    items.filter(li => !li.hidden).forEach((li, k) => li.animate(
+      [{ opacity: 0, transform: 'translateY(16px)' }, { opacity: 1, transform: 'none' }],
+      { duration: 500, delay: Math.min(k, 12) * 30, easing: 'cubic-bezier(.2,.7,.1,1)', fill: 'backwards' }))
     lenis?.resize()
-  })
-
-  // filters
-  const chips = section.querySelectorAll('[data-filter]')
-  chips.forEach(chip => chip.addEventListener('click', () => {
-    const f = chip.dataset.filter
-    chips.forEach(c => c.classList.toggle('is-on', c === chip))
-    cards.forEach(k => k.el.classList.toggle('is-dim', f !== 'all' && k.c.service !== f))
-    list.querySelectorAll('li').forEach(li => li.classList.toggle('is-dim', f !== 'all' && li.dataset.service !== f))
-    const first = f !== 'all' && cards.find(k => k.c.service === f)
-    if (first) { target.x += stage.clientWidth / 2 - (first.x + cw / 2); target.y += stage.clientHeight / 2 - (first.y + ch / 2) }
+  }
+  section.querySelectorAll('[data-filter]').forEach(chip => chip.addEventListener('click', () => {
+    filter = chip.dataset.filter
+    section.querySelectorAll('[data-filter]').forEach(c => c.classList.toggle('is-on', c === chip))
+    apply()
   }))
+  more.addEventListener('click', () => { expanded = true; apply() })
+  apply()
 
-  // layout + infinite wrap
-  let cw = 300, ch = 360, cellW = 340, cellH = 400, W = 0, H = 0
-  function layout() {
-    cw = Math.round(Math.min(320, Math.max(240, innerWidth * 0.21)))
-    ch = Math.round(cw * 1.2)
-    cellW = cw + 24
-    cellH = ch + 24
-    W = COLS * cellW
-    H = Math.ceil(cards.length / COLS) * cellH
-    plane.style.setProperty('--cw', `${cw}px`)
-    plane.style.setProperty('--ch', `${ch}px`)
-  }
-  layout()
-  addEventListener('resize', layout)
-
-  const offset = { x: 0, y: 0 }, target = { x: -cellW * 0.4, y: -cellH * 0.3 }
-  const mod = (n, m) => ((n % m) + m) % m
-  function place() {
-    for (const k of cards) {
-      const col = k.i % COLS, row = Math.floor(k.i / COLS)
-      const bx = col * cellW, by = row * cellH + (col % 2) * cellH * 0.5
-      k.x = mod(bx + offset.x, W) - cellW
-      k.y = mod(by + offset.y, H) - cellH
-      k.el.style.transform = `translate3d(${k.x}px, ${k.y}px, 0)`
-    }
-  }
-
-  // drag with inertia
-  let down = false, last = { x: 0, y: 0 }, vel = { x: 0, y: 0 }, pointerType = 'mouse'
-  stage.addEventListener('pointerdown', e => {
-    down = true; moved = 0; pointerType = e.pointerType
-    last = { x: e.clientX, y: e.clientY }; vel = { x: 0, y: 0 }
-    stage.classList.add('is-drag')
+  addEventListener('niche:open-case', e => {
+    const idx = cases.findIndex(c => c.slug === e.detail)
+    if (idx > -1) modal.open(idx, null, () => cases.map((_, i) => i))
   })
-  addEventListener('pointermove', e => {
-    if (!down) return
-    const dx = e.clientX - last.x, dy = pointerType === 'mouse' ? e.clientY - last.y : 0
-    last = { x: e.clientX, y: e.clientY }
-    moved += Math.abs(dx) + Math.abs(dy)
-    target.x += dx; target.y += dy
-    vel = { x: dx, y: dy }
-  })
-  const up = () => {
-    if (!down) return
-    down = false; stage.classList.remove('is-drag')
-    target.x += vel.x * 12; target.y += vel.y * 12
-  }
-  addEventListener('pointerup', up)
-  addEventListener('pointercancel', up)
-  stage.addEventListener('wheel', e => {
-    if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) { e.preventDefault(); target.x -= e.deltaX }
-  }, { passive: false })
-  stage.addEventListener('focusin', e => {
-    const k = cards.find(c => c.el === e.target)
-    if (!k) return
-    if (k.x < 40 || k.x + cw > stage.clientWidth - 40) target.x += stage.clientWidth / 2 - (k.x + cw / 2)
-    if (k.y < 20 || k.y + ch > stage.clientHeight - 20) target.y += stage.clientHeight / 2 - (k.y + ch / 2)
-  })
-
-  let visible = false
-  new IntersectionObserver(([e]) => { visible = e.isIntersecting }).observe(stage)
-  const tick = () => {
-    if (visible) {
-      if (!down && !reduced && !modal.isOpen()) target.x -= 0.2
-      offset.x += (target.x - offset.x) * 0.09
-      offset.y += (target.y - offset.y) * 0.09
-      place()
-    }
-    requestAnimationFrame(tick)
-  }
-  place()
-  tick()
 
   const m = location.hash.match(/^#case\/(.+)$/)
   if (m) {
     const idx = cases.findIndex(c => c.slug === m[1])
-    if (idx > -1) setTimeout(() => modal.open(idx), 400)
+    if (idx > -1) setTimeout(() => modal.open(idx, null, () => cases.map((_, i) => i)), 300)
   }
 }
 
@@ -150,14 +81,30 @@ function initModal({ lenis }) {
   const el = document.querySelector('[data-modal]')
   const panel = el.querySelector('[data-panel]')
   const q = s => el.querySelector(s)
-  let idx = 0, opener = null, open = false
+  const stage = q('[data-gallery-img]'), thumbs = q('[data-gallery-thumbs]')
+  let order = [], pos = 0, opener = null, open = false, shot = 0, list = []
 
-  function fill(i) {
-    idx = (i + cases.length) % cases.length
-    const c = cases[idx]
-    q('[data-modal-side]').innerHTML = `<small>${SERVICE_LABEL[c.service]} · ${c.where}</small><div><b>${c.stat}</b><span>${c.statLabel}</span></div>`
-    q('[data-modal-kicker]').textContent = `Case study ${idx + 1} of ${cases.length}`
+  function setShot(n) {
+    if (!list.length) return
+    shot = (n + list.length) % list.length
+    const [file, w, h] = list[shot]
+    const c = cases[order[pos]]
+    stage.src = img(c.slug, file)
+    stage.width = w; stage.height = h
+    stage.style.maxWidth = `${Math.max(w, 320)}px`
+    stage.alt = `${c.brand}, ${c.title}: photo ${shot + 1} of ${list.length}`
+    thumbs.querySelectorAll('button').forEach((b, i) => b.setAttribute('aria-current', i === shot))
+  }
+
+  function fill(p) {
+    pos = (p + order.length) % order.length
+    const i = order[pos], c = cases[i]
+    list = photos[c.slug] || []
+    thumbs.innerHTML = list.length > 1 ? list.map(([f], k) => `<button type="button" aria-label="Photo ${k + 1}"><img src="${img(c.slug, f)}" alt="" loading="lazy"></button>`).join('') : ''
+    setShot(0)
+    q('[data-modal-kicker]').textContent = `Case study ${i + 1} of ${cases.length}`
     q('[data-modal-title]').innerHTML = `${c.brand}<small>${c.title}</small>`
+    q('[data-modal-pills]').innerHTML = [SERVICE_LABEL[c.service], ...c.where.split(', ')].map(t => `<span>${t}</span>`).join('')
     q('[data-modal-stats]').innerHTML = c.stats.map(([b, s]) => `<div><b>${b}</b><span>${s}</span></div>`).join('')
     q('[data-modal-text]').innerHTML = `
       <h3>Challenge</h3><p>${c.challenge}</p>
@@ -166,9 +113,11 @@ function initModal({ lenis }) {
     panel.scrollTop = 0
     history.replaceState(null, '', `#case/${c.slug}`)
   }
-  function show(i, from) {
-    opener = from || document.activeElement
-    fill(i)
+
+  function show(i, from, getOrder) {
+    order = getOrder()
+    opener = from
+    fill(Math.max(0, order.indexOf(i)))
     el.hidden = false
     open = true
     lenis?.stop()
@@ -186,10 +135,23 @@ function initModal({ lenis }) {
     opener?.focus?.({ preventScroll: true })
   }
 
+  thumbs.addEventListener('click', e => {
+    const b = e.target.closest('button')
+    if (b) setShot([...thumbs.children].indexOf(b))
+  })
+  // swipe between photos on touch screens
+  let sx = null
+  q('.gallery__stage').addEventListener('pointerdown', e => { sx = e.clientX })
+  q('.gallery__stage').addEventListener('pointerup', e => {
+    if (sx === null) return
+    const dx = e.clientX - sx; sx = null
+    if (Math.abs(dx) > 40) setShot(shot + (dx < 0 ? 1 : -1))
+  })
+
   el.addEventListener('click', e => {
     if (e.target.closest('[data-close]')) close()
     if (e.target.closest('[data-close-to-contact]')) {
-      const c = cases[idx]
+      const c = cases[order[pos]]
       const msg = document.querySelector('[name="message"]')
       if (msg && !msg.value) msg.value = `We'd like something similar to your ${c.brand} ${c.title} programme.`
       const sel = document.querySelector('[data-service-select]')
@@ -197,19 +159,19 @@ function initModal({ lenis }) {
       close()
     }
   })
-  q('[data-prev]').addEventListener('click', () => fill(idx - 1))
-  q('[data-next]').addEventListener('click', () => fill(idx + 1))
+  q('[data-prev]').addEventListener('click', () => fill(pos - 1))
+  q('[data-next]').addEventListener('click', () => fill(pos + 1))
   document.addEventListener('keydown', e => {
     if (!open) return
     if (e.key === 'Escape') close()
-    if (e.key === 'ArrowRight') fill(idx + 1)
-    if (e.key === 'ArrowLeft') fill(idx - 1)
+    if (e.key === 'ArrowRight') setShot(shot + 1)
+    if (e.key === 'ArrowLeft') setShot(shot - 1)
     if (e.key === 'Tab') {
       const f = [...panel.querySelectorAll('button, a[href]')]
-      const first = f[0], lastEl = f[f.length - 1]
-      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); lastEl.focus() }
-      else if (!e.shiftKey && document.activeElement === lastEl) { e.preventDefault(); first.focus() }
+      const first = f[0], last = f[f.length - 1]
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus() }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus() }
     }
   })
-  return { open: show, close, isOpen: () => open }
+  return { open: show, close }
 }
