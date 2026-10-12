@@ -79,138 +79,105 @@ export function initCounters({ reduced }) {
   })
 }
 
-// ---------------------------------------------------------------- services explorer
-// Four group tabs, a numbered list and one large panel per service. The list
-// auto-advances with a progress bar while in view (pauses on hover, stops on click).
+// ---------------------------------------------------------------- services: card grid + drawer
+// All 14 services at a glance (icon, name, one line, proof). Hover fades in the
+// photo; click opens a drawer with the full description and what's included.
 const SVC_ICONS = ['audit', 'mystery', 'research', 'reporting', 'merch', 'ambassador', 'install', 'promo', 'sampling', 'events', 'production', 'logistics', 'digital', 'vehicle']
-const GROUP_ICONS = ['dashboard', 'users', 'promo', 'factory']
 const SVC_FILTER = ['audits', 'mystery', 'audits', 'audits', 'merch', 'activation', 'install', 'activation', 'activation', 'activation', 'production', 'install', null, null]
-const DWELL = 7000
 
-export function initServices({ lenis, reduced }) {
+export function initServices({ lenis }) {
   const root = $('[data-services]')
   if (!root) return
   const BASE = import.meta.env.BASE_URL
   let k = 0
   const all = groups.flatMap((g, gi) => g.services.map(s => ({ ...s, gi, n: k, icon: SVC_ICONS[k], filter: SVC_FILTER[k++] })))
 
-  root.innerHTML = `
-    <div class="svx__tabs" role="tablist" aria-label="Service groups">
-      ${groups.map((g, gi) => `<button class="svx__tab" role="tab" type="button" data-g="${gi}">
-        ${icon(GROUP_ICONS[gi], 'ico svx__tab-ico')}
-        <span><b>${g.name}</b><small>${g.intro}</small></span>
-        <em>${String(g.services.length).padStart(2, '0')}</em>
-      </button>`).join('')}
-    </div>
-    <div class="svx__body">
-      <ol class="svx__list" data-list></ol>
-      <article class="svx__panel" data-panel aria-live="polite"></article>
-    </div>`
+  root.innerHTML = groups.map((g, gi) => `
+    <div class="sg">
+      <div class="sg__head"><h3>${g.name}</h3><p>${g.intro}</p></div>
+      <ul class="sg__cards">${all.filter(s => s.gi === gi).map(s => `
+        <li><button class="sc" type="button" data-n="${s.n}" aria-haspopup="dialog">
+          ${s.photo ? `<img class="sc__img" src="${BASE}work/${s.photo}" alt="" loading="lazy">` : ''}
+          <span class="sc__top">${icon(s.icon, 'ico sc__ico')}${icon('arrow', 'ico sc__arrow')}</span>
+          <span class="sc__name">${s.name}</span>
+          <span class="sc__line">${s.line}</span>
+          <span class="sc__proof">${s.proof ? `<b>${s.proof[0]}</b><small>${s.proof[1]}</small>` : `<small>${s.link ? 'Through Connexis, part of the Niche Group' : 'Supports what happens in store'}</small>`}</span>
+        </button></li>`).join('')}
+      </ul>
+    </div>`).join('')
 
-  const tabs = $$('.svx__tab', root), list = $('[data-list]', root), panel = $('[data-panel]', root)
-  let group = 0, active = 0, timer = 0, started = 0, auto = !reduced, paused = false, inView = false, raf = 0
+  // ---- drawer
+  const drawer = document.createElement('div')
+  drawer.className = 'drawer'
+  drawer.hidden = true
+  drawer.innerHTML = `<div class="drawer__backdrop" data-x></div>
+    <aside class="drawer__panel" role="dialog" aria-modal="true" aria-labelledby="drawer-title">
+      <button class="drawer__close" type="button" data-x aria-label="Close">✕</button>
+      <div class="drawer__body" data-body></div>
+      <div class="drawer__nav"><button type="button" data-step="-1">← Previous</button><span data-count></span><button type="button" data-step="1">Next →</button></div>
+    </aside>`
+  document.body.appendChild(drawer)
+  const panel = $('.drawer__panel', drawer), body = $('[data-body]', drawer)
+  let cur = 0, opener = null
 
-  function renderList() {
-    tabs.forEach((t, i) => { t.classList.toggle('is-on', i === group); t.setAttribute('aria-selected', i === group) })
-    const items = all.filter(s => s.gi === group)
-    list.innerHTML = items.map((s, i) => `<li><button type="button" data-n="${s.n}">
-      <span class="svx__num">${String(i + 1).padStart(2, '0')}</span>
-      ${icon(s.icon)}
-      <span class="svx__name">${s.name}</span>
-      <i class="svx__bar"><i></i></i>
-    </button></li>`).join('')
-  }
-
-  function renderPanel(n) {
-    const s = all[n]
-    active = n
-    $$('button', list).forEach(b => b.classList.toggle('is-on', +b.dataset.n === n))
-    const media = s.photo
-      ? `<img src="${BASE}work/${s.photo}" alt="${s.name} by Niche" loading="lazy">`
-      : `<div class="svx__art">${icon(s.icon)}</div>`
-    panel.innerHTML = `
-      <div class="svx__media">
-        ${media}
-        ${s.proof ? `<div class="svx__proof"><b data-to="${s.proof[0]}">${s.proof[0]}</b><span>${s.proof[1]}</span></div>` : ''}
-      </div>
-      <div class="svx__copy">
-        <p class="svx__kicker">${icon(s.icon)}${groups[s.gi].name}</p>
-        <h3>${s.name}</h3>
-        <p class="svx__line">${s.line}</p>
-        <p class="svx__text">${s.body}</p>
-        <h4>What's included</h4>
-        <ul class="svx__inc">${s.included.map(x => `<li>${icon('check')}<span>${x}</span></li>`).join('')}</ul>
-        <div class="svx__cta">
-          <a class="btn btn--red" href="#contact" data-svc-quote="${s.name}">Get a proposal ${icon('arrow')}</a>
-          ${s.filter ? `<a class="svx__link" href="#work" data-filter-to="${s.filter}">See related work ${icon('arrow')}</a>` : ''}
-          ${s.link ? `<a class="svx__link" href="${s.link}" target="_blank" rel="noopener">Visit Connexis ${icon('arrow')}</a>` : ''}
-        </div>
+  function fill(n) {
+    cur = (n + all.length) % all.length
+    const s = all[cur]
+    body.innerHTML = `
+      <div class="drawer__media">${s.photo ? `<img src="${BASE}work/${s.photo}" alt="${s.name} by Niche">` : `<div class="drawer__art">${icon(s.icon)}</div>`}
+        ${s.proof ? `<p class="drawer__proof"><b>${s.proof[0]}</b>${s.proof[1]}</p>` : ''}</div>
+      <p class="drawer__kicker">${icon(s.icon)}${groups[s.gi].name}</p>
+      <h3 id="drawer-title">${s.name}</h3>
+      <p class="drawer__line">${s.line}</p>
+      <p class="drawer__text">${s.body}</p>
+      <h4>What's included</h4>
+      <ul class="drawer__inc">${s.included.map(x => `<li>${icon('check')}${x}</li>`).join('')}</ul>
+      <div class="drawer__cta">
+        <a class="btn btn--red" href="#contact" data-quote="${s.name}">Get a proposal ${icon('arrow')}</a>
+        ${s.filter ? `<a class="drawer__link" href="#work" data-filter-to="${s.filter}">See related work</a>` : ''}
+        ${s.link ? `<a class="drawer__link" href="${s.link}" target="_blank" rel="noopener">Visit Connexis</a>` : ''}
       </div>`
-    if (reduced) return
-    // entrance: photo wipes in, proof counts up, checklist ticks one by one
-    gsap.fromTo($('.svx__media', panel), { clipPath: 'inset(0 0 0 100%)' }, { clipPath: 'inset(0 0 0 0%)', duration: 0.9, ease: 'expo.out' })
-    gsap.fromTo($('.svx__media img, .svx__art', panel), { scale: 1.15 }, { scale: 1, duration: 1.6, ease: 'expo.out' })
-    gsap.from($$('.svx__kicker, .svx__copy h3, .svx__line, .svx__text', panel), { y: 18, opacity: 0, duration: 0.6, stagger: 0.06, ease: 'power3.out' })
-    gsap.from($$('.svx__inc li', panel), { x: -14, opacity: 0, duration: 0.45, stagger: 0.07, delay: 0.25, ease: 'power3.out' })
-    gsap.from($$('.svx__inc .ico', panel), { scale: 0, duration: 0.4, stagger: 0.07, delay: 0.35, ease: 'back.out(3)' })
-    const b = $('.svx__proof b', panel)
-    if (b) {
-      gsap.from($('.svx__proof', panel), { y: 30, opacity: 0, duration: 0.7, delay: 0.3, ease: 'power3.out' })
-      const m = b.dataset.to.match(/^([\d,]+)(.*)$/)
-      if (m) {
-        const end = +m[1].replace(/,/g, ''), suf = m[2], o = { v: 0 }
-        gsap.to(o, { v: end, duration: 1.4, delay: 0.3, ease: 'power3.out', onUpdate: () => { b.textContent = Math.round(o.v).toLocaleString('en-US') + suf } })
-      }
-    }
+    $('[data-count]', drawer).textContent = `${cur + 1} / ${all.length}`
+    panel.scrollTop = 0
+    gsap.from($$('.drawer__body > *', drawer), { y: 16, opacity: 0, duration: 0.5, stagger: 0.04, ease: 'power3.out' })
+  }
+  function open(n, from) {
+    opener = from
+    fill(n)
+    drawer.hidden = false
+    lenis?.stop()
+    document.documentElement.style.overflow = 'hidden'
+    panel.animate([{ transform: 'translateX(100%)' }, { transform: 'none' }], { duration: 500, easing: 'cubic-bezier(.2,.7,.1,1)' })
+    $('.drawer__close', drawer).focus()
+  }
+  function close() {
+    if (drawer.hidden) return
+    panel.animate([{ transform: 'none' }, { transform: 'translateX(100%)' }], { duration: 300, easing: 'ease-in' }).onfinish = () => { drawer.hidden = true }
+    lenis?.start()
+    document.documentElement.style.overflow = ''
+    opener?.focus({ preventScroll: true })
   }
 
-  function select(n, fromUser) {
-    if (fromUser) auto = false
-    const s = all[n]
-    if (s.gi !== group) { group = s.gi; renderList() }
-    renderPanel(n)
-    started = performance.now()
-  }
-
-  // auto-advance with a progress bar
-  function tick(now) {
-    const bar = $('.svx__list button.is-on .svx__bar i', root)
-    if (auto && inView && !paused) {
-      const p = Math.min(1, (now - started) / DWELL)
-      if (bar) bar.style.transform = `scaleX(${p})`
-      if (p >= 1) select((active + 1) % all.length, false)
-    } else if (!auto && bar) bar.style.transform = 'scaleX(1)'
-    else if (paused) started = now - (parseFloat(bar?.style.transform.slice(7)) || 0) * DWELL
-    raf = requestAnimationFrame(tick)
-  }
-  new IntersectionObserver(([e]) => { inView = e.isIntersecting; if (inView) started = performance.now() }, { threshold: 0.35 }).observe(root)
-  root.addEventListener('pointerenter', () => { paused = true })
-  root.addEventListener('pointerleave', () => { paused = false })
-  root.addEventListener('focusin', () => { paused = true })
-
-  root.addEventListener('click', e => {
-    const tab = e.target.closest('.svx__tab')
-    if (tab) { const first = all.find(s => s.gi === +tab.dataset.g); select(first.n, true); return }
-    const item = e.target.closest('[data-n]')
-    if (item) { select(+item.dataset.n, true); return }
-    const q = e.target.closest('[data-svc-quote]')
-    if (q) { const sel = $('[data-service-select]'); if (sel) sel.value = q.dataset.svcQuote }
+  root.addEventListener('click', e => { const c = e.target.closest('.sc'); if (c) open(+c.dataset.n, c) })
+  drawer.addEventListener('click', e => {
+    if (e.target.closest('[data-x]')) close()
+    const st = e.target.closest('[data-step]'); if (st) fill(cur + +st.dataset.step)
+    const q = e.target.closest('[data-quote]')
+    if (q) { const sel = $('[data-service-select]'); if (sel) sel.value = q.dataset.quote; close() }
     const f = e.target.closest('[data-filter-to]')
-    if (f) document.querySelector(`[data-filter="${f.dataset.filterTo}"]`)?.click()
+    if (f) { close(); document.querySelector(`[data-filter="${f.dataset.filterTo}"]`)?.click() }
   })
-  // arrow keys move through the list
-  list.addEventListener('keydown', e => {
-    if (!['ArrowDown', 'ArrowUp'].includes(e.key)) return
-    e.preventDefault()
-    const btns = $$('button', list), i = btns.findIndex(b => b.classList.contains('is-on'))
-    const nb = btns[(i + (e.key === 'ArrowDown' ? 1 : -1) + btns.length) % btns.length]
-    nb.focus(); select(+nb.dataset.n, true)
+  document.addEventListener('keydown', e => {
+    if (drawer.hidden) return
+    if (e.key === 'Escape') close()
+    if (e.key === 'ArrowRight') fill(cur + 1)
+    if (e.key === 'ArrowLeft') fill(cur - 1)
+    if (e.key === 'Tab') {
+      const f = $$('button, a[href]', panel), a = f[0], z = f[f.length - 1]
+      if (e.shiftKey && document.activeElement === a) { e.preventDefault(); z.focus() }
+      else if (!e.shiftKey && document.activeElement === z) { e.preventDefault(); a.focus() }
+    }
   })
-
-  renderList()
-  renderPanel(0)
-  started = performance.now()
-  if (!reduced) raf = requestAnimationFrame(tick)
 
   const select$ = $('[data-service-select]')
   if (select$) select$.insertAdjacentHTML('beforeend', all.map(s => `<option>${s.name}</option>`).join(''))
@@ -254,7 +221,7 @@ export function initLogos({ reduced }) {
 // ---------------------------------------------------------------- reveals
 export function initReveals({ reduced }) {
   if (reduced) return
-  $$('.section-head, .proof__grid, .bt, .svx__tabs, .steps li, .reporting__grid > *, .why__grid article, .regions > div, .ind li, .group__list li, .form').forEach(el => {
+  $$('.section-head, .proof__grid, .bt, .sg, .steps li, .reporting__grid > *, .why__grid article, .regions > div, .ind li, .group__list li, .form').forEach(el => {
     gsap.from(el, { y: 30, opacity: 0, duration: 1, ease: 'power3.out', scrollTrigger: { trigger: el, start: 'top 90%' } })
   })
 }
