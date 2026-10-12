@@ -19,7 +19,7 @@ npm run gen:map    # rebuild src/data/map-dots.json from Natural Earth
 | Hero | Transparent globe (d3-geo, canvas) that spins in and settles on MENA; drag to rotate, it springs back. 17 countries fill red, sonar pulses, English/Arabic names on hover, live audit chip. |
 | About + stats | Bento grid: Red Bull photo card, 2003→2026 timeline, 17 dots, 250 people dots, du monthly bars, offices. |
 | Client logos | 35 logos from the presentation's Client References slides, two rows. |
-| Services | All 14 services in 4 groups; each opens with a photo, description, inclusions and proof. Cursor-follow photo preview. |
+| Services | Explorer: 4 group tabs, a numbered list that auto-advances (pauses on hover), and a panel per service with photo, counting proof figure, summary, animated checklist and CTAs. |
 | Case studies | Bento grid of real photos (grayscale → colour), filters, show all, popup with gallery. |
 | How we work, Reporting, Why | Step line that fills on scroll; real shelf photo with floating report chips; four reasons. |
 | Network | WebGL MENA dot map with arcs and pings. |
