@@ -64,11 +64,6 @@ export function initWall({ lenis }) {
   more.addEventListener('click', () => { expanded = true; apply() })
   apply()
 
-  addEventListener('niche:open-case', e => {
-    const idx = cases.findIndex(c => c.slug === e.detail)
-    if (idx > -1) modal.open(idx, null, () => cases.map((_, i) => i))
-  })
-
   const m = location.hash.match(/^#case\/(.+)$/)
   if (m) {
     const idx = cases.findIndex(c => c.slug === m[1])

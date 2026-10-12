@@ -60,7 +60,7 @@ export function initHeroIntro({ reduced }) {
   if (reduced) return
   gsap.from('.hero__title .line > span', { yPercent: 105, duration: 1.2, ease: 'expo.out', stagger: 0.08, delay: 0.1 })
   gsap.from(['.kicker', '.hero__sub', '.hero__ctas'], { opacity: 0, y: 16, duration: 1, ease: 'power3.out', stagger: 0.08, delay: 0.4 })
-  gsap.from('.hero__window', { opacity: 0, y: 40, scale: 0.97, duration: 1.3, ease: 'expo.out', delay: 0.25 })
+  gsap.from('.hero__visual', { opacity: 0, x: 60, duration: 1.4, ease: 'expo.out', delay: 0.2 })
   gsap.from('.hero__badge', { scale: 0, rotate: -90, duration: 1, ease: 'back.out(1.6)', delay: 0.9, transformOrigin: 'center' })
 }
 
@@ -186,7 +186,7 @@ export function initLogos({ reduced }) {
 // ---------------------------------------------------------------- reveals
 export function initReveals({ reduced }) {
   if (reduced) return
-  $$('.section-head, .proof__grid, .stats, .svc__group, .steps li, .reporting__grid > *, .why__grid article, .regions > div, .ind li, .group__list li, .form').forEach(el => {
+  $$('.section-head, .proof__grid, .bt, .svc__group, .steps li, .reporting__grid > *, .why__grid article, .regions > div, .ind li, .group__list li, .form').forEach(el => {
     gsap.from(el, { y: 30, opacity: 0, duration: 1, ease: 'power3.out', scrollTrigger: { trigger: el, start: 'top 90%' } })
   })
 }
@@ -226,34 +226,6 @@ export function initSteps({ reduced }) {
   })
 }
 
-// ---------------------------------------------------------------- hero live feed (sample)
-const FEED = [
-  ['Perfect Store audit', 'Doha · Qatar'], ['Shelf photo uploaded', 'Riyadh · KSA'], ['Sampling complete', 'Dubai Mall · UAE'],
-  ['Mystery shop scored 92%', 'Jeddah · KSA'], ['POSM installed', 'Kuwait City'], ['Planogram corrected', 'Muscat · Oman'],
-  ['Cooler audit', 'Cairo · Egypt'], ['Promoter checked in', 'Sharjah · UAE'], ['Dealer survey logged', 'Karachi · Pakistan'],
-]
-export function initHeroFeed({ reduced }) {
-  const feed = $('[data-hero-feed]')
-  if (!feed || reduced) return
-  let i = 0
-  const time = () => new Intl.DateTimeFormat('en-GB', { hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Dubai' }).format(new Date())
-  const push = () => {
-    if (document.hidden) return
-    const [msg, where] = FEED[i++ % FEED.length]
-    const el = document.createElement('div')
-    el.className = 'ping'
-    el.innerHTML = `<span>${msg}<small>${where} · ${time()}</small></span>`
-    feed.appendChild(el)
-    el.animate([{ opacity: 0, transform: 'translateY(14px) scale(.96)' }, { opacity: 1, transform: 'none' }], { duration: 450, easing: 'cubic-bezier(.2,.7,.1,1)' })
-    while (feed.children.length > 1) {
-      const old = feed.firstElementChild
-      old.animate([{ opacity: 1 }, { opacity: 0, transform: 'translateY(-10px)' }], { duration: 300, fill: 'forwards' }).onfinish = () => old.remove()
-      break
-    }
-  }
-  setTimeout(() => { push(); setInterval(push, 2600) }, 1800)
-}
-
 // ---------------------------------------------------------------- nav: highlight current section
 export function initActiveNav() {
   const links = $$('.nav__links a')
@@ -263,4 +235,22 @@ export function initActiveNav() {
     if (a && e.isIntersecting) { links.forEach(l => l.classList.remove('is-active')); a.classList.add('is-active') }
   }), { rootMargin: '-45% 0px -50% 0px' })
   map.forEach((_, id) => { const el = document.getElementById(id); if (el) io.observe(el) })
+}
+
+// ---------------------------------------------------------------- bento stats
+export function initBento({ reduced }) {
+  const people = $('[data-people]')
+  if (people) people.innerHTML = '<i></i>'.repeat(250)
+  const dots = people ? [...people.children] : []
+  const io = new IntersectionObserver(entries => entries.forEach(e => {
+    if (!e.isIntersecting) return
+    e.target.classList.add('is-in')
+    io.unobserve(e.target)
+    if (e.target.classList.contains('bt--people')) {
+      if (reduced) { dots.forEach(d => d.classList.add('on')); return }
+      let k = 0
+      const t = setInterval(() => { for (let n = 0; n < 8 && k < dots.length; n++) dots[k++].classList.add('on'); if (k >= dots.length) clearInterval(t) }, 30)
+    }
+  }), { threshold: 0.35 })
+  $$('.bt').forEach(b => io.observe(b))
 }

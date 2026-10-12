@@ -8,7 +8,7 @@ import { initWall } from './modules/wall.js'
 import { playIntro } from './modules/intro.js'
 import {
   initNav, initAnchors, initHeroIntro, initCounters, initServices, initLogos, initReveals, initForm,
-  initSteps, initHeroFeed, initActiveNav,
+  initSteps, initActiveNav, initBento,
 } from './modules/ui.js'
 
 gsap.registerPlugin(ScrollTrigger)
@@ -34,17 +34,18 @@ initCounters(ctx)
 initWall(ctx)
 initLogos(ctx)
 initSteps(ctx)
+initBento(ctx)
 initReveals(ctx)
 initForm()
 
-// Hero: WebGL aisle stocked with real case photos, loaded after first paint.
+// Hero: tilted vector map of MENA, loaded after first paint.
 const hero = document.querySelector('.hero')
 requestAnimationFrame(async () => {
-  const { initAisle } = await import('./modules/aisle.js')
-  const aisle = initAisle({ canvas: document.querySelector('[data-aisle]'), label: document.querySelector('[data-aisle-label]'), reduced })
-  ScrollTrigger.create({ trigger: hero, start: 'top top', end: 'bottom top', onUpdate: s => aisle.setScroll(s.progress) })
+  const { initHeroMap } = await import('./modules/hero-map.js')
+  initHeroMap({ root: document.querySelector('[data-hero-map]'), reduced })
 })
 gsap.to('.hero__copy', { yPercent: -10, opacity: 0, ease: 'none', scrollTrigger: { trigger: hero, start: 'top top', end: '75% top', scrub: true } })
+gsap.to('.hero__visual', { yPercent: 8, opacity: 0.2, ease: 'none', scrollTrigger: { trigger: hero, start: 'top top', end: 'bottom top', scrub: true } })
 
 // Network: the MENA map with live pings, loaded when the section gets close.
 const network = document.querySelector('#network')
@@ -60,7 +61,7 @@ lenis?.stop()
 playIntro({
   reduced,
   logoSrc: `${BASE}brand/niche-logo.png`,
-  onReveal: () => { lenis?.start(); initHeroIntro(ctx); initHeroFeed(ctx) },
+  onReveal: () => { lenis?.start(); initHeroIntro(ctx) },
 })
 
 addEventListener('load', () => ScrollTrigger.refresh())

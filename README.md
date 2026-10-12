@@ -16,8 +16,8 @@ npm run gen:map    # rebuild src/data/map-dots.json from Natural Earth
 | Section | What it does |
 |---|---|
 | Intro | Once per session: the MENA map draws itself, the 17 countries light up from Dubai, English/Arabic lines, then the logo. Skippable. |
-| Hero | WebGL supermarket aisle stocked with the 30 real case photos. Hover a photo for colour + label, click to open the case. Live audit chips. |
-| About + stats | Dark strip with company summary and six figures with icons. |
+| Hero | Tilted vector map of MENA: the 17 countries fill red from Dubai, arcs with travelling lights, hover for English/Arabic names, a live audit chip pinned to cities, rotating badge. |
+| About + stats | Bento grid: Red Bull photo card, 2003→2026 timeline, 17 dots, 250 people dots, du monthly bars, offices. |
 | Client logos | 35 logos from the presentation's Client References slides, two rows. |
 | Services | All 14 services in 4 groups; each opens with a photo, description, inclusions and proof. Cursor-follow photo preview. |
 | Case studies | Bento grid of real photos (grayscale → colour), filters, show all, popup with gallery. |
