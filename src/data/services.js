@@ -1,5 +1,8 @@
 // All services, grouped. Copy is drawn from nicheme.com and the company profile.
-// Every service on the current site maps to one entry here. `photo` is a path under public/work/.
+// Every service on the current site maps to one entry here. `photo` is a path under public/work/,
+// `cases` lists related case-study slugs (they drive the service pages).
+
+export const allServices = () => groups.flatMap((g, gi) => g.services.map(s => ({ ...s, group: g.name, gi })))
 
 export const groups = [
   {
@@ -8,6 +11,9 @@ export const groups = [
     services: [
       {
         name: 'Retail & Perfect Store Audits',
+        slug: 'retail-audits',
+        icon: 'audit',
+        cases: ['red-bull-perfect-store-audits', 'unilever-retail-audits', 'reckitt-retail-audits', 'iffco-retail-audits', 'mars-retail-execution-gcc'],
         photo: 'reckitt-retail-audits/02.webp',
         line: 'Monthly, photo-verified checks of your shelf in every outlet.',
         body: 'Our in-store audit service for FMCG, electronics and pharmaceutical (OTC) brands. Auditors check what shoppers actually see and send the results, with photos, to your dashboard. The data shows where your distributor is strong, where it is weak and what to fix first.',
@@ -16,6 +22,9 @@ export const groups = [
       },
       {
         name: 'Mystery Shopping',
+        slug: 'mystery-shopping',
+        icon: 'mystery',
+        cases: ['automotive-mystery-shopping', 'william-grant-mystery-shopping', 'discover-card-acceptance-mystery-shopping', 'home-centre-customer-journey-mystery-shopping', 'red-bull-on-premise-mystery-shopping'],
         photo: 'william-grant-mystery-shopping/01.webp',
         line: 'See your brand through your customer’s eyes.',
         body: 'Trained mystery shoppers visit showrooms, stores, hotels, bars and merchants and score how your brand is sold and served. We test your own initiatives or those of third parties, and turn the scores into coaching points for your sales teams.',
@@ -24,6 +33,9 @@ export const groups = [
       },
       {
         name: 'Market Research & Dealer Surveys',
+        slug: 'market-research',
+        icon: 'research',
+        cases: ['electrolux-merchandising-surveys', 'mars-retail-execution-gcc'],
         photo: 'iffco-retail-audits/01.webp',
         line: 'A census of every outlet that sells your category.',
         body: 'Our Every Dealer Survey visits every outlet in a city or country, maps it digitally and records whether your products, or your competitors’, are on sale. Use it to plan distribution, size a market or choose where to send your field team next.',
@@ -32,6 +44,9 @@ export const groups = [
       },
       {
         name: 'Real-Time Reporting',
+        slug: 'real-time-reporting',
+        icon: 'reporting',
+        cases: ['du-field-force-merchandising', 'reckitt-retail-audits', 'unilever-retail-audits', 'mars-retail-execution-gcc'],
         photo: 'unilever-retail-audits/03.webp',
         line: 'Every visit reported the same day, with photos.',
         body: 'Field staff report from hand-held devices. Our IT team in Dubai processes each report and delivers it to you within 24 hours, or on a schedule you agree. Reports are built around your KPIs, and all data is held securely in Dubai with an independent off-site backup.',
@@ -46,6 +61,9 @@ export const groups = [
     services: [
       {
         name: 'Merchandising & Field Force',
+        slug: 'merchandising',
+        icon: 'merch',
+        cases: ['du-field-force-merchandising', 'bein-merchandising-program', 'electrolux-merchandising-surveys'],
         photo: 'du-field-force-merchandising/01.webp',
         line: 'Dedicated or shared merchandisers, from one city to 18 countries.',
         body: 'We employ and train merchandisers for every type of retail segment to raise your share of shelf and share of voice. Teams work to a route plan, set up and remove POSM, keep facings right and report every visit.',
@@ -54,6 +72,9 @@ export const groups = [
       },
       {
         name: 'Brand Ambassadors & Retail Engagement',
+        slug: 'brand-ambassadors',
+        icon: 'ambassador',
+        cases: ['proyouth-spinneys-waitrose-activation', 'dabur-activation-sampling', 'natour-ghee-union-coop-activation'],
         photo: 'natour-ghee-union-coop-activation/05.webp',
         line: 'Keep your brand front-of-mind with retailers and their staff.',
         body: 'We design, launch and manage engagement programmes for your retailers. Loyalty schemes reward in-store sales staff for product knowledge and strong sales, while trained brand ambassadors and advocates sell, train and report in store every week.',
@@ -62,6 +83,9 @@ export const groups = [
       },
       {
         name: 'Fixture Installation, Shelving & Maintenance',
+        slug: 'fixture-installation',
+        icon: 'install',
+        cases: ['nespresso-boutique-installations', 'dkny-rag-bone-shop-in-shop', 'hmy-supermarket-shelving', 'intel-innovate-display-zone', 'envision-racing-experience-zone', 'ajman-coop-electronics-zone'],
         photo: 'dkny-rag-bone-shop-in-shop/02.webp',
         line: 'Shop-in-shops, shelving and checkouts, installed and looked after.',
         body: 'Our teams ship, install and maintain retail fixtures, from a single counter to a full supermarket fit-out. We supervise brand installations in department stores and keep fixtures working with preventive maintenance and break-fix visits.',
@@ -76,6 +100,9 @@ export const groups = [
     services: [
       {
         name: 'Promotions & Activations',
+        slug: 'promotions-activations',
+        icon: 'promo',
+        cases: ['labour-camp-carnival-of-games', 'proyouth-spinneys-waitrose-activation', 'natour-ghee-union-coop-activation', 'dabur-activation-sampling'],
         photo: 'dabur-activation-sampling/03.webp',
         line: 'Campaigns planned, run and measured on sales.',
         body: 'We plan, run and manage promotional campaigns from first idea to final report, tailored to your goals: awareness, perception and sales. We handle retailer approvals, kiosks and branding, and our trained promoters turn shoppers into buyers.',
@@ -84,6 +111,9 @@ export const groups = [
       },
       {
         name: 'Product Sampling',
+        slug: 'product-sampling',
+        icon: 'sampling',
+        cases: ['mentos-air-action-sampling', 'grenade-gym-sampling', 'chupa-chups-mentos-community-events'],
         photo: 'mentos-air-action-sampling/03.webp',
         line: 'Turn trial into sales, in store, in gyms and at events.',
         body: 'Sampling campaigns in hypermarkets, gyms, schools, parks and community events. We coordinate approvals, train promoters and track how many people buy after they try.',
@@ -92,6 +122,9 @@ export const groups = [
       },
       {
         name: 'Events & Roadshows',
+        slug: 'events-roadshows',
+        icon: 'events',
+        cases: ['labour-camp-carnival-of-games', 'chupa-chups-mentos-community-events', 'dabur-activation-sampling'],
         photo: 'chupa-chups-mentos-community-events/cover.webp',
         line: 'Roadshows and events that travel across the region.',
         body: 'Mall events, roadshows and community carnivals, with staffing, staging, branding and logistics handled by one team.',
@@ -106,6 +139,9 @@ export const groups = [
     services: [
       {
         name: 'Production, Branding & Advertising',
+        slug: 'production-posm',
+        icon: 'production',
+        cases: ['dubai-chocolate-carrefour-displays', 'bein-retailer-branding', 'jet-aviation-dubai', 'danette-carrefour-value-packs', 'ajman-coop-electronics-zone'],
         photo: 'dubai-chocolate-carrefour-displays/02.webp',
         line: 'POSM, displays and signage made by our own studio.',
         body: 'Through Niche Star Advertising, our in-house production arm, we design, build and install point-of-sale materials, displays and signage. No outsourcing means fewer delays between approval and shelf.',
@@ -114,6 +150,9 @@ export const groups = [
       },
       {
         name: 'Logistics, Distribution & Warehousing',
+        slug: 'logistics',
+        icon: 'logistics',
+        cases: ['bein-merchandising-program', 'nespresso-boutique-installations', 'dkny-rag-bone-shop-in-shop'],
         photo: 'hmy-supermarket-shelving/02.webp',
         line: 'Stock and materials delivered to every point of sale.',
         body: 'Through Niche Cape Shipping Services, we store and deliver products and marketing materials to retailers across the Middle East, Africa and Asia, as your single point of contact for logistics.',
@@ -122,6 +161,9 @@ export const groups = [
       },
       {
         name: 'Digital Marketing & Video',
+        slug: 'digital-marketing',
+        icon: 'digital',
+        cases: [],
         line: 'Digital work that supports what happens in store.',
         body: 'Search, social and video that drive shoppers to the shelf, plus websites and in-store digital displays.',
         included: ['Google Ads and SEO', 'Social media content and ads', 'Video design and production', 'Websites', 'Digital displays'],
@@ -129,6 +171,9 @@ export const groups = [
       },
       {
         name: 'Vehicle Tracking',
+        slug: 'vehicle-tracking',
+        icon: 'vehicle',
+        cases: [],
         line: 'Vehicle tracking and fuel monitoring, through Connexis.',
         body: 'Connexis, part of the Niche Group, runs vehicle tracking and fuel monitoring as an independent company.',
         included: ['Vehicle tracking', 'Fuel monitoring'],

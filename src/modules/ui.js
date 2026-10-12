@@ -19,11 +19,11 @@ export function toast(msg) {
 // ---------------------------------------------------------------- nav
 export function initNav({ lenis }) {
   const nav = $('[data-nav]')
-  const hero = $('.hero')
+  const hero = $('.hero, .phero')
   let lastY = 0
   const onScroll = y => {
-    nav.classList.toggle('is-solid', y > hero.offsetHeight - 80)
-    nav.classList.toggle('is-hidden', y > lastY && y > 400 && !document.body.classList.contains('menu-open'))
+    nav.classList.toggle('is-solid', y > (hero ? hero.offsetHeight - 80 : 40))
+    nav.classList.toggle('is-hidden', y > lastY && y > 400 && !document.body.classList.contains('menu-open') && !nav.classList.contains('is-open'))
     lastY = y
   }
   lenis ? lenis.on('scroll', e => onScroll(e.scroll)) : addEventListener('scroll', () => onScroll(scrollY))
@@ -79,107 +79,8 @@ export function initCounters({ reduced }) {
   })
 }
 
-// ---------------------------------------------------------------- services: card grid + drawer
-// All 14 services at a glance (icon, name, one line, proof). Hover fades in the
-// photo; click opens a drawer with the full description and what's included.
+// service icons in the order of src/data/services.js (used by the brief builder)
 const SVC_ICONS = ['audit', 'mystery', 'research', 'reporting', 'merch', 'ambassador', 'install', 'promo', 'sampling', 'events', 'production', 'logistics', 'digital', 'vehicle']
-const SVC_FILTER = ['audits', 'mystery', 'audits', 'audits', 'merch', 'activation', 'install', 'activation', 'activation', 'activation', 'production', 'install', null, null]
-
-export function initServices({ lenis }) {
-  const root = $('[data-services]')
-  if (!root) return
-  const BASE = import.meta.env.BASE_URL
-  let k = 0
-  const all = groups.flatMap((g, gi) => g.services.map(s => ({ ...s, gi, n: k, icon: SVC_ICONS[k], filter: SVC_FILTER[k++] })))
-
-  root.innerHTML = groups.map((g, gi) => `
-    <div class="sg">
-      <div class="sg__head"><h3>${g.name}</h3><p>${g.intro}</p></div>
-      <ul class="sg__cards">${all.filter(s => s.gi === gi).map(s => `
-        <li><button class="sc" type="button" data-n="${s.n}" aria-haspopup="dialog">
-          ${s.photo ? `<img class="sc__img" src="${BASE}work/${s.photo}" alt="" loading="lazy">` : ''}
-          <span class="sc__top">${icon(s.icon, 'ico sc__ico')}${icon('arrow', 'ico sc__arrow')}</span>
-          <span class="sc__name">${s.name}</span>
-          <span class="sc__line">${s.line}</span>
-          <span class="sc__proof">${s.proof ? `<b>${s.proof[0]}</b><small>${s.proof[1]}</small>` : `<small>${s.link ? 'Through Connexis, part of the Niche Group' : 'Supports what happens in store'}</small>`}</span>
-        </button></li>`).join('')}
-      </ul>
-    </div>`).join('')
-
-  // ---- drawer
-  const drawer = document.createElement('div')
-  drawer.className = 'drawer'
-  drawer.hidden = true
-  drawer.innerHTML = `<div class="drawer__backdrop" data-x></div>
-    <aside class="drawer__panel" role="dialog" aria-modal="true" aria-labelledby="drawer-title">
-      <button class="drawer__close" type="button" data-x aria-label="Close">✕</button>
-      <div class="drawer__body" data-body></div>
-      <div class="drawer__nav"><button type="button" data-step="-1">← Previous</button><span data-count></span><button type="button" data-step="1">Next →</button></div>
-    </aside>`
-  document.body.appendChild(drawer)
-  const panel = $('.drawer__panel', drawer), body = $('[data-body]', drawer)
-  let cur = 0, opener = null
-
-  function fill(n) {
-    cur = (n + all.length) % all.length
-    const s = all[cur]
-    body.innerHTML = `
-      <div class="drawer__media">${s.photo ? `<img src="${BASE}work/${s.photo}" alt="${s.name} by Niche">` : `<div class="drawer__art">${icon(s.icon)}</div>`}
-        ${s.proof ? `<p class="drawer__proof"><b>${s.proof[0]}</b>${s.proof[1]}</p>` : ''}</div>
-      <p class="drawer__kicker">${icon(s.icon)}${groups[s.gi].name}</p>
-      <h3 id="drawer-title">${s.name}</h3>
-      <p class="drawer__line">${s.line}</p>
-      <p class="drawer__text">${s.body}</p>
-      <h4>What's included</h4>
-      <ul class="drawer__inc">${s.included.map(x => `<li>${icon('check')}${x}</li>`).join('')}</ul>
-      <div class="drawer__cta">
-        <a class="btn btn--red" href="#contact" data-quote="${s.name}">Get a proposal ${icon('arrow')}</a>
-        ${s.filter ? `<a class="drawer__link" href="#work" data-filter-to="${s.filter}">See related work</a>` : ''}
-        ${s.link ? `<a class="drawer__link" href="${s.link}" target="_blank" rel="noopener">Visit Connexis</a>` : ''}
-      </div>`
-    $('[data-count]', drawer).textContent = `${cur + 1} / ${all.length}`
-    panel.scrollTop = 0
-    gsap.from($$('.drawer__body > *', drawer), { y: 16, opacity: 0, duration: 0.5, stagger: 0.04, ease: 'power3.out' })
-  }
-  function open(n, from) {
-    opener = from
-    fill(n)
-    drawer.hidden = false
-    lenis?.stop()
-    document.documentElement.style.overflow = 'hidden'
-    panel.animate([{ transform: 'translateX(100%)' }, { transform: 'none' }], { duration: 500, easing: 'cubic-bezier(.2,.7,.1,1)' })
-    $('.drawer__close', drawer).focus()
-  }
-  function close() {
-    if (drawer.hidden) return
-    panel.animate([{ transform: 'none' }, { transform: 'translateX(100%)' }], { duration: 300, easing: 'ease-in' }).onfinish = () => { drawer.hidden = true }
-    lenis?.start()
-    document.documentElement.style.overflow = ''
-    opener?.focus({ preventScroll: true })
-  }
-
-  root.addEventListener('click', e => { const c = e.target.closest('.sc'); if (c) open(+c.dataset.n, c) })
-  drawer.addEventListener('click', e => {
-    if (e.target.closest('[data-x]')) close()
-    const st = e.target.closest('[data-step]'); if (st) fill(cur + +st.dataset.step)
-    const q = e.target.closest('[data-quote]')
-    if (q) { dispatchEvent(new CustomEvent('niche:service', { detail: q.dataset.quote })); close() }
-    const f = e.target.closest('[data-filter-to]')
-    if (f) { close(); document.querySelector(`[data-filter="${f.dataset.filterTo}"]`)?.click() }
-  })
-  document.addEventListener('keydown', e => {
-    if (drawer.hidden) return
-    if (e.key === 'Escape') close()
-    if (e.key === 'ArrowRight') fill(cur + 1)
-    if (e.key === 'ArrowLeft') fill(cur - 1)
-    if (e.key === 'Tab') {
-      const f = $$('button, a[href]', panel), a = f[0], z = f[f.length - 1]
-      if (e.shiftKey && document.activeElement === a) { e.preventDefault(); z.focus() }
-      else if (!e.shiftKey && document.activeElement === z) { e.preventDefault(); a.focus() }
-    }
-  })
-
-}
 
 // ---------------------------------------------------------------- client logos
 const LOGOS = [
@@ -219,7 +120,7 @@ export function initLogos({ reduced }) {
 // ---------------------------------------------------------------- reveals
 export function initReveals({ reduced }) {
   if (reduced) return
-  $$('.section-head, .proof__grid, .bt, .sg, .steps li, .reporting__grid > *, .why__grid article, .net__facts, .acc, .gcards li, .orbit, .brief').forEach(el => {
+  $$('.section-head, .proof__grid, .bt, .sg, .steps li, .reporting__grid > *, .why__grid article, .net__facts, .acc, .gcards li, .orbit, .brief, .srow, .inc__grid li, .cgrid li, .story__steps > li, .story__side, .faq details, .pn, .more__chips, .milestones li, .masonry a').forEach(el => {
     gsap.from(el, { y: 30, opacity: 0, duration: 1, ease: 'power3.out', scrollTrigger: { trigger: el, start: 'top 90%' } })
   })
 }
@@ -294,6 +195,13 @@ export async function initForm({ reduced } = {}) {
     ;[svcs.length > 0, places.length > 0, who].forEach((ok, i) => bars[i].classList.toggle('is-on', ok))
   }
   form.addEventListener('input', update)
+  // ?service=<slug> from service and case pages pre-selects a chip
+  const want = new URLSearchParams(location.search).get('service')
+  if (want) {
+    const { allServices } = await import('../data/services.js')
+    const hit = allServices().find(x => x.slug === want)
+    if (hit) setSvc(full.indexOf(hit.name), true)
+  }
 
   // rotating word in the headline
   const rot = $('[data-rot]')
@@ -345,15 +253,47 @@ export function initSteps({ reduced }) {
   })
 }
 
-// ---------------------------------------------------------------- nav: highlight current section
+// ---------------------------------------------------------------- nav: current page + mega menus
+// Menus open on hover (with a short grace period so the pointer can travel),
+// on focus for keyboard users, and on tap for touch screens.
 export function initActiveNav() {
-  const links = $$('.nav__links a')
-  const map = new Map(links.map(a => [a.getAttribute('href').slice(1), a]))
-  const io = new IntersectionObserver(entries => entries.forEach(e => {
-    const a = map.get(e.target.id)
-    if (a && e.isIntersecting) { links.forEach(l => l.classList.remove('is-active')); a.classList.add('is-active') }
-  }), { rootMargin: '-45% 0px -50% 0px' })
-  map.forEach((_, id) => { const el = document.getElementById(id); if (el) io.observe(el) })
+  const page = document.body.dataset.page
+  const key = { services: 'services', service: 'services', cases: 'case-studies', case: 'case-studies', about: 'about', contact: 'contact' }[page]
+  if (key) $(`[data-nav-key="${key}"]`)?.classList.add('is-active')
+
+  const nav = $('[data-nav]')
+  const items = $$('[data-item]')
+  let timer = 0
+  const open = item => {
+    clearTimeout(timer)
+    items.forEach(i => i.classList.toggle('is-open', i === item))
+    nav.classList.toggle('is-open', !!item)
+  }
+  const closeSoon = () => { clearTimeout(timer); timer = setTimeout(() => open(null), 180) }
+  items.forEach(item => {
+    item.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') open(item) })
+    item.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') closeSoon() })
+    item.addEventListener('focusin', () => open(item))
+    item.addEventListener('focusout', e => { if (!item.contains(e.relatedTarget)) closeSoon() })
+    // touch: first tap opens the menu, second tap follows the link
+    item.querySelector('.nav__top').addEventListener('click', e => {
+      if (matchMedia('(hover: none)').matches && !item.classList.contains('is-open')) { e.preventDefault(); open(item) }
+    })
+  })
+  addEventListener('keydown', e => { if (e.key === 'Escape') open(null) })
+
+  // services mega menu: preview follows the hovered service
+  const mega = $('[data-mega]')
+  if (mega) {
+    const im = $('[data-mega-img]'), nm = $('[data-mega-name]'), ln = $('[data-mega-line]')
+    mega.addEventListener('pointerover', e => {
+      const a = e.target.closest('a[data-name]')
+      if (!a || nm.textContent === a.dataset.name) return
+      nm.textContent = a.dataset.name; ln.textContent = a.dataset.line
+      if (a.dataset.prev) { im.src = a.dataset.prev; im.parentElement.classList.remove('is-empty') } else im.parentElement.classList.add('is-empty')
+      im.animate([{ opacity: 0, transform: 'scale(1.06)' }, { opacity: 1, transform: 'none' }], { duration: 400, easing: 'cubic-bezier(.2,.7,.1,1)' })
+    })
+  }
 }
 
 // ---------------------------------------------------------------- bento stats
@@ -512,4 +452,54 @@ export function initFooter({ reduced }) {
   if (reduced) return
   gsap.from('.foot__say', { yPercent: 40, opacity: 0, duration: 1.2, ease: 'expo.out', scrollTrigger: { trigger: '.foot', start: 'top 80%' } })
   gsap.from('.foot__mail', { y: 30, opacity: 0, duration: 1, delay: 0.15, ease: 'power3.out', scrollTrigger: { trigger: '.foot', start: 'top 80%' } })
+}
+
+// ---------------------------------------------------------------- lightbox
+export function initLightbox({ lenis }) {
+  const groups = $$('[data-lightbox]')
+  if (!groups.length) return
+  const box = document.createElement('div')
+  box.className = 'lb'
+  box.hidden = true
+  box.innerHTML = '<button class="lb__x" type="button" aria-label="Close">✕</button><button class="lb__nav lb__nav--p" type="button" aria-label="Previous">←</button><figure><img alt=""><figcaption></figcaption></figure><button class="lb__nav lb__nav--n" type="button" aria-label="Next">→</button>'
+  document.body.appendChild(box)
+  const im = $('img', box), cap = $('figcaption', box)
+  let list = [], i = 0
+  const show = n => { i = (n + list.length) % list.length; const a = list[i]; im.src = a.href; cap.textContent = `${a.dataset.caption || ''}  ·  ${i + 1} / ${list.length}`; im.animate([{ opacity: 0, transform: 'scale(.97)' }, { opacity: 1, transform: 'none' }], { duration: 300 }) }
+  const close = () => { box.hidden = true; lenis?.start(); document.documentElement.style.overflow = '' }
+  groups.forEach(g => g.addEventListener('click', e => {
+    const a = e.target.closest('a'); if (!a) return
+    e.preventDefault(); list = $$('a', g); box.hidden = false; lenis?.stop(); document.documentElement.style.overflow = 'hidden'; show(list.indexOf(a))
+  }))
+  box.addEventListener('click', e => { if (e.target === box || e.target.closest('.lb__x')) close() })
+  $('.lb__nav--p', box).addEventListener('click', () => show(i - 1))
+  $('.lb__nav--n', box).addEventListener('click', () => show(i + 1))
+  addEventListener('keydown', e => { if (box.hidden) return; if (e.key === 'Escape') close(); if (e.key === 'ArrowRight') show(i + 1); if (e.key === 'ArrowLeft') show(i - 1) })
+}
+
+// ---------------------------------------------------------------- case grid filters (case studies page)
+export function initCaseGrid() {
+  const grid = $('[data-cgrid]'), bar = $('[data-grid-filters]')
+  if (!grid || !bar) return
+  const set = k => {
+    $$('[data-gf]', bar).forEach(b => b.classList.toggle('is-on', b.dataset.gf === k))
+    $$('li', grid).forEach(li => { li.hidden = k !== 'all' && li.dataset.service !== k })
+    $$('li:not([hidden])', grid).forEach((li, n) => li.animate([{ opacity: 0, transform: 'translateY(14px)' }, { opacity: 1, transform: 'none' }], { duration: 450, delay: Math.min(n, 10) * 30, fill: 'backwards' }))
+    const u = new URL(location); k === 'all' ? u.searchParams.delete('s') : u.searchParams.set('s', k); history.replaceState(null, '', u)
+  }
+  bar.addEventListener('click', e => { const b = e.target.closest('[data-gf]'); if (b) set(b.dataset.gf) })
+  const q = new URLSearchParams(location.search).get('s')
+  if (q && $(`[data-gf="${q}"]`, bar)) { set(q); setTimeout(() => $('#all')?.scrollIntoView(), 300) }
+}
+
+// ---------------------------------------------------------------- count-up on proof figures like "20,000+"
+export function initCountUps({ reduced }) {
+  if (reduced) return
+  $$('[data-countup]').forEach(el => {
+    const m = el.textContent.match(/^([\d,]+)(.*)$/)
+    if (!m) return
+    const end = +m[1].replace(/,/g, ''), suf = m[2], o = { v: 0 }
+    el.textContent = `0${suf}`
+    gsap.to(o, { v: end, duration: 1.6, delay: 0.4, ease: 'power3.out', onUpdate: () => { el.textContent = Math.round(o.v).toLocaleString('en-US') + suf } })
+  })
 }

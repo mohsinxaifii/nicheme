@@ -1,0 +1,59 @@
+    <!-- CONTACT: brief builder -->
+    <section class="contact" id="contact" aria-labelledby="contact-title">
+      <div class="wrap contact__grid">
+        <div class="contact__intro">
+          <p class="label">Contact</p>
+          <h2 id="contact-title" class="contact__title">Need eyes on your <span class="rot" data-rot><span>shelves.</span></span></h2>
+          <p class="lead">Build your brief in three quick steps. We reply within one working day with a plan and a price.</p>
+          <div class="contact__time"><i class="kicker__dot"></i><span>It's <b data-clock="Asia/Dubai">--:--</b> at our Dubai HQ</span></div>
+          <ul class="contact__direct">
+            <li><a href="tel:+97142978868"><i data-icon="call"></i><span><small>Call</small>+971 4 297 8868</span></a></li>
+            <li><a href="mailto:info@nicheme.com"><i data-icon="mail"></i><span><small>Email</small>info@nicheme.com</span></a></li>
+            <li><span class="contact__addr"><i data-icon="pin"></i><span><small>Visit</small>PO Box 81605, Dubai, UAE</span></span></li>
+          </ul>
+        </div>
+
+        <form class="brief" data-form novalidate>
+          <div class="brief__steps" aria-hidden="true"><i data-step-bar="1"></i><i data-step-bar="2"></i><i data-step-bar="3"></i></div>
+
+          <fieldset class="brief__block">
+            <legend><span>01</span>What do you need?</legend>
+            <div class="chips2" data-svc-chips></div>
+          </fieldset>
+
+          <fieldset class="brief__block">
+            <legend><span>02</span>Where? <small>Tap countries on the map</small></legend>
+            <div class="brief__where">
+              <div class="pick" data-pick></div>
+              <div class="pick__side">
+                <div class="pick__quick">
+                  <button type="button" class="chip2" data-quick="gcc">GCC</button>
+                  <button type="button" class="chip2" data-quick="all">All 17</button>
+                  <button type="button" class="chip2 chip2--ghost" data-quick="none">Clear</button>
+                </div>
+                <p class="pick__list" data-pick-list>No countries yet</p>
+              </div>
+            </div>
+          </fieldset>
+
+          <fieldset class="brief__block">
+            <legend><span>03</span>Who are you?</legend>
+            <div class="form__row">
+              <label class="field"><input name="name" autocomplete="name" required placeholder=" "><span>Name</span></label>
+              <label class="field"><input name="company" autocomplete="organization" required placeholder=" "><span>Company</span></label>
+            </div>
+            <div class="form__row">
+              <label class="field"><input name="email" type="email" autocomplete="email" required placeholder=" "><span>Work email</span></label>
+              <label class="field"><input name="phone" type="tel" autocomplete="tel" placeholder=" "><span>Phone (optional)</span></label>
+            </div>
+            <label class="field"><textarea name="message" rows="2" placeholder=" "></textarea><span>Anything else? Outlets, timing, KPIs</span></label>
+          </fieldset>
+
+          <div class="brief__foot">
+            <p class="brief__sum" data-sum>Pick a service and a country to start your brief.</p>
+            <button class="btn btn--red btn--lg" type="submit">Send brief <i data-icon="arrow"></i></button>
+          </div>
+          <div class="form__done" data-done hidden><i data-icon="check"></i><b>Brief ready to send</b><span>Your email app is opening with everything filled in. We reply within one working day.</span></div>
+        </form>
+      </div>
+    </section>

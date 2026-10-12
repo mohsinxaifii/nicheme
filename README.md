@@ -11,25 +11,23 @@ npm run build      # -> dist/
 npm run gen:map    # rebuild src/data/map-dots.json from Natural Earth
 ```
 
-## Page map
+## Pages
 
-| Section | What it does |
+All pages are generated at build time by `scripts/site.js` from `src/data/` (services, cases, photos)
+and share partials from `src/partials/` via `<!--@name-->` includes (see `vite.config.js`).
+Generated folders (`services/`, `case-studies/`, `about/`, `contact/`) are gitignored.
+
+| URL | Page |
 |---|---|
-| Intro | Once per session: the MENA map draws itself, the 17 countries light up from Dubai, English/Arabic lines, then the logo. Skippable. |
-| Hero | Transparent globe (d3-geo, canvas) that spins in and settles on MENA; drag to rotate, it springs back. 17 countries fill red, sonar pulses, English/Arabic names on hover, live audit chip. |
-| About + stats | Bento grid about Niche itself (no client names): stores audited, 23 years with ghost '2003', mini MENA map cycling the 17 countries in English/Arabic, a crowd of people figures, field force, offices. |
-| Client logos | 35 logos from the presentation's Client References slides, two rows. |
-| Services | Card grid: all 14 services at a glance (icon, name, one line, proof). Hover fades in the photo; click opens a side drawer with photo, description, what's included, CTA and prev/next. |
-| Case studies | Tilted 3D wall of the 30 projects drifting sideways, curved network lines linking same-service projects (hover lights a project's network, filters light a service), drag to scrub, popup with gallery. |
-| How we work, Reporting, Why | Step line that fills on scroll; real shelf photo with floating report chips; four reasons. |
-| Network | Country board: 17 tiles grouped by region, each with the country outline, English/Arabic name and live local clock; Dubai HQ tile in red. |
-| Industries | Hover accordion of seven industries with photos and a line on what Niche does there. |
-| Group | Company cards beside an orbit diagram (Niche at the core, three group companies). |
-| Contact | Brief builder in 3 steps: service chips, a clickable MENA map to pick countries (GCC / All 17 shortcuts), details; live summary line and progress bar; rotating headline word. |
-| Footer | "Let's talk.", big email that fills red on hover with copy button, Dubai clock, social icons, and a NICHE logo revealed in red under a cursor spotlight. |
+| `/` | Home: globe hero, stats bento, logos, services, 3D case wall, network, industries, group, brief builder |
+| `/services/` | All 14 services: icon wall hero, one sticky section per group |
+| `/services/<slug>/` | 14 service pages: hero with photo + proof, what's included, field photo gallery (lightbox), related cases, FAQ, prev/next |
+| `/case-studies/` | 3D wall + filterable grid (`?s=audits` etc.) |
+| `/case-studies/<slug>/` | 30 case pages: stats, challenge / what we did / result, services used, gallery, related, prev/next |
+| `/about/` | Story, milestones, stats, network, industries, group, how we work |
+| `/contact/` | Brief builder (`?service=<slug>` pre-selects), offices board, FAQ |
 
-Assets: `public/work/` (case photos) and `public/logos/` are extracted from *Niche - Company Presentation 2026.pdf*.
-Logo: `public/brand/niche-logo.png` from the live nicheme.com. Fonts: Inter Tight, Noto Kufi Arabic (intro).
+Header: hover mega menus (Services with live photo preview, Case studies, About); mobile menu with accordions.
 
 ## Content rules followed
 

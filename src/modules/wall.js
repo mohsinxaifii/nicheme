@@ -2,7 +2,6 @@
 // with curved network lines linking projects of the same service. Hover lights
 // up a project's network, filters light up a service, click opens the case.
 import { cases, SERVICE_LABEL } from '../data/cases.js'
-import { photos } from '../data/photos.js'
 
 const BASE = import.meta.env.BASE_URL
 const img = (slug, file) => `${BASE}work/${slug}/${file}`
@@ -17,11 +16,14 @@ const CW = 250, CH = 310, GX = 70, GY = 46            // card size and gaps (px,
 const CELLX = CW + GX, CELLY = CH + GY
 const SETW = COLS * CELLX                             // width of one loop of the wall
 
+const caseIndex = slug => cases.findIndex(c => c.slug === slug)
+
 export function initWall({ lenis, reduced }) {
   const section = document.querySelector('#work')
+  if (!section?.querySelector('[data-wall3d]')) return
   const stage = section.querySelector('[data-wall3d]')
   const track = section.querySelector('[data-track]')
-  const modal = initModal({ lenis })
+  const modal = { isOpen: () => false }
   let filter = 'all', focus = null
 
   // grid position of each case: 3 staggered rows
@@ -110,7 +112,7 @@ export function initWall({ lenis, reduced }) {
   track.addEventListener('click', e => {
     const c = e.target.closest('.w3__card')
     if (!c || moved > 6) return
-    modal.open(+c.dataset.i, cards[+c.dataset.i], () => cases.map((_, i) => i))
+    location.href = `${BASE}case-studies/${cases[+c.dataset.i].slug}/`
   })
   // keyboard: keep the focused card on screen
   track.addEventListener('focusin', e => {
@@ -133,108 +135,8 @@ export function initWall({ lenis, reduced }) {
   }
   loop()
 
+  // old deep links (#case/<slug>) now have their own pages
   const m = location.hash.match(/^#case\/(.+)$/)
-  if (m) {
-    const idx = cases.findIndex(c => c.slug === m[1])
-    if (idx > -1) setTimeout(() => modal.open(idx, null, () => cases.map((_, i) => i)), 300)
-  }
+  if (m && caseIndex(m[1]) > -1) location.replace(`${BASE}case-studies/${m[1]}/`)
 }
 
-// ---------------------------------------------------------------------------
-function initModal({ lenis }) {
-  const el = document.querySelector('[data-modal]')
-  const panel = el.querySelector('[data-panel]')
-  const q = s => el.querySelector(s)
-  const stage = q('[data-gallery-img]'), thumbs = q('[data-gallery-thumbs]')
-  let order = [], pos = 0, opener = null, open = false, shot = 0, list = []
-
-  function setShot(n) {
-    if (!list.length) return
-    shot = (n + list.length) % list.length
-    const [file, w, h] = list[shot]
-    const c = cases[order[pos]]
-    stage.src = img(c.slug, file)
-    stage.width = w; stage.height = h
-    stage.style.maxWidth = `${Math.max(w, 320)}px`
-    stage.alt = `${c.brand}, ${c.title}: photo ${shot + 1} of ${list.length}`
-    thumbs.querySelectorAll('button').forEach((b, i) => b.setAttribute('aria-current', i === shot))
-  }
-
-  function fill(p) {
-    pos = (p + order.length) % order.length
-    const i = order[pos], c = cases[i]
-    list = photos[c.slug] || []
-    thumbs.innerHTML = list.length > 1 ? list.map(([f], k) => `<button type="button" aria-label="Photo ${k + 1}"><img src="${img(c.slug, f)}" alt="" loading="lazy"></button>`).join('') : ''
-    setShot(0)
-    q('[data-modal-kicker]').textContent = `Case study ${i + 1} of ${cases.length}`
-    q('[data-modal-title]').innerHTML = `${c.brand}<small>${c.title}</small>`
-    q('[data-modal-pills]').innerHTML = [SERVICE_LABEL[c.service], ...c.where.split(', ')].map(t => `<span>${t}</span>`).join('')
-    q('[data-modal-stats]').innerHTML = c.stats.map(([b, s]) => `<div><b>${b}</b><span>${s}</span></div>`).join('')
-    q('[data-modal-text]').innerHTML = `
-      <h3>Challenge</h3><p>${c.challenge}</p>
-      <h3>What we did</h3><ul>${c.did.map(d => `<li>${d}</li>`).join('')}</ul>
-      <h3>Result</h3><p>${c.result}</p>`
-    panel.scrollTop = 0
-    history.replaceState(null, '', `#case/${c.slug}`)
-  }
-
-  function show(i, from, getOrder) {
-    order = getOrder()
-    opener = from
-    fill(Math.max(0, order.indexOf(i)))
-    el.hidden = false
-    open = true
-    lenis?.stop()
-    document.documentElement.style.overflow = 'hidden'
-    panel.animate([{ opacity: 0, transform: 'translateY(24px)' }, { opacity: 1, transform: 'none' }], { duration: 450, easing: 'cubic-bezier(.2,.7,.1,1)' })
-    q('.modal__close').focus()
-  }
-  function close() {
-    if (!open) return
-    open = false
-    panel.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 200 }).onfinish = () => { el.hidden = true }
-    lenis?.start()
-    document.documentElement.style.overflow = ''
-    history.replaceState(null, '', location.pathname + '#work')
-    opener?.focus?.({ preventScroll: true })
-  }
-
-  thumbs.addEventListener('click', e => {
-    const b = e.target.closest('button')
-    if (b) setShot([...thumbs.children].indexOf(b))
-  })
-  // swipe between photos on touch screens
-  let sx = null
-  q('.gallery__stage').addEventListener('pointerdown', e => { sx = e.clientX })
-  q('.gallery__stage').addEventListener('pointerup', e => {
-    if (sx === null) return
-    const dx = e.clientX - sx; sx = null
-    if (Math.abs(dx) > 40) setShot(shot + (dx < 0 ? 1 : -1))
-  })
-
-  el.addEventListener('click', e => {
-    if (e.target.closest('[data-close]')) close()
-    if (e.target.closest('[data-close-to-contact]')) {
-      const c = cases[order[pos]]
-      const msg = document.querySelector('[name="message"]')
-      if (msg && !msg.value) msg.value = `We'd like something similar to your ${c.brand} ${c.title} programme.`
-      dispatchEvent(new CustomEvent('niche:service', { detail: FORM_SERVICE[c.service] }))
-      close()
-    }
-  })
-  q('[data-prev]').addEventListener('click', () => fill(pos - 1))
-  q('[data-next]').addEventListener('click', () => fill(pos + 1))
-  document.addEventListener('keydown', e => {
-    if (!open) return
-    if (e.key === 'Escape') close()
-    if (e.key === 'ArrowRight') setShot(shot + 1)
-    if (e.key === 'ArrowLeft') setShot(shot - 1)
-    if (e.key === 'Tab') {
-      const f = [...panel.querySelectorAll('button, a[href]')]
-      const first = f[0], last = f[f.length - 1]
-      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus() }
-      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus() }
-    }
-  })
-  return { open: show, close, isOpen: () => open }
-}
