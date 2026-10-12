@@ -3,7 +3,7 @@ section { position: relative; }
 /* HERO */
 .hero {
   min-height: max(100svh, 680px); background: var(--ink); color: #fff; overflow: hidden;
-  display: grid; align-items: end; padding: calc(var(--nav-h) + 40px) var(--gutter) clamp(80px, 10vh, 120px);
+  display: grid; align-items: end; padding: calc(var(--nav-h) + 40px) var(--edge) clamp(80px, 10vh, 120px);
 }
 .hero__map { position: absolute; inset: 0; width: 100%; height: 100%; }
 .hero::after { content: ''; position: absolute; inset: 0; z-index: 1; pointer-events: none; background: linear-gradient(90deg, rgba(10,10,10,.9) 0%, rgba(10,10,10,.4) 38%, rgba(10,10,10,0) 60%), linear-gradient(0deg, rgba(10,10,10,.7), transparent 30%); }
@@ -14,7 +14,7 @@ section { position: relative; }
 .hero__title .line > span { display: inline-block; }
 .hero__sub { font-size: clamp(17px, 1.4vw, 20px); max-width: 44ch; color: rgba(255,255,255,.72); }
 .hero__ctas { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 36px; }
-.hero__legend { position: absolute; right: var(--gutter); bottom: clamp(80px, 10vh, 120px); z-index: 2; font-size: 14px; color: rgba(255,255,255,.6); display: flex; align-items: center; gap: 10px; }
+.hero__legend { position: absolute; right: var(--edge); bottom: clamp(80px, 10vh, 120px); z-index: 2; font-size: 14px; color: rgba(255,255,255,.6); display: flex; align-items: center; gap: 10px; }
 .hero__legend i { width: 8px; height: 8px; border-radius: 50%; background: var(--red); }
 @media (max-width: 900px) {
   .hero { padding-top: calc(var(--nav-h) + 34svh); padding-bottom: 64px; }
@@ -25,7 +25,8 @@ section { position: relative; }
 
 /* ABOUT */
 .about { padding: clamp(96px, 12vw, 168px) 0 clamp(80px, 9vw, 120px); }
-.about__grid { display: grid; grid-template-columns: 1fr 3fr; gap: 40px; }
+.about__grid { display: grid; grid-template-columns: 1fr 3fr; gap: 40px; align-items: start; }
+.about__grid .label { margin-top: .6em; }
 .about__lead { font-size: clamp(24px, 2.6vw, 38px); line-height: 1.25; font-weight: 500; letter-spacing: -.02em; }
 .about__body { margin-top: 28px; color: var(--grey-600); max-width: 60ch; }
 .stats { display: grid; grid-template-columns: repeat(6, 1fr); margin-top: clamp(64px, 8vw, 110px); }

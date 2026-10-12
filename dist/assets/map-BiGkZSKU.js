@@ -1,4 +1,4 @@
-import{_ as Xo}from"./index-DyDyJSAm.js";/**
+import{_ as Xo}from"./index-CaK8ex3F.js";/**
  * @license
  * Copyright 2010-2024 Three.js Authors
  * SPDX-License-Identifier: MIT
