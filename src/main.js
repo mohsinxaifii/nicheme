@@ -38,14 +38,15 @@ initBento(ctx)
 initReveals(ctx)
 initForm()
 
-// Hero: tilted vector map of MENA, loaded after first paint.
+// Hero: transparent globe that settles on MENA, loaded after first paint.
 const hero = document.querySelector('.hero')
+let globe = null
 requestAnimationFrame(async () => {
-  const { initHeroMap } = await import('./modules/hero-map.js')
-  initHeroMap({ root: document.querySelector('[data-hero-map]'), reduced })
+  const { initHeroGlobe } = await import('./modules/hero-globe.js')
+  globe = initHeroGlobe({ root: document.querySelector('[data-globe]'), canvas: document.querySelector('[data-globe-canvas]'), reduced })
 })
+ScrollTrigger.create({ trigger: hero, start: 'top top', end: 'bottom top', onUpdate: s => globe?.setScroll(s.progress) })
 gsap.to('.hero__copy', { yPercent: -10, opacity: 0, ease: 'none', scrollTrigger: { trigger: hero, start: 'top top', end: '75% top', scrub: true } })
-gsap.to('.hero__visual', { yPercent: 8, opacity: 0.2, ease: 'none', scrollTrigger: { trigger: hero, start: 'top top', end: 'bottom top', scrub: true } })
 
 // Network: the MENA map with live pings, loaded when the section gets close.
 const network = document.querySelector('#network')

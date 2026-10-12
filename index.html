@@ -82,16 +82,18 @@
           <a class="btn btn--ghost btn--lg" href="#work">See our work</a>
         </div>
       </div>
-      <div class="hero__visual" aria-hidden="true">
-        <div class="hmap" data-hero-map></div>
-        <svg class="hero__badge" viewBox="0 0 120 120">
-          <defs><path id="badge-path" d="M60 60m-45 0a45 45 0 1 1 90 0a45 45 0 1 1-90 0"/></defs>
-          <circle cx="60" cy="60" r="59" class="hero__badge-bg"/>
-          <g class="hero__badge-ring"><text><textPath href="#badge-path" textLength="280" lengthAdjust="spacing">EYES ON EVERY SHELF · SINCE 2003 ·</textPath></text></g>
-          <path class="hero__badge-arrow" d="M51 69 69 51M55 51h14v14"/>
-        </svg>
-        <p class="hero__count"><b>17</b><span>countries<br>20+ offices</span></p>
+      <div class="hero__globe" data-globe>
+        <canvas data-globe-canvas aria-hidden="true"></canvas>
+        <div class="hmap__chip" data-chip aria-hidden="true"></div>
+        <div class="hmap__tip" data-tip aria-hidden="true"></div>
       </div>
+      <svg class="hero__badge" viewBox="0 0 120 120" aria-hidden="true">
+        <defs><path id="badge-path" d="M60 60m-45 0a45 45 0 1 1 90 0a45 45 0 1 1-90 0"/></defs>
+        <circle cx="60" cy="60" r="59" class="hero__badge-bg"/>
+        <g class="hero__badge-ring"><text><textPath href="#badge-path" textLength="280" lengthAdjust="spacing">EYES ON EVERY SHELF · SINCE 2003 ·</textPath></text></g>
+        <path class="hero__badge-arrow" d="M51 69 69 51M55 51h14v14"/>
+      </svg>
+      <p class="hero__drag" aria-hidden="true"><span></span>Drag the globe</p>
     </section>
 
     <!-- ABOUT + STATS STRIP -->

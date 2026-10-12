@@ -60,7 +60,7 @@ export function initHeroIntro({ reduced }) {
   if (reduced) return
   gsap.from('.hero__title .line > span', { yPercent: 105, duration: 1.2, ease: 'expo.out', stagger: 0.08, delay: 0.1 })
   gsap.from(['.kicker', '.hero__sub', '.hero__ctas'], { opacity: 0, y: 16, duration: 1, ease: 'power3.out', stagger: 0.08, delay: 0.4 })
-  gsap.from('.hero__visual', { opacity: 0, x: 60, duration: 1.4, ease: 'expo.out', delay: 0.2 })
+  gsap.from('.hero__globe', { opacity: 0, duration: 1.6, ease: 'power2.out' })
   gsap.from('.hero__badge', { scale: 0, rotate: -90, duration: 1, ease: 'back.out(1.6)', delay: 0.9, transformOrigin: 'center' })
 }
 
