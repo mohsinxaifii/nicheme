@@ -59,6 +59,7 @@ section { position: relative; }
 .proof__grid { display: grid; grid-template-columns: 1fr 3fr; gap: 40px; align-items: start; }
 .proof__grid .label { margin-top: .6em; }
 .proof__lead { font-size: clamp(24px, 2.6vw, 38px); line-height: 1.25; font-weight: 500; letter-spacing: -.02em; }
+@media (max-width: 700px) { .proof__grid { grid-template-columns: 1fr; gap: 14px; } .proof__grid .label { margin-top: 0; } }
 .bento { display: grid; grid-template-columns: repeat(4, 1fr); grid-template-rows: auto auto auto; gap: 14px; margin-top: clamp(56px, 7vw, 96px); }
 .bt { position: relative; overflow: hidden; border-radius: 22px; background: #151515; box-shadow: inset 0 0 0 1px rgba(255,255,255,.07); padding: 26px; display: flex; flex-direction: column; min-height: 220px; transition: transform .5s var(--ease), box-shadow .3s; }
 .bt:hover { transform: translateY(-4px); box-shadow: inset 0 0 0 1px rgba(255,255,255,.16); }
@@ -164,7 +165,15 @@ section { position: relative; }
 .sc__proof small { display: block; font-size: 12.5px; color: var(--grey-600); margin-top: 4px; line-height: 1.35; transition: color .35s; }
 .sc:hover .sc__proof b, .sc:focus-visible .sc__proof b { color: #fff; }
 .sc:hover .sc__proof small, .sc:focus-visible .sc__proof small { color: rgba(255,255,255,.7); }
-@media (hover: none) { .sc__img, .sc::after { display: none; } }
+/* Touch: taps leave :hover stuck, and there is no photo behind the text, so keep the resting look. */
+@media (hover: none) {
+  .sc__img, .sc::after { display: none; }
+  .sc:hover { transform: none; box-shadow: 0 1px 0 rgba(0,0,0,.04); color: inherit; }
+  .sc:hover .sc__ico { background: rgba(228,35,27,.08); color: var(--red); }
+  .sc:hover .sc__arrow { color: var(--grey-300); transform: none; }
+  .sc:hover .sc__line, .sc:hover .sc__proof small { color: var(--grey-600); }
+  .sc:hover .sc__proof b { color: var(--red); }
+}
 @media (max-width: 600px) { .sg__head { flex-direction: column; gap: 2px; } .sg__cards { grid-template-columns: 1fr 1fr; gap: 8px; } .sc { min-height: 0; padding: 16px; } .sc .sc__ico { width: 38px; height: 38px; padding: 9px; } .sc__name { font-size: 16px; margin-top: 14px; } .sc__line { display: none; } .sc__proof b { font-size: 22px; } }
 
 /* drawer */
@@ -313,6 +322,19 @@ section { position: relative; }
 .tile--hq .tile__meta b { font-size: 22px; color: #fff; }
 @media (max-width: 1100px) { .board { grid-template-columns: 1fr 1fr; } }
 @media (max-width: 600px) { .board { grid-template-columns: 1fr; } .region:first-child ul { grid-template-columns: 1fr; } .net__facts li { min-width: 0; flex: 1; } }
+/* Phones: two compact tiles per row, and room above each region heading. */
+@media (max-width: 600px) {
+  .board { gap: 26px; }
+  .region ul, .region:first-child ul { grid-template-columns: 1fr 1fr; gap: 8px; }
+  .tile { grid-template-columns: 30px 1fr; column-gap: 10px; padding: 12px; }
+  .tile__shape { width: 30px; height: 30px; }
+  .tile__name b { font-size: 14px; }
+  .tile__name span { font-size: 11px; }
+  .tile__meta { flex-direction: column; align-items: flex-start; gap: 0; margin-top: 4px; }
+  .tile--hq { grid-template-columns: 64px 1fr; padding: 16px; }
+  .tile--hq .tile__shape { width: 64px; height: 64px; }
+  .tile--hq .tile__meta { flex-direction: row; align-items: baseline; }
+}
 
 /* INDUSTRIES: hover accordion */
 .industries { padding: clamp(80px, 10vw, 140px) 0; }
@@ -553,6 +575,16 @@ section { position: relative; }
 @keyframes bob { 50% { transform: translateY(-10px); } }
 @keyframes fillbar { from { transform: scaleX(.55); } to { transform: scaleX(1); } }
 @media (max-width: 700px) { .chip-float--a { left: 8px; } .chip-float--b { right: 8px; } }
+/* Small screens: the photo is too short for three chips, so keep two in opposite corners. */
+@media (max-width: 600px) {
+  .chip-float { padding: 8px 12px; gap: 8px; font-size: 12.5px; border-radius: 9px; }
+  .chip-float small { font-size: 11px; }
+  .chip-float__ico { width: 26px; height: 26px; padding: 5px; }
+  .chip-float--a { left: 10px; top: 10px; }
+  .chip-float--b { right: 10px; top: auto; bottom: 10px; min-width: 140px; }
+  .chip-float--b b { font-size: 22px; }
+  .chip-float--c { display: none; }
+}
 
 /* INTRO */
 html.is-intro { overflow: hidden; }

@@ -430,18 +430,20 @@ export async function initBoard({ reduced }) {
 
 // ---------------------------------------------------------------- clocks (board + footer)
 let clocksOn = false
+const clockFmts = {}
+const tickClocks = () => {
+  const now = new Date()
+  $$('[data-clock]').forEach(el => {
+    const tz = el.dataset.clock || 'Asia/Dubai'
+    try { el.textContent = (clockFmts[tz] ||= new Intl.DateTimeFormat('en-GB', { hour: '2-digit', minute: '2-digit', timeZone: tz })).format(now) } catch {}
+  })
+}
+// Safe to call more than once: later callers (e.g. the board after it renders) get filled in right away.
 export function startClocks() {
+  tickClocks()
   if (clocksOn) return
   clocksOn = true
-  const fmts = {}
-  const tick = () => {
-    const now = new Date()
-    $$('[data-clock]').forEach(el => {
-      const tz = el.dataset.clock || 'Asia/Dubai'
-      try { el.textContent = (fmts[tz] ||= new Intl.DateTimeFormat('en-GB', { hour: '2-digit', minute: '2-digit', timeZone: tz })).format(now) } catch {}
-    })
-  }
-  tick(); setInterval(tick, 15000)
+  setInterval(tickClocks, 15000)
 }
 
 // ---------------------------------------------------------------- industries accordion
@@ -479,6 +481,7 @@ export function initFooter({ reduced }) {
       new IntersectionObserver(([e], io) => { if (!e.isIntersecting) return; io.disconnect(); tr = 9999; kick() }).observe(spot)
     }
   }
+  if ($('[data-clock]')) startClocks()
   $$('[data-copy]').forEach(b => b.addEventListener('click', async () => {
     try { await navigator.clipboard.writeText(b.dataset.copy); b.textContent = 'Copied'; toast('Email copied.') } catch { toast(b.dataset.copy) }
     setTimeout(() => { b.textContent = 'Copy' }, 1800)

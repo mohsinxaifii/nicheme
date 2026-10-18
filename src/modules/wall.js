@@ -25,6 +25,8 @@ export function initWall({ lenis, reduced }) {
   const track = section.querySelector('[data-track]')
   const modal = { isOpen: () => false }
   let filter = 'all', focus = null
+  const hint = section.querySelector('.w3__hint')
+  if (hint && !matchMedia('(hover: hover)').matches) hint.lastChild.textContent = 'Drag to explore · tap a project to open it'
 
   // grid position of each case: 3 staggered rows
   const pos = cases.map((c, i) => {
