@@ -100,10 +100,10 @@
 .inc__grid b { font-size: 18px; font-weight: 600; letter-spacing: -.015em; line-height: 1.3; position: relative; z-index: 1; }
 
 /* field gallery (masonry) */
-.field { padding: clamp(80px, 10vw, 130px) 0; background: var(--ink); color: #fff; }
-.field .label, .field .lead { color: rgba(255,255,255,.62); }
-.field--case { background: var(--grey-100); color: var(--ink); }
-.field--case .label, .field--case .lead { color: var(--grey-600); }
+.infield { padding: clamp(80px, 10vw, 130px) 0; background: var(--ink); color: #fff; }
+.infield .label, .infield .lead { color: rgba(255,255,255,.62); }
+.infield--case { background: var(--grey-100); color: var(--ink); }
+.infield--case .label, .infield--case .lead { color: var(--grey-600); }
 .masonry { columns: 4 240px; column-gap: 10px; }
 .masonry a { position: relative; display: block; margin-bottom: 10px; break-inside: avoid; border-radius: 16px; overflow: hidden; aspect-ratio: var(--ar); background: #1a1a1a; cursor: zoom-in; }
 .masonry img { width: 100%; height: 100%; object-fit: cover; transition: transform .8s var(--ease), filter .5s; }

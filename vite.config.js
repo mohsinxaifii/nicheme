@@ -17,6 +17,14 @@ const expand = html => {
 export default defineConfig({
   base,
   plugins: [
+    {
+      // Page transitions: if we got here through one, cover the page before first
+      // paint so the incoming sweep (src/modules/transition.js) starts seamlessly.
+      name: 'niche-transition-cover',
+      transformIndexHtml: html => html.replace('</head>', `  <script>try{if(sessionStorage.getItem('niche-pt')&&!matchMedia('(prefers-reduced-motion: reduce)').matches)document.documentElement.classList.add('pt-arrive')}catch(e){}</script>
+  <style>html.pt-arrive::before{content:'';position:fixed;inset:0;z-index:2147483647;background:#0A0A0A}</style>
+</head>`),
+    },
     { name: 'niche-partials', transformIndexHtml: { order: 'pre', handler: expand } },
     {
       // internal links and data attributes written as "/path" get the base prefix

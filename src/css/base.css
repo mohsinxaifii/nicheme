@@ -174,3 +174,14 @@ h1, h2, h3, p, dl, dd { margin: 0; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; }
 }
+
+/* page transition (src/modules/transition.js) */
+.pt { position: fixed; inset: 0; z-index: 2147483000; pointer-events: none; overflow: hidden; visibility: hidden; }
+.pt.is-on { visibility: visible; pointer-events: auto; }
+.pt__rot { position: absolute; left: 50%; top: 50%; width: 150vmax; height: 150vmax; margin: -75vmax 0 0 -75vmax; transform: rotate(45deg); }
+.pt__p { position: absolute; inset: 0; will-change: transform; }
+.pt__p--red { background: var(--red); }
+.pt__p--ink { background: var(--ink); }
+.pt__label { position: absolute; inset: 0; display: grid; place-content: center; justify-items: center; gap: 22px; opacity: 0; }
+.pt__label img { width: 110px; }
+.pt__label b { font-size: clamp(44px, 8vw, 120px); font-weight: 600; letter-spacing: -.05em; line-height: 1; color: #fff; }

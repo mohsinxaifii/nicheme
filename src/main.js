@@ -7,9 +7,10 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { hydrateIcons } from './data/icons.js'
 import { initWall } from './modules/wall.js'
 import { playIntro } from './modules/intro.js'
+import { initTransitions } from './modules/transition.js'
 import {
   initNav, initAnchors, initHeroIntro, initCounters, initLogos, initReveals, initForm,
-  initSteps, initActiveNav, initBento, initBoard, initAccordion, initFooter,
+  initSteps, initActiveNav, initBento, initBoard, initGroup, initAccordion, initFooter,
   initLightbox, initCaseGrid, initCountUps,
 } from './modules/ui.js'
 
@@ -30,6 +31,7 @@ if (!reduced) {
 
 // Every init checks for its own elements, so one bundle serves every page.
 const ctx = { lenis, reduced }
+initTransitions(ctx)
 initNav(ctx)
 initActiveNav()
 initAnchors(ctx)
@@ -42,6 +44,7 @@ initBento(ctx)
 initReveals(ctx)
 initForm(ctx)
 initBoard(ctx)
+initGroup()
 initAccordion()
 initLightbox(ctx)
 initCaseGrid()

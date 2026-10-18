@@ -120,7 +120,7 @@ export function initLogos({ reduced }) {
 // ---------------------------------------------------------------- reveals
 export function initReveals({ reduced }) {
   if (reduced) return
-  $$('.section-head, .proof__grid, .bt, .sg, .steps li, .reporting__grid > *, .why__grid article, .net__facts, .acc, .gcards li, .orbit, .brief, .srow, .inc__grid li, .cgrid li, .story__steps > li, .story__side, .faq details, .pn, .more__chips, .milestones li, .masonry a').forEach(el => {
+  $$('.section-head, .proof__grid, .bt, .sg, .steps li, .reporting__grid > *, .why__grid article, .net__facts, .acc, .gtabs, .gpanels, .brief, .srow, .inc__grid li, .cgrid li, .story__steps > li, .story__side, .faq details, .pn, .more__chips, .milestones li, .masonry a').forEach(el => {
     gsap.from(el, { y: 30, opacity: 0, duration: 1, ease: 'power3.out', scrollTrigger: { trigger: el, start: 'top 90%' } })
   })
 }
@@ -208,7 +208,11 @@ export async function initForm({ reduced } = {}) {
   if (rot && !reduced) {
     const words = ['shelves.', 'showrooms.', 'promoters.', 'stores.', 'brand.']
     let k = 0
+    // Hidden tabs pause animations but not timers, so skip ticks while hidden and
+    // clear any word whose exit never finished, or they pile up on top of each other.
     setInterval(() => {
+      if (document.hidden) return
+      while (rot.children.length > 1) rot.firstElementChild.remove()
       const old = rot.firstElementChild, nw = document.createElement('span')
       nw.textContent = words[++k % words.length]
       rot.appendChild(nw)
@@ -362,6 +366,36 @@ function bbox(d) {
   let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9
   for (let i = 0; i < n.length - 1; i += 2) { x0 = Math.min(x0, n[i]); x1 = Math.max(x1, n[i]); y0 = Math.min(y0, n[i + 1]); y1 = Math.max(y1, n[i + 1]) }
   return [x0, y0, x1 - x0, y1 - y0]
+}
+// Group: country tabs, one panel at a time. Hover or click a tab to switch.
+export async function initGroup() {
+  const group = $('#group')
+  if (!group) return
+  const tabs = $$('[role="tab"]', group), panels = $$('[role="tabpanel"]', group)
+  const show = tab => {
+    if (tab.getAttribute('aria-selected') === 'true') return
+    tabs.forEach(t => { const on = t === tab; t.setAttribute('aria-selected', on); t.tabIndex = on ? 0 : -1 })
+    panels.forEach(p => { const on = p.id === tab.getAttribute('aria-controls'); p.hidden = !on; p.classList.toggle('is-on', on) })
+  }
+  tabs.forEach((t, i) => {
+    t.addEventListener('click', () => show(t))
+    t.addEventListener('mouseenter', () => matchMedia('(hover: hover)').matches && show(t))
+    t.addEventListener('keydown', e => {
+      const d = { ArrowRight: 1, ArrowLeft: -1 }[e.key]
+      if (!d) return
+      const next = tabs[(i + d + tabs.length) % tabs.length]
+      show(next); next.focus()
+    })
+  })
+  const { COUNTRIES } = await import('../data/mena.js')
+  $$('[data-shape]', group).forEach(svg => {
+    const c = COUNTRIES.find(c => c.id === svg.dataset.shape)
+    if (!c) return
+    const [x, y, w, h] = bbox(c.d), pad = Math.max(w, h) * 0.04, step = Math.max(w, h) / 60, id = `gdots-${c.id}`
+    svg.setAttribute('viewBox', `${x - pad} ${y - pad} ${w + pad * 2} ${h + pad * 2}`)
+    svg.innerHTML = `<defs><pattern id="${id}" width="${step}" height="${step}" patternUnits="userSpaceOnUse"><circle cx="${step / 2}" cy="${step / 2}" r="${step * 0.32}"/></pattern></defs>
+      <path d="${c.d}" fill="url(#${id})"/><path d="${c.d}" class="edge"/>`
+  })
 }
 export async function initBoard({ reduced }) {
   const root = $('[data-board]')

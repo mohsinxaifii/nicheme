@@ -252,7 +252,7 @@ function servicePage(s, i) {
     </section>
 
     ${gallery.length ? `
-    <section class="field" id="work">
+    <section class="infield" id="work">
       <div class="wrap">
         <div class="section-head"><p class="label">In the field</p><h2 class="h2">Real work, photographed by our teams.</h2><p class="lead">Every photo below is from a Niche programme. Select one to see it full size.</p></div>
         <div class="masonry" data-lightbox>${gallery.map(g => `<a href="${img(g.c.slug, g.f)}" data-caption="${esc(`${g.c.brand}: ${g.c.title}`)}" style="--ar:${(g.w / g.h).toFixed(3)}"><img src="${img(g.c.slug, g.f)}" alt="${esc(g.c.brand)}" loading="lazy"><span>${g.c.brand}</span></a>`).join('')}</div>
@@ -346,7 +346,7 @@ function casePage(c, i) {
     </section>
 
     ${list.length > 1 ? `
-    <section class="field field--case">
+    <section class="infield infield--case">
       <div class="wrap">
         <div class="section-head"><p class="label">Gallery</p><h2 class="h2">From the programme.</h2></div>
         <div class="masonry" data-lightbox>${list.map(([f, w, h]) => `<a href="${img(c.slug, f)}" data-caption="${esc(`${c.brand}: ${c.title}`)}" style="--ar:${(w / h).toFixed(3)}"><img src="${img(c.slug, f)}" alt="${esc(c.brand)}" loading="lazy"></a>`).join('')}</div>
