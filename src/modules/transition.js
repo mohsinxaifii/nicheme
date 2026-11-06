@@ -2,15 +2,22 @@
 // logo's arrow (bottom-left to top-right), naming the destination, then sweep
 // off the same way on the next page. Plain multi-page navigation underneath.
 import { gsap } from 'gsap'
+import { allServices } from '../data/services.js'
+import { cases } from '../data/cases.js'
 
 const KEY = 'niche-pt'
 const BASE = import.meta.env.BASE_URL
-const NAMES = { '': 'Home', services: 'Services', 'case-studies': 'Case studies', about: 'About', contact: 'Contact' }
+const NAMES = { '': 'Home', services: 'Services', 'case-studies': 'Case studies', about: 'About', contact: 'Contact', careers: 'Careers' }
+const SERVICE = Object.fromEntries(allServices().map(s => [s.slug, s.name]))
+const CASE = Object.fromEntries(cases.map(c => [c.slug, c.brand]))
 
+// The destination's own name: the page, or for a service / case page, that service or brand.
 const nameFor = url => {
   const path = url.pathname.startsWith(BASE) ? url.pathname.slice(BASE.length) : url.pathname.replace(/^\//, '')
-  const top = path.split('/')[0]
-  return NAMES[top] ?? 'Niche'
+  const [top, slug] = path.split('/')
+  if (top === 'services' && SERVICE[slug]) return SERVICE[slug]
+  if (top === 'case-studies' && CASE[slug]) return CASE[slug]
+  return NAMES[top] ?? NAMES['']
 }
 
 function mount() {
@@ -39,10 +46,20 @@ export function initTransitions({ reduced }) {
     gsap.set(label, { opacity: 1, y: 0 })
     el.classList.add('is-on')
     document.documentElement.classList.remove('pt-arrive')
-    gsap.timeline({ delay: 0.15, onComplete: () => el.classList.remove('is-on') })
+    // Hold the cover until the new page has settled (fonts in, two quiet frames; at most 1.2 s),
+    // so the sweep doesn't fight the page's own start-up work and stutter.
+    const go = () => gsap.timeline({ onComplete: () => el.classList.remove('is-on') })
       .to(label, { opacity: 0, y: -24, duration: 0.35, ease: 'power2.in' })
       .to(ink, { yPercent: -OFF, duration: 0.9, ease: 'expo.inOut' }, 0.15)
       .to(red, { yPercent: -OFF, duration: 0.9, ease: 'expo.inOut' }, 0.31)
+    let started = false
+    const start = () => { if (!started) { started = true; go() } }
+    setTimeout(start, 1200)
+    Promise.all([document.fonts?.ready, new Promise(r => setTimeout(r, 250))]).then(() => {
+      let last = performance.now(), calm = 0
+      const check = now => { calm = now - last < 34 ? calm + 1 : 0; last = now; calm >= 2 ? start() : !started && requestAnimationFrame(check) }
+      requestAnimationFrame(check)
+    })
   } else {
     gsap.set([red, ink], { yPercent: OFF })
   }

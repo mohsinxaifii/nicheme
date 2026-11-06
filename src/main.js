@@ -65,7 +65,12 @@ if (page === 'home') {
   // Load the globe during the intro but start it as the curtain lifts, so it
   // doesn't compete with the intro for the CPU and its spin-in is actually seen.
   const globeMod = import('./modules/hero-globe.js')
-  const startGlobe = () => { if (!globe) globeMod.then(({ initHeroGlobe }) => { globe ||= initHeroGlobe({ root: document.querySelector('[data-globe]'), canvas: document.querySelector('[data-globe-canvas]'), reduced }) }) }
+  const startGlobe = () => {
+    if (globe) return
+    // wait for a page-transition cover to finish sliding off: the globe's first draws would make it stutter
+    if (document.querySelector('.pt.is-on')) return setTimeout(startGlobe, 100)
+    globeMod.then(({ initHeroGlobe }) => { globe ||= initHeroGlobe({ root: document.querySelector('[data-globe]'), canvas: document.querySelector('[data-globe-canvas]'), reduced }) })
+  }
   gsap.to('.hero__copy', { yPercent: -10, opacity: 0, ease: 'none', scrollTrigger: { trigger: hero, start: 'top top', end: '75% top', scrub: true } })
 
   // Intro (first visit per session), then the hero animates in.
