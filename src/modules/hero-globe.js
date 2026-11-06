@@ -1,34 +1,32 @@
 // Hero: a large transparent globe that bleeds off the screen. It spins in and
 // settles on MENA; drag to rotate and it springs back. Niche's 17 countries
 // fill red outward from Dubai, sonar pulses ripple from each city, hovering a
-// country shows its name in English and Arabic, and a live audit chip pins
-// itself to the city it mentions.
+// country shows its name, and a chip tours the network: it pins itself to each
+// country's main city with that city's local time.
 import { geoOrthographic, geoPath, geoGraticule10, geoContains, geoDistance } from 'd3-geo'
 import { feature } from 'topojson-client'
 import world from 'world-atlas/countries-110m.json'
 
 const HOME = [-33, -24]          // rotation that faces MENA (lon, lat)
 const NETWORK = {
-  '784': ['United Arab Emirates', 'الإمارات'], '682': ['Saudi Arabia', 'السعودية'], '634': ['Qatar', 'قطر'],
-  '414': ['Kuwait', 'الكويت'], '512': ['Oman', 'عُمان'], '048': ['Bahrain', 'البحرين'], '400': ['Jordan', 'الأردن'],
-  '422': ['Lebanon', 'لبنان'], '760': ['Syria', 'سوريا'], '368': ['Iraq', 'العراق'], '818': ['Egypt', 'مصر'],
-  '504': ['Morocco', 'المغرب'], '788': ['Tunisia', 'تونس'], '012': ['Algeria', 'الجزائر'], '887': ['Yemen', 'اليمن'],
-  '586': ['Pakistan', 'باكستان'], '480': ['Mauritius', 'موريشيوس'],
+  '784': 'United Arab Emirates', '682': 'Saudi Arabia', '634': 'Qatar', '414': 'Kuwait', '512': 'Oman', '048': 'Bahrain',
+  '400': 'Jordan', '422': 'Lebanon', '760': 'Syria', '368': 'Iraq', '818': 'Egypt', '504': 'Morocco', '788': 'Tunisia',
+  '012': 'Algeria', '887': 'Yemen', '586': 'Pakistan', '480': 'Mauritius',
 }
-// Arabic names to be checked by Niche's Arabic copywriter before launch.
 const CITIES = {
   dubai: [55.27, 25.2], riyadh: [46.68, 24.71], jeddah: [39.19, 21.49], doha: [51.53, 25.29], kuwait: [47.98, 29.38],
   muscat: [58.38, 23.59], manama: [50.59, 26.23], amman: [35.93, 31.95], beirut: [35.5, 33.89], damascus: [36.28, 33.51],
   baghdad: [44.37, 33.32], cairo: [31.24, 30.04], casablanca: [-7.59, 33.57], tunis: [10.18, 36.81], algiers: [3.06, 36.75],
   sanaa: [44.19, 15.37], karachi: [67.0, 24.86], portlouis: [57.5, -20.16],
 }
-// Sample feed, illustrative of what the reporting app sends.
-const FEED = [
-  ['Perfect Store audit', 'doha', 'Doha, Qatar'], ['Shelf photo uploaded', 'riyadh', 'Riyadh, KSA'],
-  ['Sampling complete', 'dubai', 'Dubai, UAE'], ['POSM installed', 'kuwait', 'Kuwait City'],
-  ['Cooler audit', 'cairo', 'Cairo, Egypt'], ['Planogram corrected', 'muscat', 'Muscat, Oman'],
-  ['Display installed', 'casablanca', 'Casablanca, Morocco'], ['Dealer survey logged', 'karachi', 'Karachi, Pakistan'],
-  ['Price check', 'amman', 'Amman, Jordan'], ['Merchandiser visit', 'portlouis', 'Port Louis, Mauritius'],
+// The chip tours the network: country, its main city and the local time there.
+const TOUR = [
+  ['784', 'dubai', 'Dubai · HQ', 'Asia/Dubai'], ['682', 'riyadh', 'Riyadh', 'Asia/Riyadh'], ['634', 'doha', 'Doha', 'Asia/Qatar'],
+  ['414', 'kuwait', 'Kuwait City', 'Asia/Kuwait'], ['512', 'muscat', 'Muscat', 'Asia/Muscat'], ['048', 'manama', 'Manama', 'Asia/Bahrain'],
+  ['818', 'cairo', 'Cairo', 'Africa/Cairo'], ['400', 'amman', 'Amman', 'Asia/Amman'], ['422', 'beirut', 'Beirut', 'Asia/Beirut'],
+  ['368', 'baghdad', 'Baghdad', 'Asia/Baghdad'], ['760', 'damascus', 'Damascus', 'Asia/Damascus'], ['887', 'sanaa', "Sana'a", 'Asia/Aden'],
+  ['586', 'karachi', 'Karachi', 'Asia/Karachi'], ['504', 'casablanca', 'Casablanca', 'Africa/Casablanca'], ['788', 'tunis', 'Tunis', 'Africa/Tunis'],
+  ['012', 'algiers', 'Algiers', 'Africa/Algiers'], ['480', 'portlouis', 'Port Louis', 'Indian/Mauritius'],
 ]
 
 export function initHeroGlobe({ root, canvas, reduced }) {
@@ -48,8 +46,9 @@ export function initHeroGlobe({ root, canvas, reduced }) {
   // reveal order: distance from Dubai
   net.forEach(f => { f.delay = geoDistance(centroidOf(f), CITIES.dubai) * 0.9 })
 
-  const front = geoOrthographic().clipAngle(90).precision(0.8)
-  const back = geoOrthographic().clipAngle(null).precision(1.5)
+  // coarser adaptive resampling: invisible at this size, far cheaper per redraw
+  const front = geoOrthographic().clipAngle(90).precision(2)
+  const back = geoOrthographic().clipAngle(null).precision(4)
   const pf = geoPath(front, ctx), pb = geoPath(back, ctx)
 
   const chip = root.querySelector('[data-chip]')
@@ -109,28 +108,27 @@ export function initHeroGlobe({ root, canvas, reduced }) {
     hovered = f
     canvas.style.cursor = f ? 'pointer' : 'grab'
     if (f) {
-      const [en, ar] = NETWORK[f.id]
-      tip.innerHTML = `<b>${en}</b><span lang="ar" dir="rtl">${ar}</span>`
+      tip.innerHTML = `<b>${NETWORK[f.id]}</b>`
       tip.style.transform = `translate(${x + 14}px, ${y + 14}px)`
       tip.classList.add('is-on')
     } else tip.classList.remove('is-on')
   }
 
-  // ---- live chip
-  let feedI = 0, pinned = null
-  const time = () => new Intl.DateTimeFormat('en-GB', { hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Dubai' }).format(new Date())
+  // ---- country chip
+  let tourI = 0, pinned = null, pinnedId = null
+  const fmts = {}
+  const time = tz => (fmts[tz] ||= new Intl.DateTimeFormat('en-GB', { hour: '2-digit', minute: '2-digit', timeZone: tz })).format(new Date())
   function nextChip() {
     if (document.hidden) return
-    const [msg, key, where] = FEED[feedIdx()]
+    const [id, key, city, tz] = TOUR[tourI++ % TOUR.length]
     chip.classList.remove('is-on')
     setTimeout(() => {
-      pinned = key
-      chip.innerHTML = `<span class="ping"><span>${msg}<small>${where} · ${time()}</small></span></span>`
+      pinned = key; pinnedId = id; dirty = true
+      chip.innerHTML = `<span class="ping"><span>${NETWORK[id]}<small>${city} · ${time(tz)} local</small></span></span>`
       placeChip()
       chip.classList.add('is-on')
     }, 260)
   }
-  const feedIdx = () => feedI++ % FEED.length
   function placeChip() {
     if (!pinned) return
     const c = CITIES[pinned]
@@ -143,20 +141,27 @@ export function initHeroGlobe({ root, canvas, reduced }) {
   }
 
   // ---- draw
-  let visible = true
-  new IntersectionObserver(([e]) => { visible = e.isIntersecting; if (visible) requestAnimationFrame(frame) }).observe(root)
+  // one draw loop only: it stops off-screen and restarts once when the globe comes back
+  let visible = true, looping = false
+  const start = () => { if (!looping) { looping = true; requestAnimationFrame(frame) } }
+  new IntersectionObserver(([e]) => { visible = e.isIntersecting; if (visible) start() }).observe(root)
 
+  let lastNow = 0
   function frame(now) {
-    if (!visible) return
+    if (!visible) { looping = false; lastNow = 0; return }
     const t = (now - t0) / 1000
+    // time-based: the spring settles in the same time on a slow machine as a fast one
+    const k = lastNow ? Math.min(4, (now - lastNow) / 16.667) : 1
+    lastNow = now
 
     // spring back to MENA when not dragging, then rest
     if (!dragging) {
-      const tl = HOME[0] - scroll * 25, tp = HOME[1] + scroll * 8
-      vel.l = vel.l * 0.9 + (tl - rot.l) * 0.012
-      vel.p = vel.p * 0.9 + (tp - rot.p) * 0.012
-      rot.l += vel.l; rot.p += vel.p
-      if (Math.abs(vel.l) + Math.abs(vel.p) > 0.002) dirty = true
+      // the globe holds still while the page scrolls: turning it forced a full redraw on every scroll frame
+      const tl = HOME[0], tp = HOME[1], damp = Math.pow(0.9, k)
+      vel.l = vel.l * damp + (tl - rot.l) * 0.012 * k
+      vel.p = vel.p * damp + (tp - rot.p) * 0.012 * k
+      rot.l += vel.l * k; rot.p += vel.p * k
+      if (Math.abs(vel.l) + Math.abs(vel.p) > 0.01 || Math.abs(tl - rot.l) + Math.abs(tp - rot.p) > 0.05) dirty = true
     } else dirty = true
     const revealing = !reduced && t < 0.9 + 1.6 + 0.6
     if (dirty || revealing) { drawGlobe(t); dirty = false }
@@ -199,7 +204,7 @@ export function initHeroGlobe({ root, canvas, reduced }) {
       const a = reduced ? 1 : Math.max(0, Math.min(1, (t - 0.9 - f.delay) / 0.6))
       if (a <= 0) continue
       ctx.beginPath(); pf(f)
-      ctx.fillStyle = f === hovered ? `rgba(255,70,60,${a})` : `rgba(228,35,27,${0.92 * a})`
+      ctx.fillStyle = f === hovered || f.id === pinnedId ? `rgba(255,70,60,${a})` : `rgba(228,35,27,${0.92 * a})`
       ctx.fill()
       ctx.strokeStyle = `rgba(255,255,255,${0.4 * a})`; ctx.lineWidth = 0.8; ctx.stroke()
     }
@@ -229,15 +234,13 @@ export function initHeroGlobe({ root, canvas, reduced }) {
       if (hq) {
         ctx.font = '600 14px "Inter Tight", sans-serif'; ctx.fillStyle = '#fff'
         ctx.fillText('Dubai', x + 12, y + 18)
-        ctx.font = '500 13px "Noto Kufi Arabic", sans-serif'; ctx.fillStyle = 'rgba(255,255,255,0.7)'
-        ctx.fillText('دبي', x + 58, y + 18)
       }
     }
   }
-  requestAnimationFrame(frame)
+  start()
   setTimeout(() => { nextChip(); if (!reduced) setInterval(nextChip, 3000) }, reduced ? 0 : 2600)
 
-  return { setScroll(v) { scroll = v } }
+  return { setScroll() {} }   // kept for callers; scrolling no longer turns the globe
 }
 
 function centroidOf(f) {

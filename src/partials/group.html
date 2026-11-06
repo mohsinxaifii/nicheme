@@ -1,41 +1,36 @@
-    <!-- GROUP -->
+    <!-- GROUP: content left, the group as an orbit on the right -->
     <section class="group" id="group" aria-labelledby="group-title">
-      <div class="wrap">
-        <div class="group__head section-head">
+      <div class="wrap group__grid">
+        <div class="group__copy">
           <p class="label">The Niche Group</p>
           <h2 id="group-title" class="h2">Seven companies, three countries, one partner.</h2>
           <p class="lead">Production, shipping and tracking sit inside the group, so your programme never waits on an outside supplier.</p>
+
+          <ul class="gcos" data-glist>
+            <li class="gco gco--uae" data-co="nmm"><b>Niche Marketing Management</b><span><em>UAE</em>Retail marketing and brand activation</span></li>
+            <li class="gco gco--uae" data-co="nsa"><b>Niche Star Advertising</b><span><em>UAE</em>In-house POSM, displays and signage</span></li>
+            <li class="gco gco--uae" data-co="ncs"><b>Niche Cape Shipping</b><span><em>UAE</em>Sea and air cargo, warehousing</span></li>
+            <li class="gco gco--uae" data-co="negt"><b>NEGT</b><span><em>UAE</em></span></li>
+            <li class="gco gco--ksa" data-co="ncl"><b>Niche Company Limited</b><span><em>Saudi Arabia</em></span></li>
+            <li class="gco gco--ksa" data-co="msk"><b>Mishkat</b><span><em>Saudi Arabia</em></span></li>
+            <li class="gco gco--pk" data-co="cnx"><a href="https://www.connexistechnologies.com" target="_blank" rel="noopener"><b>Connexis <i data-icon="arrow"></i></b><span><em>Pakistan</em>Vehicle tracking and fuel monitoring</span></a></li>
+          </ul>
         </div>
 
-        <div class="gtabs" role="tablist" aria-label="Group companies by country">
-          <button role="tab" id="gt-uae" aria-controls="gp-uae" aria-selected="true" data-tab="uae"><span>United Arab Emirates</span><b>04</b></button>
-          <button role="tab" id="gt-ksa" aria-controls="gp-ksa" aria-selected="false" tabindex="-1" data-tab="ksa"><span>Saudi Arabia</span><b>02</b></button>
-          <button role="tab" id="gt-pk" aria-controls="gp-pk" aria-selected="false" tabindex="-1" data-tab="pk"><span>Pakistan</span><b>01</b></button>
-        </div>
-
-        <div class="gpanels">
-          <div class="gpanel is-on" role="tabpanel" id="gp-uae" aria-labelledby="gt-uae">
-            <div class="gpanel__art"><svg data-shape="784" aria-hidden="true"></svg><span>Headquarters · Dubai</span></div>
-            <ol class="gpanel__list">
-              <li><b>Niche Marketing Management</b><span>Retail marketing and brand activation</span></li>
-              <li><b>Niche Star Advertising</b><span>In-house POSM, displays and signage</span></li>
-              <li><b>Niche Cape Shipping</b><span>Sea and air cargo, warehousing</span></li>
-              <li><b>NEGT</b></li>
-            </ol>
+        <!-- Decorative: the same seven companies orbiting the group, coloured by country. -->
+        <div class="orbit" data-orbit aria-hidden="true">
+          <svg class="orbit__svg" data-orbit-svg></svg>
+          <div class="orbit__core">
+            <img src="/brand/niche-logo.png" alt="" width="2030" height="361" loading="lazy">
+            <span>Group</span>
           </div>
-          <div class="gpanel" role="tabpanel" id="gp-ksa" aria-labelledby="gt-ksa" hidden>
-            <div class="gpanel__art"><svg data-shape="682" aria-hidden="true"></svg><span>Saudi Arabia</span></div>
-            <ol class="gpanel__list">
-              <li><b>Niche Company Limited</b></li>
-              <li><b>Mishkat</b></li>
-            </ol>
-          </div>
-          <div class="gpanel" role="tabpanel" id="gp-pk" aria-labelledby="gt-pk" hidden>
-            <div class="gpanel__art"><svg data-shape="586" aria-hidden="true"></svg><span>Pakistan</span></div>
-            <ol class="gpanel__list">
-              <li><a href="https://www.connexistechnologies.com" target="_blank" rel="noopener"><b>Connexis <i data-icon="arrow"></i></b><span>Vehicle tracking and fuel monitoring</span></a></li>
-            </ol>
-          </div>
+          <div class="orbit__ball orbit__ball--uae orbit__ball--hq" data-ball="nmm"><i data-icon="promo"></i><span>Niche Marketing Management</span></div>
+          <div class="orbit__ball orbit__ball--uae" data-ball="nsa"><i data-icon="production"></i><span>Niche Star Advertising</span></div>
+          <div class="orbit__ball orbit__ball--uae" data-ball="ncs"><i data-icon="logistics"></i><span>Niche Cape Shipping</span></div>
+          <div class="orbit__ball orbit__ball--uae" data-ball="negt"><i data-icon="building"></i><span>NEGT</span></div>
+          <div class="orbit__ball orbit__ball--ksa" data-ball="ncl"><i data-icon="building"></i><span>Niche Company Limited</span></div>
+          <div class="orbit__ball orbit__ball--ksa" data-ball="msk"><i data-icon="building"></i><span>Mishkat</span></div>
+          <div class="orbit__ball orbit__ball--pk" data-ball="cnx"><i data-icon="vehicle"></i><span>Connexis</span></div>
         </div>
       </div>
     </section>

@@ -11,7 +11,7 @@ import { initTransitions } from './modules/transition.js'
 import {
   initNav, initAnchors, initHeroIntro, initCounters, initLogos, initReveals, initForm,
   initSteps, initActiveNav, initBento, initBoard, initGroup, initAccordion, initFooter,
-  initLightbox, initCaseGrid, initCountUps,
+  initLightbox, initCaseGrid, initCountUps, initApply, initArchive,
 } from './modules/ui.js'
 
 gsap.registerPlugin(ScrollTrigger)
@@ -23,7 +23,7 @@ hydrateIcons()
 
 let lenis = null
 if (!reduced) {
-  lenis = new Lenis({ lerp: 0.1, smoothWheel: true })
+  lenis = new Lenis({ lerp: 0.14, smoothWheel: true })   // a touch quicker than the default: responsive, still smooth
   lenis.on('scroll', ScrollTrigger.update)
   gsap.ticker.add(t => lenis.raf(t * 1000))
   gsap.ticker.lagSmoothing(0)
@@ -44,27 +44,28 @@ initBento(ctx)
 initReveals(ctx)
 initForm(ctx)
 initBoard(ctx)
-initGroup()
+initGroup(ctx)
 initAccordion()
 initLightbox(ctx)
 initCaseGrid()
+initApply()
+initArchive()
 initFooter(ctx)
 
 // Sub-page heroes rise in.
 if (page !== 'home' && !reduced) {
   gsap.from('.phero .crumbs, .phero .label, .phero__title, .phero__lead, .svh__line, .svh__kicker, .phero__btns, .phero__chips, .csh__pills, .csh__sub, .csh__stats, .milestones', { y: 26, opacity: 0, duration: 1, ease: 'expo.out', stagger: 0.06, delay: 0.05 })
-  gsap.from('.svh__media, .csh__img, .iconwall', { opacity: 0, x: 40, duration: 1.3, ease: 'expo.out', delay: 0.15 })
+  gsap.from('.svh__media, .csh__img, .iconwall, .crh', { opacity: 0, x: 40, duration: 1.3, ease: 'expo.out', delay: 0.15 })
 }
 
 if (page === 'home') {
   // Hero: transparent globe that settles on MENA, loaded after first paint.
   const hero = document.querySelector('.hero')
   let globe = null
-  requestAnimationFrame(async () => {
-    const { initHeroGlobe } = await import('./modules/hero-globe.js')
-    globe = initHeroGlobe({ root: document.querySelector('[data-globe]'), canvas: document.querySelector('[data-globe-canvas]'), reduced })
-  })
-  ScrollTrigger.create({ trigger: hero, start: 'top top', end: 'bottom top', onUpdate: s => globe?.setScroll(s.progress) })
+  // Load the globe during the intro but start it as the curtain lifts, so it
+  // doesn't compete with the intro for the CPU and its spin-in is actually seen.
+  const globeMod = import('./modules/hero-globe.js')
+  const startGlobe = () => { if (!globe) globeMod.then(({ initHeroGlobe }) => { globe ||= initHeroGlobe({ root: document.querySelector('[data-globe]'), canvas: document.querySelector('[data-globe-canvas]'), reduced }) }) }
   gsap.to('.hero__copy', { yPercent: -10, opacity: 0, ease: 'none', scrollTrigger: { trigger: hero, start: 'top top', end: '75% top', scrub: true } })
 
   // Intro (first visit per session), then the hero animates in.
@@ -72,7 +73,7 @@ if (page === 'home') {
   playIntro({
     reduced,
     logoSrc: `${BASE}brand/niche-logo.png`,
-    onReveal: () => { lenis?.start(); initHeroIntro(ctx) },
+    onReveal: () => { lenis?.start(); initHeroIntro(ctx); startGlobe() },
   })
 }
 

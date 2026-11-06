@@ -1,17 +1,24 @@
-// Every figure comes from the Niche company profile (via the developer brief).
-// Nothing here is invented. `geo` is the city used for the evidence stamp.
-// Service keys: audits · merch · mystery · activation · install · production
+// Figures come from the Niche company profile (via the developer brief) and, for
+// the cases added in Nov 2026, from Niche's own project write-ups (email from
+// Smitha, 2 Nov 2026), the logistics brief (WhatsApp) and the project log
+// spreadsheet. Nothing here is invented. Cases without photos show a placeholder
+// until photos are added to public/work/<slug>/ (and src/data/photos.js).
+// Service keys: audits · merch · mystery · research · activation · install · production · logistics
 
 const DXB = [25.2048, 55.2708]
 const RUH = [24.7136, 46.6753]
+const KWI = [29.3759, 47.9774]
+const MCT = [23.5880, 58.3829]
 
 export const SERVICE_LABEL = {
   audits: 'Retail Audits',
   merch: 'Merchandising',
   mystery: 'Mystery Shopping',
+  research: 'Market Research',
   activation: 'Activations & Sampling',
   install: 'Installation',
   production: 'Production',
+  logistics: 'Logistics',
 }
 
 export const cases = [
@@ -137,10 +144,10 @@ export const cases = [
   },
   {
     slug: 'home-centre-customer-journey-mystery-shopping', brand: 'Home Centre', title: 'Customer Journey Mystery Shopping', service: 'mystery',
-    where: 'UAE', geo: DXB, stat: '6', statLabel: 'journey stages',
-    stats: [['6', 'journey stages'], ['UAE', 'market'], ['Store', 'to returns']],
+    where: 'UAE, KSA, Kuwait, Oman, Qatar, Bahrain, Egypt, Lebanon', geo: DXB, stat: '61', statLabel: 'stores, 8 countries',
+    stats: [['61', 'stores'], ['8', 'countries'], ['2014–2016', 'programme']],
     challenge: 'Measure the full purchase journey, not just the shop floor.',
-    did: ['Staff response and pitch', 'Order and address capture', 'Delivery timeliness and installation', 'The returns process'],
+    did: ['Staff response, assistance and product knowledge', 'Product availability, pricing visibility and promotional communication', 'Order and address capture', 'Delivery timeliness and installation', 'Checkout and the returns process'],
     result: 'A timeline-based view of the whole customer journey.',
   },
   {
@@ -244,5 +251,184 @@ export const cases = [
     stats: [['Free-standing', 'units'], ['Carrefour', 'UAE'], ['Flavors', 'of Dubai']],
     challenge: 'Make a viral product impossible to miss in Carrefour.',
     did: ['Production of "Flavors of Dubai" free-standing display units', 'Installation in Carrefour UAE'], result: 'Floor displays live in Carrefour UAE.',
+  },
+
+  // ---- added Nov 2026: Niche project write-ups (email, 2 Nov 2026)
+  {
+    slug: 'trax-retail-audits-image-library', brand: 'Trax', title: 'Retail Audits & Image Library', service: 'audits',
+    where: 'GCC', geo: DXB, stat: 'GCC', statLabel: 'store audits',
+    stats: [['GCC', 'store audits'], ['Category', 'product images'], ['Per brand', 'audits on request']],
+    challenge: "Build a category-specific product image library for Trax, and audit selected brands to Trax's own requirements.",
+    did: ['Retail store audits across the GCC', "Captured category-specific product images for Trax's image library", 'Project-based and category-wise audits for selected brands', "Audits tailored to Trax's requirements"],
+    result: "Store images and audit data that supported the creation of Trax's image library.",
+  },
+  {
+    slug: 'al-baheej-hospital-gifting', brand: 'Al Baheej', title: 'Hospital Gifting Programme', service: 'activation',
+    where: 'Kuwait', geo: KWI, stat: 'Kuwait', statLabel: 'hospital gifting',
+    stats: [['Kuwait', 'market'], ['Hospitals', 'channel'], ['New parents', 'audience']],
+    challenge: 'Reach families at the moment they welcome a newborn, and learn who they are.',
+    did: ['Distributed gift hampers to families welcoming newborn babies', "Collected parents' contact details and bank names", 'Built a customer database', 'Analysed the newborns by gender'],
+    result: 'A customer database of new parents, with a gender analysis of the newborns.',
+  },
+  {
+    slug: 'eucerin-pharmacy-mystery-shopping', brand: 'Beiersdorf Eucerin', title: 'Pharmacy Mystery Shopping', service: 'mystery',
+    where: 'UAE', geo: DXB, stat: '4', statLabel: 'competitor brands benchmarked',
+    stats: [['UAE', 'pharmacies'], ['4', 'competitor brands'], ['Shelf', 'to beauty advisor']],
+    challenge: 'See how Eucerin is placed, shown and recommended in UAE pharmacies, next to its competitors.',
+    did: ['Assessed pharmacy locations and beauty advisor availability', 'Checked product placement and brand visibility', 'Covered wall units, primary shelves, header branding and dermocosmetics sections', 'Checked availability and eye-level placement of Bioderma, Vichy, La Roche-Posay and Avène'],
+    result: "A clear view of Eucerin's in-pharmacy presence against its main dermocosmetic competitors.",
+  },
+  {
+    slug: 'canon-retail-audit-market-intelligence', brand: 'Canon', title: 'Retail Audit & Market Intelligence', service: 'audits',
+    where: '', geo: DXB, stat: 'POSM', statLabel: 'and shelf space measured',
+    stats: [['Outlets', 'profiled'], ['Prices', 'captured'], ['Share', 'of in-store visibility']],
+    challenge: 'Understand where Canon stands in store: outlet potential, prices and brand exposure across trade channels.',
+    did: ['Profiled outlets and gauged business volumes', 'Captured retail prices', 'Assessed brand exposure across trade channels', "Measured Canon's share of in-store visibility through POSM and space allocation", 'Gathered market intelligence'],
+    result: "Market intelligence that supported Canon's retail planning.",
+  },
+  {
+    slug: 'carrier-pricing-posm-audit', brand: 'Carrier', title: 'Pricing Survey & POSM Availability Audit', service: 'research',
+    where: '', geo: DXB, stat: 'POSM', statLabel: 'availability verified',
+    stats: [['Prices', 'captured'], ['POSM', 'verified'], ['Outlets', 'audited']],
+    challenge: 'Know what Carrier sells for in store, and whether its promotional materials are really there.',
+    did: ['Pricing surveys across audited outlets', 'Captured retail prices', 'Audited point-of-sale material (POSM) availability', 'Verified promotional materials in store'],
+    result: 'Verified prices and POSM presence across the audited outlets.',
+  },
+  {
+    slug: 'castrol-retail-census-ksa', brand: 'Castrol', title: 'Retail Census in Saudi Arabia', service: 'research',
+    where: 'KSA', geo: RUH, stat: 'Census', statLabel: 'of lubricant outlets',
+    stats: [['KSA', 'market'], ['Census', 'of outlets'], ['Oil-change', 'activity assessed']],
+    challenge: 'Map the lubricant retail landscape in Saudi Arabia to guide distribution.',
+    did: ['Profiled outlets by location, business type, ownership and facilities', 'Assessed lubricant sales volumes and oil-change activity', 'Recorded purchasing sources', 'Checked in-store branding'],
+    result: "Market intelligence that supported Castrol's distribution and retail planning.",
+  },
+  {
+    slug: 'domestos-door-to-door-sampling', brand: 'Domestos', title: 'Door-to-Door Sampling & Verification', service: 'activation',
+    where: '', geo: DXB, stat: 'Homes', statLabel: 'called back to verify',
+    stats: [['Door-to-door', 'sampling'], ['Follow-up', 'calls'], ['Household', 'feedback']],
+    challenge: 'Prove that a door-to-door sampling campaign reached homes as planned.',
+    did: ['Household follow-up calls after the door-to-door campaign', 'Verified promoter visits and sample delivery', 'Checked communication about nearby in-store activations', 'Captured household feedback'],
+    result: 'Verified execution, plus household feedback to assess the campaign.',
+  },
+  {
+    slug: 'dove-consumer-engagement-insights', brand: 'Dove', title: 'Consumer Engagement & Brand Insights', service: 'activation',
+    where: 'UAE', geo: DXB, stat: 'Deira', statLabel: 'City Centre promotion',
+    stats: [['Deira City Centre', 'Dubai'], ['Shopper', 'feedback'], ['Brand', 'insights']],
+    challenge: 'Promote Dove and learn how shoppers experience and see the brand.',
+    did: ['Ran a Dove promotion at Deira City Centre', 'Engaged shoppers and gathered feedback on product experience and brand perception', 'Captured consumer demographics and how long shoppers had used Dove', 'Recorded the qualities shoppers associate with Dove'],
+    result: "Insight into Dove's customer profiles and the qualities shoppers associate with the brand.",
+  },
+  {
+    slug: 'electrolux-eds-retail-profiling', brand: 'Electrolux EDS', title: 'Retail Profiling & Market Analysis', service: 'research',
+    where: 'KSA', geo: RUH, stat: '2,000', statLabel: 'outlets profiled',
+    stats: [['2,000', 'outlets'], ['3', 'cities'], ['KSA', 'market']],
+    challenge: 'Decide where to invest in display, across thousands of appliance outlets in Saudi Arabia.',
+    did: ['Retail study across 2,000 outlets in Riyadh, Jeddah and Dammam', 'Covered major and small domestic appliances', 'Assessed product displays, pricing and competitor presence', 'Classified stores by display investment value'],
+    result: 'Findings that supported outlet prioritisation and retail investment planning.',
+  },
+  {
+    slug: 'heinz-retail-audits', brand: 'Heinz', title: 'Retail Audits', service: 'audits',
+    where: 'UAE, Kuwait', geo: DXB, stat: '162', statLabel: 'stores audited',
+    stats: [['162', 'stores'], ['2', 'countries'], ['2016–2021', 'programme']],
+    challenge: "Track Heinz's in-store presence, outlet by outlet.",
+    did: ['Retail audits in 122 stores in the UAE and 40 in Kuwait', "Collected outlet-level data on Heinz's in-store presence", 'Supported retail execution planning'],
+    result: 'Outlet-level data that supported retail execution planning from 2016 to 2021.',
+  },
+  {
+    slug: 'kent-digital-activation', brand: 'Kent', title: 'Digital Activation Support', service: 'activation',
+    where: '', geo: DXB, stat: 'App', statLabel: 'from sign-up to instant win',
+    stats: [['App', 'for the activation'], ['Personalised', 'drink mixes'], ['Instant win', 'quiz']],
+    challenge: 'Run a personalised activation smoothly, from sign-up to prize.',
+    did: ['An app to manage participant consent, registration and table selection', 'Recorded personalised drink mixes', 'Returning participants could retrieve their previous selections', 'Sent orders for printing', 'A country-specific quiz with automated scoring for an instant-win activity'],
+    result: 'One digital flow from consent to instant win, with every selection recorded.',
+  },
+  {
+    slug: 'london-dairy-mystery-shopping', brand: 'London Dairy', title: 'Mystery Shopping Programme', service: 'mystery',
+    where: '', geo: DXB, stat: 'Parlours', statLabel: 'scored outlet by outlet',
+    stats: [['Parlours', 'visited'], ['Outlet', 'scorecards'], ['Service', 'to ambience']],
+    challenge: 'Measure the parlour experience the way customers live it.',
+    did: ['Mystery visits across London Dairy parlours', 'Assessed staff interactions, sampling practices and order accuracy', 'Checked billing and loyalty programme communication', 'Scored cleanliness, product presentation and ambience', 'Outlet-level scorecards'],
+    result: 'Outlet-level scorecards that highlighted service gaps and opportunities to improve the customer experience.',
+  },
+  {
+    slug: 'mars-freezer-availability-audit', brand: 'Mars', title: 'Freezer & Product Availability Audit', service: 'audits',
+    where: 'KSA', geo: RUH, stat: '3', statLabel: 'cities, every freezer checked',
+    stats: [['3', 'cities'], ['Freezers', 'audited'], ['KSA', 'market']],
+    challenge: 'Make sure Mars freezers in Saudi stores are there, well placed and in working order.',
+    did: ['Freezer audit across hypermarkets and supermarkets', 'Assessed freezer presence, checkout placement and physical condition', 'Checked branding damage, glass lid condition and ice build-up', 'Checked product availability'],
+    result: 'Findings on maintenance needs and retail execution gaps across Riyadh, Jeddah and Dammam.',
+  },
+  {
+    slug: 'mars-asset-sweep-audit', brand: 'Mars', title: 'Asset Sweep Audit', service: 'audits',
+    where: 'UAE, KSA', geo: DXB, stat: 'Every', statLabel: 'shop in the area visited',
+    stats: [['Street', 'by street'], ['2', 'countries'], ['Records', 'reconciled']],
+    challenge: "Check that Mars's records of in-market assets match what is really in the shops.",
+    did: ['Street-by-street sweep of the surveyed areas', 'Visited every shop to verify Mars asset availability and count', 'Assessed asset condition, working status and what the units held', "Reconciled field findings with Mars's existing asset records"],
+    result: "A detailed report that identified discrepancies against Mars's asset records.",
+  },
+  {
+    slug: 'blackberry-mystery-shopping', brand: 'BlackBerry', title: 'Mystery Shopping Programme', service: 'mystery',
+    where: '', geo: DXB, stat: 'Store', statLabel: 'level scorecards',
+    stats: [['Retail', 'outlets'], ['Staff', 'knowledge'], ['Store-level', 'scorecards']],
+    challenge: 'Find out whether BlackBerry is shown, explained and recommended in store.',
+    did: ['Mystery visits across retail outlets', 'Assessed visibility, staff product knowledge and sales recommendations', 'Evaluated product demonstrations and how promotional offers were explained', 'Store-level scorecards'],
+    result: 'Store-level scorecards that showed gaps in retail execution and where staff needed training.',
+  },
+  {
+    slug: 'munchbox-retail-merchandising', brand: 'Munchbox', title: 'Retail Merchandising', service: 'merch',
+    where: 'UAE', geo: DXB, stat: 'Photo', statLabel: 'report from every outlet',
+    stats: [['UAE', 'outlets'], ['Displays', 'organised'], ['Photo', 'reporting']],
+    challenge: 'Keep Munchbox well presented on UAE shelves.',
+    did: ['Merchandising support across UAE retail outlets', 'Organised product displays', 'Improved shelf presentation and brand visibility', 'Photo reporting of the in-store work'],
+    result: 'Better shelf presentation and brand visibility, documented with photos.',
+  },
+  {
+    slug: 'nissan-sales-service-mystery-shopping', brand: 'Nissan', title: 'Sales & Service Mystery Shopping', service: 'mystery',
+    where: 'Oman', geo: MCT, stat: 'Waves', statLabel: 'compared across branches',
+    stats: [['Oman', 'market'], ['Showrooms', '+ service centres'], ['Branch', 'comparisons']],
+    challenge: 'Measure the Nissan experience in Oman, from first visit to handover.',
+    did: ['Mystery visits across Nissan showrooms and service centres in Oman', 'Assessed reception, needs identification, vehicle presentation and pricing explanations', 'Checked follow-up, service updates, delivery standards and vehicle handover', 'Compared performance across branches and audit waves'],
+    result: 'Branch and wave comparisons that highlighted service gaps and staff training opportunities.',
+  },
+  // ---- added Nov 2026: logistics brief (WhatsApp)
+  {
+    slug: 'confidential-gcc-logistics', brand: 'Confidential client', title: 'GCC Logistics Services', service: 'logistics',
+    where: 'GCC', geo: DXB, stat: '6', statLabel: 'GCC countries served',
+    stats: [['6', 'GCC countries'], ['Customs', 'to final mile'], ['One', 'partner']],
+    challenge: "Move goods across the Gulf with one partner, from customs to the client's door.",
+    did: ['Local customs clearance at destinations across all GCC countries', 'Transport from the UAE to the other GCC countries', 'Warehousing across all GCC countries', 'Final-mile delivery from our warehouses to end clients'],
+    result: 'Customs, transport, storage and delivery across the GCC, handled by one partner.',
+  },
+  {
+    slug: 'bein-gcc-logistics-warehousing', brand: 'beIN Sports', title: 'GCC Logistics & Warehousing', service: 'logistics',
+    where: 'GCC', geo: DXB, stat: '30', statLabel: 'pallets of print managed',
+    stats: [['~30', 'pallets stored'], ['~35 cbm', 'printed materials'], ['GCC', 'distribution']],
+    challenge: "Get beIN Sports' printed materials from the press to every end client across the GCC.",
+    did: ['Coordinated and monitored printing', 'Stored and managed about 30 pallets (about 35 cbm) of printed materials', 'Transport from the printing press to the Niche UAE warehouse', 'Transport from the UAE to the GCC, with customs clearance at destination', 'Warehousing across the GCC and final-mile delivery to end clients'],
+    result: 'End-to-end logistics, from print run to final delivery, under one partner.',
+  },
+  {
+    slug: 'gorilla-energy-promotion-logistics', brand: 'Gorilla Energy', title: 'Promotion Logistics & Warehousing', service: 'logistics',
+    where: 'UAE', geo: DXB, stat: '5 cbm', statLabel: 'of promo kit stored',
+    stats: [['~5 cbm', 'storage'], ['Fridges', 'out and back'], ['UAE', 'stores']],
+    challenge: "Keep Gorilla's in-store promotions supplied: drinks, punching bags, fridges and uniforms, delivered and collected on time.",
+    did: ['Storage for Gorilla promotional materials and equipment (about 5 cbm)', 'Handling of promotional drinks, punching bags, refrigerators and uniforms', 'Transport of materials and equipment to designated stores', 'Collection of refrigerators and equipment back to the warehouse', 'Coordination of every delivery and collection'],
+    result: 'Promotions supplied and cleared on schedule, with equipment returned to the warehouse when needed.',
+  },
+  {
+    slug: 'wanzl-uae-qatar-logistics', brand: 'Wanzl', title: 'UAE & Qatar Logistics', service: 'logistics',
+    where: 'UAE, Qatar', geo: DXB, stat: '2', statLabel: 'containers every 3 months',
+    stats: [['2', 'containers / 3 months'], ['2', 'countries'], ['Customs', 'Dubai and Qatar']],
+    challenge: 'Clear, store and deliver Wanzl shipments in the UAE and Qatar.',
+    did: ['Local customs clearance in Dubai and Qatar', 'Transport of shipments to their destinations', 'Warehousing in Qatar, about two containers every three months', 'Final-mile delivery from our warehouses to end clients'],
+    result: 'One partner for customs, storage and delivery in two markets.',
+  },
+  {
+    slug: 'euroceil-uae-logistics', brand: 'Euroceil Trading', title: 'UAE Logistics & Customs Clearance', service: 'logistics',
+    where: 'UAE', geo: DXB, stat: 'Airport', statLabel: 'to client, end to end',
+    stats: [['Emirates', 'cargo collection'], ['Customs', 'clearance'], ['Final-mile', 'delivery']],
+    challenge: 'Get cargo released and delivered across the UAE without delays.',
+    did: ['Collection and transport of cargo from Emirates facilities', 'Customs clearance and documentation for smooth release', 'Storage at designated UAE warehouses when required', 'Final-mile delivery to end clients'],
+    result: 'Cargo collected, cleared and delivered by one partner.',
   },
 ]
