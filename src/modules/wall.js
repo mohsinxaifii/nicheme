@@ -13,7 +13,7 @@ const FEATURED = new Set(['red-bull-perfect-store-audits', 'mentos-air-action-sa
 const href = c => `${BASE}case-studies/${c.slug}/`
 
 const ROWS = 2
-const SVC_ICON = { audits: 'audit', merch: 'merch', mystery: 'mystery', research: 'research', activation: 'promo', sampling: 'sampling', events: 'events', reporting: 'reporting' }
+const SVC_ICON = { audits: 'audit', merch: 'merch', mystery: 'mystery', research: 'research', activation: 'promo', sampling: 'sampling', events: 'events', reporting: 'reporting', digital: 'digital' }
 const CW = 340, CH = 422, GX = 84, GY = 56            // card size and gaps (px, wall space); keep in step with .w3__card in sections.css
 const CELLX = CW + GX, CELLY = CH + GY
 

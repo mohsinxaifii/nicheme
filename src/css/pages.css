@@ -407,3 +407,4 @@ body[data-page="contact"] .contact { padding-top: calc(var(--nav-h) + 90px); }
 .progs__list em { font-style: normal; font-size: 14px; color: #666; }
 .progs__list em:empty { display: none; }
 .progs__list strong { font-size: 24px; font-weight: 600; color: var(--ink); letter-spacing: -.03em; margin-right: 4px; }
+.relcases__all { margin-top: 28px; }

@@ -12,7 +12,7 @@ import { standaloneProjects, projectStat, caseScore, projectScore, caseCover } f
 const BASE = import.meta.env.BASE_URL.replace(/\/$/, '')
 const url = p => BASE + p
 const RECENT_KEY = 'niche-search-recent'
-const TYPES = [['all', 'All'], ['service', 'Services'], ['case', 'Case studies'], ['project', 'Projects'], ['page', 'Pages']]
+const TYPES = [['all', 'All'], ['service', 'Services'], ['case', 'Case studies'], ['page', 'Pages']]
 const TYPE_LABEL = { service: 'Service', case: 'Case study', project: 'Project', page: 'Page' }
 const GROUP_LABEL = { service: 'Services', case: 'Case studies', project: 'Projects', page: 'Pages' }
 const PER_GROUP = 6
@@ -24,7 +24,7 @@ const escHtml = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&l
 let INDEX = null
 async function buildIndex() {
   if (INDEX) return INDEX
-  const SVC_ICON = { audits: 'audit', merch: 'merch', mystery: 'mystery', research: 'research', activation: 'promo', sampling: 'sampling', events: 'events', reporting: 'reporting' }
+  const SVC_ICON = { audits: 'audit', merch: 'merch', mystery: 'mystery', research: 'research', activation: 'promo', sampling: 'sampling', events: 'events', reporting: 'reporting', digital: 'digital' }
   const items = []
   const add = it => items.push({ ...it, _t: norm(it.title), _s: norm(it.sub), _k: norm(it.keys) })
 
@@ -36,8 +36,7 @@ async function buildIndex() {
     ['Group companies', '/about/#group', 'Niche Star Advertising, Niche Cape Shipping, Connexis', 'group companies niche star advertising cape shipping connexis negt mishkat', 'factory'],
     ['How we work', '/about/#how', 'Brief, deploy, execute, report', 'process how we work steps brief deploy execute report', 'route'],
     ['All services', '/services/', '14 field marketing services', 'services all list', 'dashboard'],
-    ['Case studies', '/case-studies/', 'Case studies and the project archive', 'case studies work portfolio clients', 'brief'],
-    ['Project archive', '/case-studies/#archive', 'Completed projects by service, country and year', 'project archive log history completed', 'calendar'],
+    ['Case studies', '/case-studies/', 'Case studies and projects by service', 'case studies work portfolio clients', 'brief'],
     ['Contact', '/contact/', 'Request a proposal, offices and phone', 'contact proposal quote brief phone email address office directions', 'mail'],
     ['Careers', '/careers/', 'Field, workshop and office roles', 'careers jobs hiring vacancies apply cv work merchandiser auditor promoter', 'users'],
   ]
@@ -57,7 +56,7 @@ async function buildIndex() {
   standaloneProjects.forEach(p => {
     const [stat, label] = projectStat(p)
     add({
-      type: 'project', title: p.brand, sub: [p.title, p.countries.join(', ')].join(' · '),
+      type: 'case', title: p.brand, sub: [p.title, p.countries.join(', ')].join(' · '),
       href: `/case-studies/${p.slug}/`, icon: SVC_ICON[p.service], thumb: p.photos.length ? `/projects/${p.slug}/cover.webp` : null,
       keys: [p.title, SERVICE_LABEL[p.service], p.countries.join(' '), p.countries.includes('KSA') ? 'saudi arabia' : '', (p.programmes || []).map(x => x.title).join(' '), stat, label].join(' '), rank: projectScore(p) / 200,
     })
@@ -232,7 +231,7 @@ export function initSearch({ lenis, reduced }) {
       const rec = recent.get().map(h => by[h]).filter(Boolean).filter(it => type === 'all' || it.type === type)
       const pool = INDEX.filter(it => type === 'all' || it.type === type)
       const start = type === 'all'
-        ? [...pool.filter(it => it.type === 'service').slice(0, 4), ...pool.filter(it => it.type === 'case').sort((a, b) => b.rank - a.rank).slice(0, 3), ...pool.filter(it => it.type === 'page' && ['/contact/', '/case-studies/#archive'].includes(it.href))]
+        ? [...pool.filter(it => it.type === 'service').slice(0, 4), ...pool.filter(it => it.type === 'case').sort((a, b) => b.rank - a.rank).slice(0, 3), ...pool.filter(it => it.type === 'page' && ['/contact/', '/case-studies/'].includes(it.href))]
         : pool.slice().sort((a, b) => b.rank - a.rank).slice(0, 8)
       if (rec.length) html += `<p class="srch__h">Recently opened</p>` + rec.map(it => row(it, k++, [])).join('')
       html += `<p class="srch__h">${type === 'all' ? 'Suggested' : GROUP_LABEL[type]}</p>` + start.filter(it => !rec.includes(it)).map(it => row(it, k++, [])).join('')

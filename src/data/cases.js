@@ -4,7 +4,8 @@
 // spreadsheet. Nothing here is invented. Cases without photos show a placeholder
 // until photos are added to public/work/<slug>/ (and src/data/photos.js).
 // Service keys follow the client's project folders (Nov 2026):
-// audits · mystery · research · merch · activation · sampling · events · reporting
+// audits · mystery · research · merch · activation · sampling · events · reporting · digital
+// Digital cases come from the Niche Digital Marketing presentation (R0, Nov 2026).
 
 const DXB = [25.2048, 55.2708]
 const RUH = [24.7136, 46.6753]
@@ -20,6 +21,7 @@ export const SERVICE_LABEL = {
   sampling: 'Product Sampling',
   events: 'Events & Roadshows',
   reporting: 'Real-Time Reporting',
+  digital: 'Digital Marketing',
 }
 
 export const cases = [
@@ -241,5 +243,70 @@ export const cases = [
     challenge: "Keep Gorilla's in-store promotions supplied: drinks, punching bags, fridges and uniforms, delivered and collected on time.",
     did: ['Storage for Gorilla promotional materials and equipment (about 5 cbm)', 'Handling of promotional drinks, punching bags, refrigerators and uniforms', 'Transport of materials and equipment to designated stores', 'Collection of refrigerators and equipment back to the warehouse', 'Coordination of every delivery and collection'],
     result: 'Promotions supplied and cleared on schedule, with equipment returned to the warehouse when needed.',
+  },
+  // ---- added Nov 2026: Niche Digital Marketing presentation (portfolio)
+  {
+    slug: 'ade-properties', brand: 'ADE Properties', title: 'Website, Brand Identity & Social Media', service: 'digital',
+    where: 'UAE', geo: DXB, stat: 'Website', statLabel: '+ brand identity & social',
+    stats: [['Website', 'design'], ['Brand', 'stationery'], ['Social', 'media']],
+    challenge: 'Give a Dubai property developer a consistent brand across its website, print and social media.',
+    did: ['Responsive website for desktop and mobile', 'Brand stationery: folder, letterhead, envelopes, business cards and bags', 'Instagram content for the Greygate Residences launch in JVC', 'Launch event and payment-plan campaign creatives'],
+    result: 'One brand identity applied across the website, printed stationery and the Instagram feed.',
+  },
+  {
+    slug: 'umbrella-home-healthcare', brand: 'The Umbrella Home Healthcare', title: 'Website, Social Media & Brochure', service: 'digital',
+    where: 'UAE', geo: DXB, stat: 'Website', statLabel: '+ social & print',
+    stats: [['Website', 'design'], ['Social', 'media'], ['Print', 'brochure']],
+    challenge: 'Present a home healthcare provider and its services clearly online and in print.',
+    did: ['Website presenting home healthcare and IV therapy services', 'Instagram content covering each care service', 'Printed brochure: elderly care, people of determination and post-operative care'],
+    result: 'A website, Instagram feed and brochure with one consistent look.',
+  },
+  {
+    slug: 'arhan-restaurant', brand: 'Arhan Restaurant', title: 'Social Media Content', service: 'digital',
+    where: 'UAE', geo: DXB, stat: 'Social', statLabel: 'media content',
+    stats: [['Social', 'media'], ['Menu', 'campaigns'], ['Dubai', 'Al Satwa']],
+    challenge: 'Promote a Dubai restaurant’s menu on social media.',
+    did: ['Branded social media posts for menu highlights', 'Campaign creatives with booking and contact details', 'Consistent templates in the restaurant’s brand colours'],
+    result: 'A consistent set of social media creatives for the restaurant’s channels.',
+  },
+  {
+    slug: 'enstara', brand: 'Enstara', title: 'Corporate Brochure', service: 'digital',
+    where: 'UAE', geo: DXB, stat: 'Print', statLabel: 'corporate brochure',
+    stats: [['Brochure', 'design'], ['5', 'service lines'], ['HR', 'consultancy']],
+    challenge: 'Explain the services of a Dubai HR consultancy in one printed piece.',
+    did: ['Tri-fold corporate brochure design', 'Sections for recruitment, training, specialised HR services and employee wellness', 'Icon set and layout in the Enstara brand colours'],
+    result: 'A corporate brochure presenting all five Enstara service lines.',
+  },
+  {
+    slug: 'hive-640', brand: 'Hive 640', title: 'Social Media Campaign', service: 'digital',
+    where: 'UAE', geo: DXB, stat: 'Social', statLabel: 'media campaign',
+    stats: [['Social', 'media'], ['App', 'downloads'], ['UAE', 'market']],
+    challenge: 'Promote a gym and fitness membership app to users and gyms in the UAE.',
+    did: ['Instagram feed design for the Hive 640 app', 'Creatives promoting discounted gym rates and app features', 'Posts inviting gyms to join the platform'],
+    result: 'A complete Instagram feed promoting the app to members and gym owners.',
+  },
+  {
+    slug: 'mas-du-roseau', brand: 'Mas du Roseau', title: 'Social Media Content', service: 'digital',
+    geo: DXB, stat: 'Social', statLabel: 'media content',
+    stats: [['Social', 'media'], ['Product', 'photography'], ['Natural', 'cosmetics']],
+    challenge: 'Present a natural and organic cosmetics range on social media.',
+    did: ['Product-focused social media posts', 'Campaigns for body oils, mists, soaps and baby laundry products', 'Consistent feed layouts for each product line'],
+    result: 'Social media content covering the full product range.',
+  },
+  {
+    slug: 'tab-deal', brand: 'Tab Deal', title: 'Social Media Campaign', service: 'digital',
+    geo: DXB, stat: 'Bilingual', statLabel: 'social campaign',
+    stats: [['Social', 'media'], ['2', 'languages'], ['Web app', 'launch']],
+    challenge: 'Introduce an online bartering web app to new users.',
+    did: ['Social media campaign for the web app launch', 'Posts explaining how online bartering works', 'English and Arabic versions of each creative'],
+    result: 'A bilingual launch campaign for the Tab Deal web app.',
+  },
+  {
+    slug: 'yomly', brand: 'Yomly', title: 'Social Media Content', service: 'digital',
+    where: 'UAE', geo: DXB, stat: 'Social', statLabel: 'media content',
+    stats: [['Social', 'media'], ['HR', 'software'], ['UAE', 'market']],
+    challenge: 'Promote HR and payroll software to businesses in the UAE.',
+    did: ['Social media posts for HR, payroll and leave management features', 'Creatives for recruitment and employee data tools', 'Consistent templates in the Yomly brand colours'],
+    result: 'A series of social media posts covering the software’s main features.',
   },
 ]
