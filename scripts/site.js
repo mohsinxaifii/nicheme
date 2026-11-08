@@ -8,7 +8,7 @@ import { cases, SERVICE_LABEL } from '../src/data/cases.js'
 import { photos } from '../src/data/photos.js'
 import { projects, PROJECT_SERVICE } from '../src/data/projects.js'
 import { icon } from '../src/data/icons.js'
-import { workItems, standaloneProjects, projectStat, casesByContent, projectsByContent, caseScore, projectScore, byScore } from '../src/data/work.js'
+import { workItems, standaloneProjects, projectStat, casesByContent, projectsByContent, caseScore, projectScore, byScore, caseGallery, caseCover, programmesOf } from '../src/data/work.js'
 
 const ROOT = resolve(import.meta.dirname, '..')
 const SVCS = allServices()
@@ -20,7 +20,7 @@ const FILTERS = [['all', 'All projects'], ...Object.entries(SERVICE_LABEL).filte
 const countOf = k => k === 'all' ? workItems.length : workItems.filter(w => w.service === k).length
 // icon for a case or project with no photo yet (placeholder until photos are added)
 const SVC_ICON = { audits: 'audit', merch: 'merch', mystery: 'mystery', research: 'research', activation: 'promo', sampling: 'sampling', events: 'events', reporting: 'reporting' }
-const hasPhotos = slug => !!photos[slug]?.length
+const hasPhotos = slug => !!caseCover(slug)
 // archive projects per service page
 const PROJECT_FOR_SERVICE = { 'retail-audits': 'audits', 'mystery-shopping': 'mystery', 'market-research': 'research' }
 const fmt = n => typeof n === 'number' ? n.toLocaleString('en-US') : n
@@ -37,7 +37,7 @@ export const servicesForCase = slug => {
   const p = svcBy[PRIMARY[c.service]]
   return p && !list.includes(p) ? [p, ...list] : list
 }
-const coverOf = s => s.photo || ((c => c ? `work/${c}/cover.webp` : null)(s.cases.find(hasPhotos)))
+const coverOf = s => s.photo || ((c => c ? caseCover(c) : null)(s.cases.find(hasPhotos)))
 
 // ---------------------------------------------------------------- partials
 export function header() {
@@ -63,7 +63,7 @@ export function header() {
         <li class="drop__sep"><a href="/case-studies/#archive"><span>Project archive</span><small>${projects.length}</small></a></li>
       </ul>
       <div class="drop__cards">
-        ${['red-bull-perfect-store-audits', 'mentos-air-action-sampling', 'william-grant-mystery-shopping'].map(sl => { const c = caseBy[sl]; return `<a class="dcard" href="${caseUrl(c)}"><img src="${img(sl, 'cover.webp')}" alt="" loading="lazy"><span><b>${c.brand}</b>${c.title}</span></a>` }).join('')}
+        ${['red-bull-perfect-store-audits', 'mentos-air-action-sampling', 'william-grant-mystery-shopping'].map(sl => { const c = caseBy[sl]; return `<a class="dcard" href="${caseUrl(c)}"><img src="/${caseCover(sl)}" alt="" loading="lazy"><span><b>${c.brand}</b>${c.title}</span></a>` }).join('')}
       </div>
     </div>`
   const about = `
@@ -89,6 +89,7 @@ export function header() {
         <div class="nav__item"><a class="nav__top" href="/careers/" data-nav-key="careers">Careers</a></div>
       </nav>
       <div class="nav__right">
+        <button class="nav__search" type="button" data-search-open aria-label="Search the site" aria-keyshortcuts="Control+K Meta+K /">${icon('search')}<span class="nav__search-txt">Search</span><kbd data-search-key>Ctrl K</kbd></button>
         <button class="nav__lang" type="button" data-toast="The Arabic site is coming with launch." aria-label="Switch to Arabic (coming soon)">${icon('globe')}<span>AR</span></button>
         <a class="btn btn--red btn--sm" href="/contact/">Get a proposal ${icon('arrow')}</a>
         <button class="nav__burger" type="button" aria-label="Open menu" aria-expanded="false" data-burger><span></span><span></span></button>
@@ -97,6 +98,7 @@ export function header() {
   </header>
   <div class="menu" data-menu hidden>
     <nav aria-label="Mobile">
+      <button type="button" class="menu__search" data-search-open>${icon('search')}<span>Search the site</span></button>
       <a href="/" class="menu__link">Home</a>
       <details><summary>About ${chev}</summary><ul><li><a href="/about/">About Niche</a></li><li><a href="/about/#network">Our network</a></li><li><a href="/about/#industries">Industries</a></li><li><a href="/about/#group">Group companies</a></li></ul></details>
       <details><summary>Services ${chev}</summary>
@@ -144,7 +146,7 @@ const crumbs = list => `<nav class="crumbs" aria-label="Breadcrumb"><a href="/">
 
 const caseCard = c => `
   <li data-service="${c.service}"><a class="cc${hasPhotos(c.slug) ? '' : ' cc--empty'}" href="${caseUrl(c)}">
-    ${hasPhotos(c.slug) ? `<img src="${img(c.slug, 'cover.webp')}" alt="" loading="lazy">` : `<span class="cc__ph" aria-hidden="true">${icon(SVC_ICON[c.service])}</span>`}
+    ${hasPhotos(c.slug) ? `<img src="/${caseCover(c.slug)}" alt="" loading="lazy">` : `<span class="cc__ph" aria-hidden="true">${icon(SVC_ICON[c.service])}</span>`}
     <span class="cc__pill">${SERVICE_LABEL[c.service]}</span>
     <span class="cc__stat"><b>${c.stat}</b>${c.statLabel}</span>
     <span class="cc__meta"><b>${c.brand}</b><span>${c.title}</span></span>
@@ -156,6 +158,18 @@ const FAQ = s => [
   [`Can we start ${s.name.toLowerCase().includes('vehicle') ? 'small' : 'in one market'}?`, 'Yes. Programmes can begin in a single city and expand across the region, with one account contact and centralised billing.'],
   ['How do we request a proposal?', 'Send a short brief outlining the service, markets and timing. We respond within one working day with a proposed approach and pricing.'],
 ]
+// programmes behind a case study or merged project, from the project log (no dates)
+const programmes = (x, brand) => {
+  const list = programmesOf(x)
+  if (!list.length) return ''
+  return `
+    <section class="progs">
+      <div class="wrap">
+        <div class="section-head"><p class="label">Programmes</p><h2 class="h2">${list.length === 1 ? 'Programme on record.' : `${list.length} programmes for ${brand}.`}</h2></div>
+        <ul class="progs__list">${list.map(p => `<li><b>${p.title}</b><span>${icon('pin')}${p.countries.join(' · ')}</span><em>${typeof p.stores === 'number' ? `<strong>${fmt(p.stores)}</strong> stores` : ''}</em></li>`).join('')}</ul>
+      </div>
+    </section>`
+}
 const faq = list => `<div class="faq">${list.map(([q, a], i) => `<details${i === 0 ? ' open' : ''}><summary><span>${q}</span><i class="faq__plus"></i></summary><p>${a}</p></details>`).join('')}</div>`
 
 // ---------------------------------------------------------------- pages
@@ -256,7 +270,16 @@ function trackRecord(s) {
 function servicePage(s, i) {
   const prev = SVCS[(i - 1 + SVCS.length) % SVCS.length], next = SVCS[(i + 1) % SVCS.length]
   const rel = s.cases.map(sl => caseBy[sl]).filter(Boolean).sort(byScore(caseScore))
-  const gallery = rel.flatMap(c => (photos[c.slug] || []).map(([f, w, h]) => ({ c, f, w, h }))).slice(0, 12)
+  // photos from every related case study and archive project, taken in turn (one from each, then
+  // the next round) so no single programme fills the strip
+  const key = Object.keys(PRIMARY).find(k => PRIMARY[k] === s.slug)
+  const sources = [
+    ...rel.map(c => ({ c, list: caseGallery(c.slug) })),
+    ...(key ? projectsByContent.filter(p => p.service === key && !p.case && p.photos.length).map(p => ({ c: p, list: p.photos.map(([f, w, h]) => [`projects/${p.slug}/${f}`, w, h]) })) : []),
+  ].filter(x => x.list.length)
+  const gallery = []
+  for (let round = 0; gallery.length < 12 && sources.some(x => x.list[round]); round++)
+    for (const { c, list } of sources) if (list[round] && gallery.length < 12) gallery.push({ c, src: list[round][0], w: list[round][1], h: list[round][2] })
   const siblings = groups[s.gi].services.filter(x => x.slug !== s.slug)
   const hero = s.photo ? `/${s.photo}` : coverOf(s) ? `/${coverOf(s)}` : null
   const body = `
@@ -290,7 +313,7 @@ function servicePage(s, i) {
     <section class="infield" id="photos">
       <div class="wrap">
         <div class="section-head"><p class="label">In the field</p><h2 class="h2">Project photography.</h2><p class="lead">All photographs are taken from Niche client projects.</p></div>
-        <div class="masonry masonry--static">${gallery.map(g => `<figure style="--ar:${(g.w / g.h).toFixed(3)}"><img src="${img(g.c.slug, g.f)}" alt="${esc(`${g.c.brand}: ${g.c.title}`)}" loading="lazy"><figcaption>${g.c.brand}</figcaption></figure>`).join('')}</div>
+        <div class="masonry masonry--static">${gallery.map(g => `<figure style="--ar:${(g.w / g.h).toFixed(3)}"><img src="/${g.src}" alt="${esc(`${g.c.brand}: ${g.c.title}`)}" loading="lazy"><figcaption>${g.c.brand}</figcaption></figure>`).join('')}</div>
       </div>
     </section>` : ''}
     ${rel.length ? `
@@ -327,7 +350,7 @@ function archive() {
     const media = p.photos.length
       ? `<a class="pj__media" href="${url}"><img src="/projects/${p.slug}/cover.webp" alt="${cap}" loading="lazy"><span class="pj__count">${icon('camera')}${p.photos.length}</span></a>`
       : p.case && hasPhotos(p.case)
-        ? `<a class="pj__media" href="${url}"><img src="${img(p.case, 'cover.webp')}" alt="${cap}" loading="lazy"></a>`
+        ? `<a class="pj__media" href="${url}"><img src="/${caseCover(p.case)}" alt="${cap}" loading="lazy"></a>`
         : `<a class="pj__media pj__media--empty" href="${url}" aria-label="${cap}">${icon(SVC_ICON[p.service])}</a>`
     return `
       <li class="pj" data-service="${p.service}">
@@ -336,7 +359,7 @@ function archive() {
           <p class="pj__svc">${PROJECT_SERVICE[p.service]}</p>
           <h3 class="pj__brand">${p.brand}</h3>
           <p class="pj__title">${p.title}</p>
-          <dl class="pj__facts"><div><dt>When</dt><dd>${p.period}</dd></div><div><dt>${p.service === 'research' ? 'Sample' : 'Stores'}</dt><dd>${p.stores === null ? '–' : fmt(p.stores)}</dd></div></dl>
+          <dl class="pj__facts">${p.programmes ? `<div><dt>Programmes</dt><dd>${p.programmes.length}</dd></div>` : `<div><dt>${p.service === 'research' ? 'Sample' : 'Stores'}</dt><dd>${p.stores === null ? '–' : fmt(p.stores)}</dd></div>`}<div><dt>Countries</dt><dd>${p.countries.length}</dd></div></dl>
           <p class="pj__where">${icon('pin')}${p.countries.join(' · ')}</p>
           <a class="pj__case" href="${url}">${p.case ? 'Read the case study' : 'View project'} ${icon('arrow')}</a>
         </div>
@@ -389,13 +412,13 @@ function casesIndex() {
 }
 
 function casePage(c, i) {
-  const list = photos[c.slug] || []
+  const list = caseGallery(c.slug)
   const svcs = servicesForCase(c.slug)
   const prev = cases[(i - 1 + cases.length) % cases.length], next = cases[(i + 1) % cases.length]
   const same = casesByContent.filter(x => x.service === c.service && x.slug !== c.slug).slice(0, 3)
   const body = `
     <section class="phero phero--case">
-      ${list.length ? `<div class="phero__bg" style="background-image:url('${img(c.slug, 'cover.webp')}')"></div>` : ''}
+      ${list.length ? `<div class="phero__bg" style="background-image:url('/${caseCover(c.slug)}')"></div>` : ''}
       <div class="wrap csh">
         <div class="csh__copy">
           ${crumbs([['Case studies', '/case-studies/'], [c.brand]])}
@@ -410,7 +433,7 @@ function casePage(c, i) {
           </div>
         </div>
         ${list.length
-          ? `<figure class="csh__img"><img src="${img(c.slug, list[0][0])}" alt="${esc(`${c.brand}: ${c.title}`)}"></figure>`
+          ? `<figure class="csh__img"><img src="/${list[0][0]}" alt="${esc(`${c.brand}: ${c.title}`)}"></figure>`
           : `<figure class="csh__img csh__img--empty" aria-hidden="true">${icon(SVC_ICON[c.service])}<span>${SERVICE_LABEL[c.service]}</span></figure>`}
       </div>
     </section>
@@ -429,11 +452,12 @@ function casePage(c, i) {
       </div>
     </section>
 
+    ${programmes(c, c.brand)}
     ${list.length > 1 ? `
     <section class="infield infield--case" id="gallery">
       <div class="wrap">
         <div class="section-head"><p class="label">Gallery</p><h2 class="h2">Project photos.</h2></div>
-        <div class="masonry masonry--static">${list.map(([f, w, h]) => `<figure style="--ar:${(w / h).toFixed(3)}"><img src="${img(c.slug, f)}" alt="${esc(`${c.brand}: ${c.title}`)}" loading="lazy"></figure>`).join('')}</div>
+        <div class="masonry masonry--static">${list.map(([src, w, h]) => `<figure style="--ar:${(w / h).toFixed(3)}"><img src="/${src}" alt="${esc(`${c.brand}: ${c.title}`)}" loading="lazy"></figure>`).join('')}</div>
       </div>
     </section>` : ''}
 
@@ -476,8 +500,8 @@ function projectPage(p, i) {
           <ul class="csh__pills"><li><a href="/case-studies/?s=${p.service}">${SERVICE_LABEL[p.service]}</a></li>${p.countries.map(w => `<li>${icon('pin')}${w}</li>`).join('')}</ul>
           <h1 class="phero__title">${p.brand}</h1>
           <p class="csh__sub">${p.title}</p>
-          <p class="csh__lead">${p.title} for ${p.brand}${typeof p.stores === 'number' ? `, covering ${stat} ${statLabel}` : ''} in ${p.countries.join(', ')}.</p>
-          <dl class="csh__stats">${typeof p.stores === 'number' ? `<div><dt>${statLabel}</dt><dd>${stat}</dd></div>` : ''}<div><dt>countries</dt><dd>${p.countries.length}</dd></div><div><dt>period</dt><dd>${p.period}</dd></div></dl>
+          <p class="csh__lead">${p.title} for ${p.brand}${p.programmes ? `, across ${p.programmes.length} programmes` : typeof p.stores === 'number' ? `, covering ${stat} ${statLabel}` : ''} in ${p.countries.join(', ')}.</p>
+          <dl class="csh__stats">${p.programmes || typeof p.stores === 'number' ? `<div><dt>${statLabel}</dt><dd>${stat}</dd></div>` : ''}<div><dt>countries</dt><dd>${p.countries.length}</dd></div><div><dt>service</dt><dd>${SERVICE_LABEL[p.service].split(' ')[0]}</dd></div></dl>
           <div class="phero__btns">
             <a class="btn btn--red btn--lg" href="/contact/?service=${svc?.slug || ''}">Request a proposal ${icon('arrow')}</a>
             ${p.photos.length > 1 ? `<a class="btn btn--ghost btn--lg" href="#gallery">View project photos</a>` : svc ? `<a class="btn btn--ghost btn--lg" href="${svcUrl(svc)}">About ${svc.name.toLowerCase()}</a>` : ''}
@@ -493,7 +517,7 @@ function projectPage(p, i) {
       <div class="wrap story__grid">
         <ol class="story__steps">
           <li><span>${icon('pin')}</span><div><p class="label">Markets</p><p class="story__big">${p.countries.join(', ')}</p></div></li>
-          <li><span>${icon('calendar')}</span><div><p class="label">Period</p><p class="story__big">${p.period}</p></div></li>
+          <li><span>${icon('brief')}</span><div><p class="label">Service</p><p class="story__big">${svc ? svc.line : SERVICE_LABEL[p.service]}</p></div></li>
         </ol>
         <aside class="story__side">
           <p class="label">Service</p>
@@ -503,6 +527,7 @@ function projectPage(p, i) {
       </div>
     </section>
 
+    ${programmes(p, p.brand)}
     ${p.photos.length > 1 ? `
     <section class="infield infield--case" id="gallery">
       <div class="wrap">
@@ -521,7 +546,7 @@ function projectPage(p, i) {
       </div>
     </section>
     ${cta({ title: 'Planning a similar project?', href: `/contact/?service=${svc?.slug || ''}`, label: 'Get a proposal' })}`
-  return shell({ title: `${p.brand}: ${p.title} | Niche Project`, desc: `${p.title} for ${p.brand} in ${p.countries.join(', ')}, ${p.period}. Delivered by Niche Marketing Management.`.slice(0, 155), path: `/case-studies/${p.slug}/`, page: 'case', body })
+  return shell({ title: `${p.brand}: ${p.title} | Niche Project`, desc: `${p.title} for ${p.brand} in ${p.countries.join(', ')}. Delivered by Niche Marketing Management.`.slice(0, 155), path: `/case-studies/${p.slug}/`, page: 'case', body })
 }
 
 function aboutPage() {

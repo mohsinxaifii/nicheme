@@ -3,7 +3,7 @@
 // Only HD, sharp, upright photos are kept (short side >= 768px, Laplacian sharpness >= 400 at full size and >= 1000 at 500px,
 // shelf photos saved sideways left out), sharpest first.
 export const photos = {
-  "home-centre-customer-journey-mystery-shopping":[["01.webp",1600,898],["02.webp",1600,898]],
+  "home-centre-customer-journey-mystery-shopping":[["01.webp",1600,898],["02.webp",898,1600],["03.webp",1600,898],["04.webp",1600,898],["05.webp",898,1600],["06.webp",898,1600],["07.webp",898,1600]],
   "william-grant-mystery-shopping":[["01.webp",768,1024],["02.webp",768,1024],["03.webp",768,1024],["04.webp",768,1024],["05.webp",1024,768],["06.webp",768,1024],["07.webp",768,1024],["08.webp",768,1024],["09.webp",768,1024],["10.webp",1024,768],["11.webp",768,1024]],
   "gorilla-energy-promotion-logistics":[["01.webp",1600,1200],["02.webp",1600,1200],["03.webp",1600,1200],["04.webp",1200,1600],["05.webp",1200,1600],["06.webp",1200,1600],["07.webp",1200,1600],["08.webp",1200,1600],["09.webp",1200,1600],["10.webp",1200,1600],["11.webp",1200,1600],["12.webp",1200,1600]],
   "mentos-air-action-sampling":[["01.webp",899,1599],["02.webp",899,1599],["03.webp",960,1280],["04.webp",899,1599],["05.webp",899,1599],["06.webp",899,1599],["07.webp",899,1599],["08.webp",960,1280],["09.webp",1200,1600],["10.webp",960,1280]],

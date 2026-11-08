@@ -8,6 +8,7 @@ import { hydrateIcons } from './data/icons.js'
 import { initWall } from './modules/wall.js'
 import { playIntro } from './modules/intro.js'
 import { initTransitions } from './modules/transition.js'
+import { initSearch } from './modules/search.js'
 import {
   initNav, initAnchors, initHeroIntro, initCounters, initLogos, initReveals, initForm,
   initSteps, initActiveNav, initBento, initBoard, initGroup, initAccordion, initFooter,
@@ -37,6 +38,7 @@ if (!reduced) {
 const ctx = { lenis, reduced }
 initTransitions(ctx)
 initNav(ctx)
+initSearch(ctx)
 initActiveNav()
 initAnchors(ctx)
 initCounters(ctx)

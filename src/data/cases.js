@@ -26,7 +26,7 @@ export const cases = [
   {
     slug: 'red-bull-perfect-store-audits', brand: 'Red Bull', title: 'Perfect Store Audits', service: 'audits',
     where: 'MENA + 6 more', geo: DXB, stat: '20,000+', statLabel: 'stores',
-    stats: [['20,000+', 'stores'], ['17', 'countries'], ['2009', 'partner since']],
+    stats: [['20,000+', 'stores'], ['17', 'countries'], ['15+ yrs', 'partnership']],
     challenge: "Maintain consistent shelf and cooler standards for Red Bull in stores across MENA, Georgia, Mauritius, Sri Lanka, Maldives, Senegal and Pakistan.",
     did: ['Quarterly Perfect Store (PSA) audits', 'Monthly VIP audits', 'Visibility, shelving and planogram compliance checks', 'Brand messaging, pricing and competitor activity'],
     result: 'Consistent, regularly reported execution data across 20,000+ stores for more than 15 years.',
@@ -50,7 +50,7 @@ export const cases = [
   {
     slug: 'unilever-retail-audits', brand: 'Unilever', title: 'Retail & Perfect Store Audits', service: 'audits',
     where: '8 countries', geo: DXB, stat: '6,000+', statLabel: 'outlets / month',
-    stats: [['6,000+', 'outlets / month'], ['8', 'countries'], ['7 yrs', '2010–2017']],
+    stats: [['6,000+', 'outlets / month'], ['8', 'countries'], ['7 yrs', 'programme']],
     challenge: 'Track availability, pricing and shelf share across the GCC, Egypt and Morocco.',
     did: ['Monthly retail audits: availability, pricing, planogram compliance', 'Share of space and voice', 'Secondary displays and Perfect Store audits'],
     result: 'Improved on-shelf execution and visibility across the region.',
@@ -58,7 +58,7 @@ export const cases = [
   {
     slug: 'reckitt-retail-audits', brand: 'Reckitt', title: '21-Year Retail Audit Partnership', service: 'audits',
     where: '8 countries', geo: [31.9454, 35.9284], stat: '21 yrs', statLabel: 'partnership',
-    stats: [['3,000+', 'outlets / month'], ['8', 'countries'], ['21 yrs', '2003–2024']],
+    stats: [['3,000+', 'outlets / month'], ['8', 'countries'], ['21 yrs', 'partnership']],
     challenge: 'Consistent shelf data across the GCC, Lebanon and Jordan for two decades.',
     did: ['Monthly audits of availability and pricing', 'Planogram compliance', 'Share of space and voice', 'Secondary displays'],
     result: '21 years of continuous on-shelf monitoring.',
@@ -74,18 +74,10 @@ export const cases = [
   {
     slug: 'william-grant-mystery-shopping', brand: 'William Grant & Sons', title: 'On-premise Mystery Shopping', service: 'mystery',
     where: 'UAE', geo: DXB, stat: '2,000+', statLabel: 'outlets',
-    stats: [['2,000+', 'outlets'], ['UAE', 'market'], ['3 yrs', '2021–2023']],
+    stats: [['2,000+', 'outlets'], ['UAE', 'market'], ['3 yrs', 'programme']],
     challenge: 'Assess how hotels, bars and clubs serve and display the brands.',
     did: ['Point-of-sale visibility audits', 'Perfect serve and back-bar stock', 'Shot pricing and menu listings'],
     result: 'Three years of on-premise execution data.',
-  },
-  {
-    slug: 'electrolux-merchandising-surveys', brand: 'Electrolux', title: 'Merchandising & Dealer Survey', service: 'merch',
-    where: 'UAE, KSA', geo: RUH, stat: '1,100', statLabel: 'KSA stores surveyed',
-    stats: [['150', 'visits / month UAE'], ['1,100', 'KSA stores'], ['2 yrs', 'contract']],
-    challenge: 'Maintain displays in the UAE and map the dealer network in Saudi Arabia.',
-    did: ['2 full-time merchandisers for POSM deployment and removal', 'Competitor and branding-opportunity intelligence', 'One-off survey of 1,100 KSA stores'],
-    result: 'Well-maintained displays and a complete dealer map for Saudi Arabia.',
   },
   {
     slug: 'chupa-chups-mentos-community-events', brand: 'Chupa Chups & Mentos', title: 'Community Sampling', service: 'activation',
@@ -96,8 +88,8 @@ export const cases = [
     result: 'Engagement with students and families for both brands.',
   },
   {
-    slug: 'dabur-activation-sampling', brand: 'Dabur', title: 'Activation & Sampling', service: 'sampling',
-    where: 'UAE', geo: [25.3573, 55.3909], stat: '4+', statLabel: 'brands sampled',
+    slug: 'dabur-activation-sampling', brand: 'Dabur', title: 'Sampling, Activations & Retail Audits', service: 'sampling',
+    where: 'UAE, KSA, Oman, Qatar', geo: [25.3573, 55.3909], stat: '4+', statLabel: 'brands sampled',
     stats: [['4+', 'brands'], ['3', 'channels'], ['Trained', 'promoters']],
     challenge: 'Explain and sample Dabur, Vatika, Shilajit and Badshah products to shoppers.',
     did: ['Branded sampling stands', 'Roadshows and in-store activations', 'Trained promoters at every touchpoint'],
@@ -106,7 +98,7 @@ export const cases = [
   {
     slug: 'home-centre-customer-journey-mystery-shopping', brand: 'Home Centre', title: 'Customer Journey Mystery Shopping', service: 'mystery',
     where: 'UAE, KSA, Kuwait, Oman, Qatar, Bahrain, Egypt, Lebanon', geo: DXB, stat: '61', statLabel: 'stores, 8 countries',
-    stats: [['61', 'stores'], ['8', 'countries'], ['2014–2016', 'programme']],
+    stats: [['61', 'stores'], ['8', 'countries'], ['2 yrs', 'programme']],
     challenge: 'Measure the full purchase journey, not just the shop floor.',
     did: ['Staff response, assistance and product knowledge', 'Product availability, pricing visibility and promotional communication', 'Order and address capture', 'Delivery timeliness and installation', 'Checkout and the returns process'],
     result: 'A timeline-based view of the whole customer journey.',
@@ -114,7 +106,7 @@ export const cases = [
   {
     slug: 'iffco-retail-audits', brand: 'IFFCO', title: 'GCC Retail Audits', service: 'audits',
     where: '6 GCC', geo: [29.3759, 47.9774], stat: '600+', statLabel: 'outlets / month',
-    stats: [['600+', 'outlets / month'], ['6', 'GCC countries'], ['7 yrs', '2011–2018']],
+    stats: [['600+', 'outlets / month'], ['6', 'GCC countries'], ['7 yrs', 'programme']],
     challenge: 'Reliable monthly shelf data across six GCC markets.',
     did: ['Monthly audits of availability and pricing', 'Planogram compliance and share of space', 'Secondary displays'],
     result: 'Improved on-shelf visibility across GCC markets over 7 years.',
@@ -186,20 +178,20 @@ export const cases = [
     result: "Insight into Dove's customer profiles and the qualities shoppers associate with the brand.",
   },
   {
-    slug: 'electrolux-eds-retail-profiling', brand: 'Electrolux EDS', title: 'Retail Profiling & Market Analysis', service: 'research',
+    slug: 'electrolux', brand: 'Electrolux', title: 'Dealer Survey & Retail Profiling', service: 'research',
     where: 'KSA', geo: RUH, stat: '2,000', statLabel: 'outlets profiled',
-    stats: [['2,000', 'outlets'], ['3', 'cities'], ['KSA', 'market']],
-    challenge: 'Decide where to invest in display, across thousands of appliance outlets in Saudi Arabia.',
-    did: ['Retail study across 2,000 outlets in Riyadh, Jeddah and Dammam', 'Covered major and small domestic appliances', 'Assessed product displays, pricing and competitor presence', 'Classified stores by display investment value'],
-    result: 'Findings that supported outlet prioritisation and retail investment planning.',
+    stats: [['2,000', 'outlets profiled'], ['1,100', 'dealers surveyed'], ['3', 'cities']],
+    challenge: 'Map the appliance dealer network in Saudi Arabia and decide where to invest in display.',
+    did: ['One-off survey of 1,100 stores to map the dealer network', 'Retail study across 2,000 outlets in Riyadh, Jeddah and Dammam', 'Covered major and small domestic appliances', 'Assessed product displays, pricing and competitor presence', 'Classified stores by display investment value'],
+    result: 'A complete dealer map for Saudi Arabia, with findings that supported outlet prioritisation and retail investment planning.',
   },
   {
     slug: 'heinz-retail-audits', brand: 'Heinz', title: 'Retail Audits', service: 'audits',
     where: 'UAE, Kuwait', geo: DXB, stat: '162', statLabel: 'stores audited',
-    stats: [['162', 'stores'], ['2', 'countries'], ['2016–2021', 'programme']],
+    stats: [['162', 'stores'], ['2', 'countries'], ['5 yrs', 'programme']],
     challenge: "Track Heinz's in-store presence, outlet by outlet.",
     did: ['Retail audits in 122 stores in the UAE and 40 in Kuwait', "Collected outlet-level data on Heinz's in-store presence", 'Supported retail execution planning'],
-    result: 'Outlet-level data that supported retail execution planning from 2016 to 2021.',
+    result: 'Outlet-level data that supported retail execution planning over five years.',
   },
   {
     slug: 'kent-digital-activation', brand: 'Kent', title: 'Digital Activation Support', service: 'reporting',
