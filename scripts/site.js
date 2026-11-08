@@ -387,7 +387,7 @@ function casePage(c, i) {
         ${c.leadStock
           ? `<figure class="csh__img csh__img--stock"><img src="/${c.leadStock}" alt="${esc(`${c.brand}: ${c.title}`)}"></figure>`
           : list.length
-          ? `<figure class="csh__img${c.service === 'digital' ? ' csh__img--fit' : ''}" style="--ar:${(list[0][1] / list[0][2]).toFixed(3)}"><img src="/${list[0][0]}" alt="${esc(`${c.brand}: ${c.title}`)}"></figure>`
+          ? `<figure class="csh__img${c.service === 'digital' || list[0][1] / list[0][2] < 0.8 || list[0][1] / list[0][2] > 1.5 ? ' csh__img--fit' : ''}" style="--ar:${(list[0][1] / list[0][2]).toFixed(3)}"><img src="/${list[0][0]}" alt="${esc(`${c.brand}: ${c.title}`)}"></figure>`
           : c.stockCover ? `<figure class="csh__img csh__img--stock"><img src="/${c.stockCover}" alt="${esc(SERVICE_LABEL[c.service])}"></figure>`
           : `<figure class="csh__img csh__img--empty" aria-hidden="true">${icon(SVC_ICON[c.service])}<span>${SERVICE_LABEL[c.service]}</span></figure>`}
       </div>
