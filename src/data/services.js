@@ -1,6 +1,9 @@
 // All services, grouped. Copy is drawn from nicheme.com and the company profile.
 // Every service on the current site maps to one entry here. `photo` is a path under public/ (HD project photos only),
 // `cases` lists related case-study slugs (they drive the service pages).
+// Services with no client photo use free Pexels stock (public/stock/, Pexels licence, no attribution
+// required): logistics-warehouse 17229385 (Léster Lau), fleet-trucks 13961751 (Lidia Volovaci),
+// video-camera 3062553, car-showroom 15097788 (Dextar Studio), card-payment 8475155 (Kampus Production).
 // `seo` is the page <title> keyword phrase and `meta` the meta description for each service page.
 
 export const allServices = () => groups.flatMap((g, gi) => g.services.map(s => ({ ...s, group: g.name, gi })))
@@ -176,7 +179,7 @@ export const groups = [
         slug: 'logistics',
         icon: 'logistics',
         cases: ['gorilla-energy-promotion-logistics'],
-        photo: 'work/gorilla-energy-promotion-logistics/10.webp',
+        photo: 'stock/logistics-warehouse.webp',
         seo: 'Logistics, Distribution & Warehousing',
         meta: 'Sea and air freight, land transport and warehousing in the UAE and Saudi Arabia, with delivery of products and marketing materials to retail outlets.',
         line: 'Storage and delivery of products and marketing materials to retail outlets.',
@@ -189,6 +192,7 @@ export const groups = [
         slug: 'digital-marketing',
         icon: 'digital',
         cases: ['kent-digital-activation'],
+        photo: 'stock/video-camera.webp',
         seo: 'Digital Marketing & Video Production',
         meta: 'Search, social media, video production, websites and in-store digital displays that support retail and field marketing programmes.',
         line: 'Digital services that support in-store programmes.',
@@ -201,6 +205,7 @@ export const groups = [
         slug: 'vehicle-tracking',
         icon: 'vehicle',
         cases: [],
+        photo: 'stock/fleet-trucks.webp',
         seo: 'Vehicle Tracking & Fuel Monitoring',
         meta: 'Vehicle tracking and fuel monitoring through Connexis, a Niche Group company.',
         line: 'Vehicle tracking and fuel monitoring through Connexis.',
