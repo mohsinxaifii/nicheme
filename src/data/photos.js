@@ -1,36 +1,14 @@
 // Photos per case: [file, width, height]. Files live in public/work/<slug>/; cover.webp is a
-// 1:1 crop of the largest photo. Sources: the Niche company presentation (2026), and the
-// client's project photo folders (Nov 2026), screened and exported as WebP.
+// 900px square crop of 01.webp, the lead photo (hand-picked) used at the top of the page. Source: the client's project photo folders (Nov 2026).
+// Only HD, sharp, upright photos are kept (short side >= 768px, Laplacian sharpness >= 400 at full size and >= 1000 at 500px,
+// shelf photos saved sideways left out), sharpest first.
 export const photos = {
-  "red-bull-perfect-store-audits":[["01.webp",332,210],["02.webp",144,210],["03.webp",152,210],["04.webp",221,206],["05.webp",1050,1400],["06.webp",1050,1400],["07.webp",1050,1400],["08.webp",1050,1400],["09.webp",1050,1400],["10.webp",1050,1400],["11.webp",1050,1400],["12.webp",1050,1400]],
-  "du-field-force-merchandising":[["01.webp",342,335]],
-  "mentos-air-action-sampling":[["01.webp",258,357],["02.webp",254,358],["03.webp",260,358],["04.webp",260,357],["05.webp",960,1280],["06.webp",1050,1400],["07.webp",787,1400],["08.webp",787,1400],["09.webp",960,1280],["10.webp",787,1400],["11.webp",787,1400],["12.webp",787,1400]],
-  "labour-camp-carnival-of-games":[["01.webp",416,164],["02.webp",169,309],["03.webp",143,200],["04.webp",146,198],["05.webp",256,197],["06.webp",181,142],["07.webp",232,142]],
-  "unilever-retail-audits":[["01.webp",540,741],["02.webp",616,629],["03.webp",769,629],["04.webp",540,678],["05.webp",740,633],["06.webp",540,960],["07.webp",960,540],["08.webp",1050,1400],["09.webp",1050,1400],["10.webp",1050,1400],["11.webp",1050,1400],["12.webp",1400,1050],["13.webp",1400,1050]],
-  "automotive-mystery-shopping":[["01.webp",361,442]],
-  "bein-merchandising-program":[["01.webp",296,234],["02.webp",275,232],["03.webp",238,309],["04.webp",249,309]],
-  "mars-retail-execution-gcc":[["01.webp",208,277],["02.webp",208,271]],
-  "reckitt-retail-audits":[["01.webp",581,728],["02.webp",960,866],["03.webp",960,685],["04.webp",1032,581],["05.webp",720,1280],["06.webp",1050,1400],["07.webp",1050,1400],["08.webp",960,1280],["09.webp",1050,1400],["10.webp",1050,1400],["11.webp",768,1024],["12.webp",768,1024]],
-  "grenade-gym-sampling":[["01.webp",264,326],["02.webp",263,186],["03.webp",247,326],["04.webp",339,179],["05.webp",339,143],["06.webp",263,132]],
-  "william-grant-mystery-shopping":[["01.webp",768,742],["02.webp",1024,538],["03.webp",768,444],["04.webp",768,685],["05.webp",768,1024],["06.webp",768,1024],["07.webp",768,1024],["08.webp",768,1024],["09.webp",1024,768],["10.webp",768,1024],["11.webp",1024,768],["12.webp",1024,768]],
-  "electrolux-merchandising-surveys":[["01.webp",319,425],["02.webp",318,424]],
-  "chupa-chups-mentos-community-events":[["01.webp",177,171],["02.webp",259,154],["03.webp",175,168],["04.webp",209,164],["05.webp",259,180],["06.webp",361,161],["07.webp",209,161]],
-  "discover-card-acceptance-mystery-shopping":[["01.webp",1086,1448]],
-  "dabur-activation-sampling":[["01.webp",526,223],["02.webp",286,390],["03.webp",329,389],["04.webp",133,160],["05.webp",133,160],["06.webp",250,160]],
-  "home-centre-customer-journey-mystery-shopping":[["01.webp",295,273],["02.webp",786,1400],["03.webp",786,1400],["04.webp",786,1400],["05.webp",786,1400],["06.webp",786,1400],["07.webp",786,1400],["08.webp",1400,786],["09.webp",1400,786]],
-  "iffco-retail-audits":[["01.webp",964,657],["02.webp",657,720],["03.webp",657,564],["04.webp",876,657],["05.webp",1400,1050],["06.webp",1050,1400],["07.webp",1050,1400],["08.webp",1050,1400],["09.webp",1050,1400],["10.webp",1050,1400],["11.webp",1050,1400],["12.webp",1050,1400]],
-  "red-bull-on-premise-mystery-shopping":[["01.webp",1086,1448]],
-  "proyouth-spinneys-waitrose-activation":[["01.webp",189,329],["02.webp",173,329],["03.webp",195,330],["04.webp",219,330],["05.webp",217,329]],
-  "natour-ghee-union-coop-activation":[["01.webp",203,330],["02.webp",203,330],["03.webp",190,328],["04.webp",170,330],["05.webp",245,327]],
-  "intel-innovate-display-zone":[["01.webp",330,276],["02.webp",430,285],["03.webp",699,308]],
-  "envision-racing-experience-zone":[["01.webp",563,310],["02.webp",634,293]],
-  "bein-retailer-branding":[["01.webp",784,541]],
-  "nespresso-boutique-installations":[["01.webp",413,636],["02.webp",526,516]],
-  "dkny-rag-bone-shop-in-shop":[["01.webp",1600,1210],["02.webp",1600,1249]],
-  "hmy-supermarket-shelving":[["01.webp",389,255],["02.webp",561,253],["03.webp",357,303],["04.webp",438,303],["05.webp",380,301]],
-  "jet-aviation-dubai":[["01.webp",747,500],["02.webp",365,501],["03.webp",500,501],["04.webp",502,501]],
-  "danette-carrefour-value-packs":[["01.webp",681,463]],
-  "ajman-coop-electronics-zone":[["01.webp",1600,828]],
-  "dubai-chocolate-carrefour-displays":[["01.webp",1166,1361],["02.webp",1600,1295]],
-  "gorilla-energy-promotion-logistics":[["01.webp",1280,720],["02.webp",1280,720],["03.webp",1050,1400],["04.webp",1050,1400],["05.webp",1050,1400],["06.webp",1050,1400],["07.webp",1280,720],["08.webp",1280,720]]
+  "home-centre-customer-journey-mystery-shopping":[["01.webp",1600,898],["02.webp",1600,898]],
+  "william-grant-mystery-shopping":[["01.webp",768,1024],["02.webp",768,1024],["03.webp",768,1024],["04.webp",768,1024],["05.webp",1024,768],["06.webp",768,1024],["07.webp",768,1024],["08.webp",768,1024],["09.webp",768,1024],["10.webp",1024,768],["11.webp",768,1024]],
+  "gorilla-energy-promotion-logistics":[["01.webp",1600,1200],["02.webp",1600,1200],["03.webp",1600,1200],["04.webp",1200,1600],["05.webp",1200,1600],["06.webp",1200,1600],["07.webp",1200,1600],["08.webp",1200,1600],["09.webp",1200,1600],["10.webp",1200,1600],["11.webp",1200,1600],["12.webp",1200,1600]],
+  "mentos-air-action-sampling":[["01.webp",899,1599],["02.webp",899,1599],["03.webp",960,1280],["04.webp",899,1599],["05.webp",899,1599],["06.webp",899,1599],["07.webp",899,1599],["08.webp",960,1280],["09.webp",1200,1600],["10.webp",960,1280]],
+  "red-bull-perfect-store-audits":[["01.webp",1200,1600],["02.webp",1200,1600],["03.webp",1200,1600],["04.webp",1200,1600],["05.webp",1200,1600],["06.webp",1200,1600],["07.webp",1200,1600],["08.webp",1200,1600],["09.webp",1200,1600],["10.webp",1200,1600],["11.webp",1200,1600],["12.webp",1200,1600]],
+  "reckitt-retail-audits":[["01.webp",1200,1600],["02.webp",1200,1600],["03.webp",1200,1600],["04.webp",1200,1600],["05.webp",1200,1600],["06.webp",1600,1200],["07.webp",1200,1600],["08.webp",1200,1600],["09.webp",1600,1200],["10.webp",1200,1600],["11.webp",1200,1600],["12.webp",1200,1600]],
+  "unilever-retail-audits":[["01.webp",1600,1200],["02.webp",1200,1600],["03.webp",1200,1600],["04.webp",1200,1600],["05.webp",1600,1200],["06.webp",1600,1200],["07.webp",1200,1600],["08.webp",1200,1600],["09.webp",1200,1600],["10.webp",1200,1600],["11.webp",1600,1200],["12.webp",1200,1600]],
+  "iffco-retail-audits":[["01.webp",1200,1600],["02.webp",1200,1600],["03.webp",1200,1600],["04.webp",1200,1600],["05.webp",1200,1600],["06.webp",1200,1600],["07.webp",1200,1600],["08.webp",1200,1600],["09.webp",1200,1600],["10.webp",1200,1600],["11.webp",1200,1600],["12.webp",1200,1600]],
 }

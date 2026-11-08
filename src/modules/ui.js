@@ -205,7 +205,7 @@ export async function initForm({ reduced } = {}) {
   // rotating word in the headline
   const rot = $('[data-rot]')
   if (rot && !reduced) {
-    const words = ['shelves.', 'showrooms.', 'promoters.', 'stores.', 'brand.']
+    const words = ['proposal.', 'retail audit.', 'store survey.', 'promotion.', 'callback.']
     let k = 0
     // Hidden tabs pause animations but not timers, so skip ticks while hidden and
     // clear any word whose exit never finished, or they pile up on top of each other.

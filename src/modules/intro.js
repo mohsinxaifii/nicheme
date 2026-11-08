@@ -12,7 +12,7 @@
 import { gsap } from 'gsap'
 
 const KEY = 'niche-intro-seen'
-const TAGLINE = 'The eyes and ears of great brands'
+const TAGLINE = 'Field marketing across MENA since 2003'
 const uncover = () => document.documentElement.classList.remove('intro-cover')
 
 export async function playIntro({ reduced, logoSrc, onReveal = () => {} }) {

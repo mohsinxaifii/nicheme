@@ -197,7 +197,8 @@
 .csh__pills li:first-child { background: var(--red); box-shadow: none; }
 .csh__pills .ico { width: 14px; height: 14px; }
 .csh__sub { font-size: clamp(20px, 1.8vw, 26px); font-weight: 500; color: rgba(255,255,255,.75); margin-top: -10px; }
-.csh__stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 36px; }
+.csh__lead { font-size: clamp(16px, 1.25vw, 19px); line-height: 1.55; color: rgba(255,255,255,.7); max-width: 52ch; margin-top: 22px; }
+.csh__stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 30px; }
 .csh__stats div { display: flex; flex-direction: column-reverse; gap: 6px; padding: 18px; border-radius: 18px; background: rgba(255,255,255,.07); box-shadow: inset 0 0 0 1px rgba(255,255,255,.1); }
 .csh__stats div:first-child { background: var(--red); box-shadow: none; }
 .csh__stats dd { font-size: clamp(24px, 2.4vw, 36px); font-weight: 600; letter-spacing: -.035em; line-height: 1.05; }

@@ -14,6 +14,10 @@ import {
   initLightbox, initCaseGrid, initCountUps, initApply, initArchive,
 } from './modules/ui.js'
 
+// show focus rings only for keyboard users, never after a click or tap
+addEventListener('keydown', e => { if (e.key === 'Tab') document.documentElement.classList.add('kbd') }, true)
+addEventListener('pointerdown', () => document.documentElement.classList.remove('kbd'), true)
+
 gsap.registerPlugin(ScrollTrigger)
 const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches
 const BASE = import.meta.env.BASE_URL

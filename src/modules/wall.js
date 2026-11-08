@@ -4,16 +4,16 @@
 // shows every case study; any other pill shows only that service's projects,
 // repeated to fill the rows and the screen. Hover slows the drift; on "All" it
 // also lights up the project's network. Click opens the case.
-import { cases, SERVICE_LABEL } from '../data/cases.js'
-import { photos } from '../data/photos.js'
+import { SERVICE_LABEL } from '../data/cases.js'
+import { workItems as cases } from '../data/work.js'
 import { icon } from '../data/icons.js'
 
 const BASE = import.meta.env.BASE_URL
-const img = (slug, file) => `${BASE}work/${slug}/${file}`
-const FEATURED = new Set(['red-bull-perfect-store-audits', 'du-field-force-merchandising', 'labour-camp-carnival-of-games', 'reckitt-retail-audits'])
+const FEATURED = new Set(['red-bull-perfect-store-audits', 'mentos-air-action-sampling', 'william-grant-mystery-shopping', 'reckitt-retail-audits'])
+const href = c => `${BASE}case-studies/${c.slug}/`
 
 const ROWS = 2
-const SVC_ICON = { audits: 'audit', merch: 'merch', mystery: 'mystery', research: 'research', activation: 'promo', install: 'install', production: 'production', logistics: 'logistics' }
+const SVC_ICON = { audits: 'audit', merch: 'merch', mystery: 'mystery', research: 'research', activation: 'promo', sampling: 'sampling', events: 'events', reporting: 'reporting' }
 const CW = 340, CH = 422, GX = 84, GY = 56            // card size and gaps (px, wall space); keep in step with .w3__card in sections.css
 const CELLX = CW + GX, CELLY = CH + GY
 
@@ -33,7 +33,7 @@ export function initWall({ lenis, reduced }) {
   function build(filter) {
     list = cases.map((c, i) => i).filter(i => filter === 'all' || cases[i].service === filter)
     // spread cases still waiting for photos evenly between the ones that have them
-    const pic = list.filter(i => photos[cases[i].slug]?.length), bare = list.filter(i => !photos[cases[i].slug]?.length)
+    const pic = list.filter(i => cases[i].cover), bare = list.filter(i => !cases[i].cover)
     list = [...pic.map((i, k) => [k / pic.length, i]), ...bare.map((i, k) => [(k + 0.5) / bare.length, i])].sort((x, y) => x[0] - y[0]).map(x => x[1])
     // every tab: same rows, same card size; small sets repeat to fill the rows
     const rows = ROWS
@@ -70,15 +70,15 @@ export function initWall({ lenis, reduced }) {
     html += '</svg>'
     offsets.forEach((ox, copy) => items.forEach(({ ci: i, p, dup }) => {
       const c = cases[i]
-      const pic = !!photos[c.slug]?.length
-      html += `<button type="button" class="w3__card${FEATURED.has(c.slug) ? ' is-feat' : ''}${pic ? '' : ' w3__card--empty'}" data-i="${i}" data-service="${c.service}"
+      const pic = !!c.cover
+      html += `<a href="${href(c)}" draggable="false" class="w3__card${FEATURED.has(c.slug) ? ' is-feat' : ''}${pic ? '' : ' w3__card--empty'}" data-i="${i}" data-service="${c.service}"
         style="left:${p.x + ox}px;top:${p.y}px" ${copy || dup ? 'aria-hidden="true" tabindex="-1"' : `aria-label="${c.brand}: ${c.title}. ${c.stat} ${c.statLabel}"`}>
-        ${pic ? `<img src="${img(c.slug, 'cover.webp')}" alt="" loading="lazy" decoding="async">` : `<span class="w3__ph" aria-hidden="true">${icon(SVC_ICON[c.service])}</span>`}
+        ${pic ? `<img src="${BASE}${c.cover}" alt="" loading="lazy" decoding="async" draggable="false">` : `<span class="w3__ph" aria-hidden="true">${icon(SVC_ICON[c.service])}</span>`}
         <span class="w3__pill">${SERVICE_LABEL[c.service]}</span>
         <span class="w3__stat"><b>${c.stat}</b>${c.statLabel}</span>
         <span class="w3__meta"><b>${c.brand}</b><span>${c.title}</span></span>
         <i class="w3__node" aria-hidden="true"></i>
-      </button>`
+      </a>`
     }))
     track.innerHTML = html
     track.style.width = `${W}px`
@@ -145,25 +145,31 @@ export function initWall({ lenis, reduced }) {
   let x = 0, target = 0, speed = reduced ? 0 : 0.35, hovering = false, down = false, moved = 0, lastX = 0, vel = 0
   stage.addEventListener('pointerenter', () => { hovering = true })
   stage.addEventListener('pointerleave', () => { hovering = false })
-  stage.addEventListener('pointerdown', e => { down = true; moved = 0; vel = 0; lastX = e.clientX; target = x; stage.classList.add('is-drag') })
+  let downCard = null
+  stage.addEventListener('pointerdown', e => { down = true; moved = 0; vel = 0; lastX = e.clientX; target = x; downCard = e.target.closest('.w3__card'); stage.classList.add('is-drag') })
   addEventListener('pointermove', e => {
     if (!down) return
     const dx = e.clientX - lastX; lastX = e.clientX; moved += Math.abs(dx); target += dx * 1.4; vel = vel * 0.5 + dx * 1.4 * 0.5
   })
   // release: carry on with a little momentum
-  addEventListener('pointerup', () => { if (!down) return; down = false; target += vel * 12; stage.classList.remove('is-drag') })
+  addEventListener('pointerup', () => { if (!down) return; down = false; if (moved > 6) target += vel * 12; stage.classList.remove('is-drag') })
   stage.addEventListener('wheel', e => { if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) { e.preventDefault(); target -= e.deltaX } }, { passive: false })
   // a wider window may need more copies to keep the loop seamless
   let rsz = 0
   addEventListener('resize', () => { clearTimeout(rsz); rsz = setTimeout(() => { if (copiesNeeded() > copies) build(filter) }, 200) })
+  // cards are real links; a drag must not open one
+  // A click (not a drag) opens the card it started on, even if the drifting wall
+  // moved a different card under the pointer by the time the button came up.
   track.addEventListener('click', e => {
     const c = e.target.closest('.w3__card')
-    if (!c || moved > 6) return
-    location.href = `${BASE}case-studies/${cases[+c.dataset.i].slug}/`
+    if (moved > 6) { if (c) e.preventDefault(); return }
+    if (downCard && c !== downCard) { e.preventDefault(); const d = downCard; downCard = null; d.click() }
   })
+  track.addEventListener('dragstart', e => e.preventDefault())
   // keyboard: keep the focused card on screen
+  // only for keyboard focus: a mouse click also focuses the link, and must not move the wall
   track.addEventListener('focusin', e => {
-    const c = e.target.closest('.w3__card'); if (!c) return
+    const c = e.target.closest('.w3__card'); if (!c || !document.documentElement.classList.contains('kbd') || c.tabIndex < 0) return
     focus = +c.dataset.i; paint()
     target = -(pos.get(focus).x - stage.clientWidth * 0.35)
   })

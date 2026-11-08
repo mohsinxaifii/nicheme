@@ -38,7 +38,10 @@ button { background: none; border: 0; cursor: pointer; padding: 0; }
 ul, ol { list-style: none; margin: 0; padding: 0; }
 h1, h2, h3, p, dl, dd { margin: 0; }
 ::selection { background: var(--red); color: #fff; }
-:focus-visible { outline: 2px solid var(--red); outline-offset: 3px; }
+:focus, :focus-visible { outline: none; }
+html { -webkit-tap-highlight-color: transparent; }
+/* focus ring only while navigating with the keyboard (html.kbd is set on Tab) */
+html.kbd :focus-visible { outline: 2px solid var(--red); outline-offset: 3px; }
 
 .skip { position: fixed; left: 12px; top: -60px; z-index: 200; background: var(--red); color: #fff; padding: 10px 14px; border-radius: 6px; }
 .skip:focus { top: 12px; }

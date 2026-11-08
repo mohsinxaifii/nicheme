@@ -8,15 +8,18 @@ import { cases, SERVICE_LABEL } from '../src/data/cases.js'
 import { photos } from '../src/data/photos.js'
 import { projects, PROJECT_SERVICE } from '../src/data/projects.js'
 import { icon } from '../src/data/icons.js'
+import { workItems, standaloneProjects, projectStat } from '../src/data/work.js'
 
 const ROOT = resolve(import.meta.dirname, '..')
 const SVCS = allServices()
 const svcBy = Object.fromEntries(SVCS.map(s => [s.slug, s]))
 const caseBy = Object.fromEntries(cases.map(c => [c.slug, c]))
-const PRIMARY = { audits: 'retail-audits', merch: 'merchandising', mystery: 'mystery-shopping', research: 'market-research', activation: 'promotions-activations', install: 'fixture-installation', production: 'production-posm', logistics: 'logistics' }
-const FILTERS = [['all', 'All case studies'], ['audits', 'Retail audits'], ['merch', 'Merchandising'], ['mystery', 'Mystery shopping'], ['research', 'Market research'], ['activation', 'Activations & sampling'], ['install', 'Installation'], ['production', 'Production'], ['logistics', 'Logistics']]
+const PRIMARY = { audits: 'retail-audits', mystery: 'mystery-shopping', research: 'market-research', merch: 'merchandising', activation: 'promotions-activations', sampling: 'product-sampling', events: 'events-roadshows', reporting: 'real-time-reporting' }
+// filters follow the client's project folders; a service with no work yet is left out
+const FILTERS = [['all', 'All projects'], ...Object.entries(SERVICE_LABEL).filter(([k]) => workItems.some(w => w.service === k))]
+const countOf = k => k === 'all' ? workItems.length : workItems.filter(w => w.service === k).length
 // icon for a case or project with no photo yet (placeholder until photos are added)
-const SVC_ICON = { audits: 'audit', merch: 'merch', mystery: 'mystery', research: 'research', activation: 'promo', install: 'install', production: 'production', logistics: 'logistics' }
+const SVC_ICON = { audits: 'audit', merch: 'merch', mystery: 'mystery', research: 'research', activation: 'promo', sampling: 'sampling', events: 'events', reporting: 'reporting' }
 const hasPhotos = slug => !!photos[slug]?.length
 // archive projects per service page
 const PROJECT_FOR_SERVICE = { 'retail-audits': 'audits', 'mystery-shopping': 'mystery', 'market-research': 'research' }
@@ -34,7 +37,7 @@ export const servicesForCase = slug => {
   const p = svcBy[PRIMARY[c.service]]
   return p && !list.includes(p) ? [p, ...list] : list
 }
-const coverOf = s => s.photo || ((c => c ? `${c}/cover.webp` : null)(s.cases.find(hasPhotos)))
+const coverOf = s => s.photo || ((c => c ? `work/${c}/cover.webp` : null)(s.cases.find(hasPhotos)))
 
 // ---------------------------------------------------------------- partials
 export function header() {
@@ -43,11 +46,11 @@ export function header() {
       <div class="mega__cols">
         ${groups.map((g, gi) => `<div class="mega__col">
           <p class="mega__h">${icon(GROUP_ICONS[gi])}${g.name}</p>
-          <ul>${g.services.map(s => `<li><a href="${svcUrl(s)}" data-prev="${s.photo ? `/work/${s.photo}` : ''}" data-line="${esc(s.line)}" data-name="${esc(s.name)}">${icon(s.icon)}<span>${s.name}</span></a></li>`).join('')}</ul>
+          <ul>${g.services.map(s => `<li><a href="${svcUrl(s)}" data-prev="${s.photo ? `/${s.photo}` : ''}" data-line="${esc(s.line)}" data-name="${esc(s.name)}">${icon(s.icon)}<span>${s.name}</span></a></li>`).join('')}</ul>
         </div>`).join('')}
       </div>
       <aside class="mega__feat">
-        <div class="mega__img"><img src="/work/${SVCS[0].photo}" alt="" data-mega-img></div>
+        <div class="mega__img"><img src="/${SVCS[0].photo}" alt="" data-mega-img></div>
         <p class="mega__name" data-mega-name>${SVCS[0].name}</p>
         <p class="mega__line" data-mega-line>${SVCS[0].line}</p>
         <a class="mega__all" href="/services/">All 14 services ${icon('arrow')}</a>
@@ -56,19 +59,19 @@ export function header() {
   const work = `
     <div class="mega mega--sm" data-mega role="menu">
       <ul class="drop">
-        ${FILTERS.map(([k, n]) => `<li><a href="/case-studies/${k === 'all' ? '' : `?s=${k}`}"><span>${n}</span><small>${k === 'all' ? cases.length : cases.filter(c => c.service === k).length}</small></a></li>`).join('')}
+        ${FILTERS.map(([k, n]) => `<li><a href="/case-studies/${k === 'all' ? '' : `?s=${k}`}"><span>${n}</span><small>${countOf(k)}</small></a></li>`).join('')}
         <li class="drop__sep"><a href="/case-studies/#archive"><span>Project archive</span><small>${projects.length}</small></a></li>
       </ul>
       <div class="drop__cards">
-        ${['red-bull-perfect-store-audits', 'labour-camp-carnival-of-games', 'dubai-chocolate-carrefour-displays'].map(sl => { const c = caseBy[sl]; return `<a class="dcard" href="${caseUrl(c)}"><img src="${img(sl, 'cover.webp')}" alt="" loading="lazy"><span><b>${c.brand}</b>${c.title}</span></a>` }).join('')}
+        ${['red-bull-perfect-store-audits', 'mentos-air-action-sampling', 'william-grant-mystery-shopping'].map(sl => { const c = caseBy[sl]; return `<a class="dcard" href="${caseUrl(c)}"><img src="${img(sl, 'cover.webp')}" alt="" loading="lazy"><span><b>${c.brand}</b>${c.title}</span></a>` }).join('')}
       </div>
     </div>`
   const about = `
     <div class="mega mega--sm mega--about" data-mega role="menu">
       <ul class="drop drop--icons">
-        <li><a href="/about/">${icon('building')}<span>About Niche<small>23 years on the shop floor</small></span></a></li>
+        <li><a href="/about/">${icon('building')}<span>About Niche<small>Field marketing since 2003</small></span></a></li>
         <li><a href="/about/#network">${icon('globe')}<span>Our network<small>17 countries, 20+ offices</small></span></a></li>
-        <li><a href="/about/#industries">${icon('store')}<span>Industries<small>Seven sectors we know well</small></span></a></li>
+        <li><a href="/about/#industries">${icon('store')}<span>Industries<small>Sectors we work in</small></span></a></li>
         <li><a href="/about/#group">${icon('factory')}<span>Group companies<small>Production, shipping, tracking</small></span></a></li>
         <li><a href="/about/#how">${icon('route')}<span>How we work<small>Brief to report in four steps</small></span></a></li>
       </ul>
@@ -116,7 +119,7 @@ export function servicesGrid() {
       <div class="sg__head"><h3>${g.name}</h3><p>${g.intro}</p></div>
       <ul class="sg__cards">${g.services.map(s => `
         <li><a class="sc" href="${svcUrl(s)}">
-          ${s.photo ? `<img class="sc__img" src="/work/${s.photo}" alt="" loading="lazy">` : ''}
+          ${s.photo ? `<img class="sc__img" src="/${s.photo}" alt="" loading="lazy">` : ''}
           <span class="sc__top">${icon(s.icon, 'ico sc__ico')}${icon('arrow', 'ico sc__arrow')}</span>
           <span class="sc__name">${s.name}</span>
           <span class="sc__line">${s.line}</span>
@@ -126,7 +129,7 @@ export function servicesGrid() {
     </div>`).join('')
 }
 
-export function cta({ title = 'Need eyes and ears in 17 markets?', text = 'Tell us what you need and where. We reply within one working day with a plan and a price.', href = '/contact/', label = 'Build your brief' } = {}) {
+export function cta({ title = 'Discuss your requirements with our team.', text = 'Tell us what you need and where. We reply within one working day with a plan and a price.', href = '/contact/', label = 'Build your brief' } = {}) {
   return `
     <section class="cta">
       <div class="wrap cta__in">
@@ -149,9 +152,9 @@ const caseCard = c => `
 
 const FAQ = s => [
   ['Which countries do you cover?', 'Our own teams work in 17 countries from 20+ offices: the UAE, Saudi Arabia, Qatar, Kuwait, Oman, Bahrain, Jordan, Lebanon, Syria, Iraq, Egypt, Morocco, Tunisia, Algeria, Yemen, Pakistan and Mauritius.'],
-  ['How fast do we see the results?', 'Field staff report from hand-held devices. Our data team in Dubai turns each visit into a report within 24 hours, or on a schedule you agree, with photo evidence.'],
-  [`Can we start ${s.name.toLowerCase().includes('vehicle') ? 'small' : 'in one market'}?`, 'Yes. Programmes can start in a single city and grow across the region, with one key contact and centralised billing throughout.'],
-  ['How do we get a proposal?', 'Send us a short brief: what you need, where and when. We reply within one working day with a plan and a price.'],
+  ['How quickly is field data reported?', 'Field staff submit reports from hand-held devices. Our Dubai-based data team delivers each visit report, with photo evidence, within 24 hours or on an agreed schedule.'],
+  [`Can we start ${s.name.toLowerCase().includes('vehicle') ? 'small' : 'in one market'}?`, 'Yes. Programmes can begin in a single city and expand across the region, with one account contact and centralised billing.'],
+  ['How do we request a proposal?', 'Send a short brief outlining the service, markets and timing. We respond within one working day with a proposed approach and pricing.'],
 ]
 const faq = list => `<div class="faq">${list.map(([q, a], i) => `<details${i === 0 ? ' open' : ''}><summary><span>${q}</span><i class="faq__plus"></i></summary><p>${a}</p></details>`).join('')}</div>`
 
@@ -195,8 +198,8 @@ function servicesIndex() {
         <div>
           ${crumbs([['Services']])}
           <p class="label">Services</p>
-          <h1 class="phero__title">Fourteen ways we put brands <em>on the shelf.</em></h1>
-          <p class="phero__lead">Retail intelligence, field execution, consumer engagement and in-house production, run by our own people in 17 countries and reported through one system.</p>
+          <h1 class="phero__title">Field marketing and <em>retail services.</em></h1>
+          <p class="phero__lead">Fourteen services across retail intelligence, field execution, consumer engagement and production, delivered by Niche staff in 17 countries and reported through one system.</p>
           <ul class="phero__chips"><li><b>14</b>services</li><li><b>4</b>groups</li><li><b>17</b>countries</li><li><b>24 h</b>reporting</li></ul>
         </div>
         <div class="iconwall" aria-label="All services">
@@ -215,7 +218,7 @@ function servicesIndex() {
         </div>
         <ul class="sgroup__list">${g.services.map(s => `
           <li><a class="srow" href="${svcUrl(s)}">
-            <span class="srow__img">${coverOf(s) ? `<img src="/work/${coverOf(s)}" alt="" loading="lazy">` : icon(s.icon)}</span>
+            <span class="srow__img">${coverOf(s) ? `<img src="/${coverOf(s)}" alt="" loading="lazy">` : icon(s.icon)}</span>
             <span class="srow__body">${icon(s.icon, 'ico srow__ico')}<b>${s.name}</b><span>${s.line}</span>
               ${s.proof ? `<em><strong>${s.proof[0]}</strong> ${s.proof[1]}</em>` : ''}</span>
             <span class="srow__go">${icon('arrow')}</span>
@@ -226,12 +229,12 @@ function servicesIndex() {
     <!--@how-->
     <section class="svfaq">
       <div class="wrap svfaq__grid">
-        <div class="section-head"><p class="label">Questions</p><h2 class="h2">Good to know.</h2><p class="lead">Anything else? <a href="/contact/">Send us your brief</a>.</p></div>
+        <div class="section-head"><p class="label">Questions</p><h2 class="h2">Frequently asked questions.</h2><p class="lead">For anything else, <a href="/contact/">contact our team</a>.</p></div>
         ${faq(FAQ({ name: '' }))}
       </div>
     </section>
-    ${cta({ title: 'Not sure which service you need?', text: 'Tell us the problem on the shop floor. We will put together the right mix of services, in the right markets.' })}`
-  return shell({ title: 'Services | Retail Audits, Merchandising, Activations in MENA | Niche', desc: 'Fourteen field marketing services across 17 countries: retail audits, mystery shopping, merchandising, activations, sampling, installation, production and more.', path: '/services/', page: 'services', body })
+    ${cta({ title: 'Need help choosing a service?', text: 'Describe your objectives and markets, and our team will recommend a suitable combination of services.' })}`
+  return shell({ title: 'Field Marketing Services in Dubai, UAE & MENA | Niche Marketing Management', desc: 'Field marketing services in 17 countries: retail audits, mystery shopping, merchandising, market research, promotions, sampling, fixture installation, POSM production and logistics.', path: '/services/', page: 'services', body })
 }
 
 // service page strip: how many more programmes of this kind are on record
@@ -243,19 +246,19 @@ function trackRecord(s) {
   return `
     <section class="track">
       <div class="wrap track__in">
-        <div><p class="label">Track record</p><h2 class="track__title">${list.length} ${PROJECT_SERVICE[key].toLowerCase()} programmes on record.</h2></div>
+        <div><p class="label">Track record</p><h2 class="track__title">${list.length} ${PROJECT_SERVICE[key].toLowerCase()} projects completed.</h2></div>
         <ul class="track__brands">${brands.map(b => `<li>${b}</li>`).join('')}</ul>
-        <a class="link-more" href="/case-studies/?p=${key}#archive">See the project archive ${icon('arrow')}</a>
+        <a class="link-more" href="/case-studies/?p=${key}#archive">View the project archive ${icon('arrow')}</a>
       </div>
     </section>`
 }
 
 function servicePage(s, i) {
   const prev = SVCS[(i - 1 + SVCS.length) % SVCS.length], next = SVCS[(i + 1) % SVCS.length]
-  const rel = s.cases.map(sl => caseBy[sl])
+  const rel = s.cases.map(sl => caseBy[sl]).filter(Boolean)
   const gallery = rel.flatMap(c => (photos[c.slug] || []).map(([f, w, h]) => ({ c, f, w, h }))).slice(0, 12)
   const siblings = groups[s.gi].services.filter(x => x.slug !== s.slug)
-  const hero = s.photo ? `/work/${s.photo}` : coverOf(s) ? `/work/${coverOf(s)}` : null
+  const hero = s.photo ? `/${s.photo}` : coverOf(s) ? `/${coverOf(s)}` : null
   const body = `
     <section class="phero phero--svc">
       <div class="wrap svh">
@@ -267,7 +270,7 @@ function servicePage(s, i) {
           <p class="phero__lead">${s.body}</p>
           <div class="phero__btns">
             <a class="btn btn--red btn--lg" href="/contact/?service=${s.slug}">Get a proposal ${icon('arrow')}</a>
-            ${rel.length ? `<a class="btn btn--ghost btn--lg" href="#work">See the work</a>` : s.link ? `<a class="btn btn--ghost btn--lg" href="${s.link}" target="_blank" rel="noopener">Visit Connexis</a>` : ''}
+            ${rel.length ? `<a class="btn btn--ghost btn--lg" href="#work">View case studies</a>` : s.link ? `<a class="btn btn--ghost btn--lg" href="${s.link}" target="_blank" rel="noopener">Visit Connexis</a>` : ''}
           </div>
         </div>
         <div class="svh__media">
@@ -278,7 +281,7 @@ function servicePage(s, i) {
 
     <section class="inc">
       <div class="wrap">
-        <div class="section-head"><p class="label">What's included</p><h2 class="h2">Everything we handle for you.</h2><p class="lead">${s.name}, delivered by our own trained teams and reported through one system.</p></div>
+        <div class="section-head"><p class="label">What's included</p><h2 class="h2">Scope of service.</h2><p class="lead">${s.name}, delivered by trained Niche staff and reported through one system.</p></div>
         <ul class="inc__grid">${s.included.map((x, k) => `<li style="--k:${k}"><span class="inc__n">${String(k + 1).padStart(2, '0')}</span>${icon('check', 'ico inc__tick')}<b>${x}</b></li>`).join('')}</ul>
       </div>
     </section>
@@ -286,13 +289,13 @@ function servicePage(s, i) {
     ${gallery.length ? `
     <section class="infield" id="work">
       <div class="wrap">
-        <div class="section-head"><p class="label">In the field</p><h2 class="h2">Real work, photographed by our teams.</h2><p class="lead">Every photo below is from a Niche programme.</p></div>
+        <div class="section-head"><p class="label">In the field</p><h2 class="h2">Project photography.</h2><p class="lead">All photographs are taken from Niche client projects.</p></div>
         <div class="masonry masonry--static">${gallery.map(g => `<figure style="--ar:${(g.w / g.h).toFixed(3)}"><img src="${img(g.c.slug, g.f)}" alt="${esc(`${g.c.brand}: ${g.c.title}`)}" loading="lazy"><figcaption>${g.c.brand}</figcaption></figure>`).join('')}</div>
       </div>
     </section>
     <section class="relcases">
       <div class="wrap">
-        <div class="section-head section-head--row"><div><p class="label">Case studies</p><h2 class="h2">Programmes we have run.</h2></div><a class="link-more" href="/case-studies/">All case studies ${icon('arrow')}</a></div>
+        <div class="section-head section-head--row"><div><p class="label">Case studies</p><h2 class="h2">Related case studies.</h2></div><a class="link-more" href="/case-studies/">All case studies ${icon('arrow')}</a></div>
         <ul class="cgrid">${rel.map(caseCard).join('')}</ul>
       </div>
     </section>` : ''}
@@ -307,8 +310,8 @@ function servicePage(s, i) {
         </div>
       </div>
     </section>
-    ${cta({ title: 'Let\'s plan your programme.', text: `${s.name} in one market or all 17. Tell us what you need and we reply within one working day.`, href: `/contact/?service=${s.slug}`, label: 'Get a proposal' })}`
-  return shell({ title: `${s.name} in Dubai, the UAE & MENA | Niche`, desc: `${s.line} ${s.body}`.slice(0, 155), path: svcUrl(s), page: 'service', body })
+    ${cta({ title: `Request a proposal for ${s.name.toLowerCase()}.`, text: 'Available in a single market or across all 17 countries. We respond within one working day.', href: `/contact/?service=${s.slug}`, label: 'Get a proposal' })}`
+  return shell({ title: `${s.seo || s.name} in Dubai, UAE & MENA | Niche`, desc: s.meta || `${s.line} ${s.body}`.slice(0, 155), path: svcUrl(s), page: 'service', body })
 }
 
 // The project archive: Niche's project log. Cards with photos open a gallery;
@@ -319,11 +322,12 @@ function archive() {
   const countries = new Set(projects.flatMap(p => p.countries)).size
   const card = p => {
     const cap = esc(`${p.brand}: ${p.title}`)
+    const url = `/case-studies/${p.case || p.slug}/`
     const media = p.photos.length
-      ? `<div class="pj__media" data-lightbox>${p.photos.map(([f], k) => `<a href="/projects/${p.slug}/${f}" data-caption="${cap}"${k ? ' hidden' : ''}>${k ? '' : `<img src="/projects/${p.slug}/cover.webp" alt="${cap}" loading="lazy"><span class="pj__count">${icon('camera')}${p.photos.length}</span>`}</a>`).join('')}</div>`
+      ? `<a class="pj__media" href="${url}"><img src="/projects/${p.slug}/cover.webp" alt="${cap}" loading="lazy"><span class="pj__count">${icon('camera')}${p.photos.length}</span></a>`
       : p.case && hasPhotos(p.case)
-        ? `<a class="pj__media" href="/case-studies/${p.case}/"><img src="${img(p.case, 'cover.webp')}" alt="${cap}" loading="lazy"></a>`
-        : `<div class="pj__media pj__media--empty" aria-hidden="true">${icon(SVC_ICON[p.service])}</div>`
+        ? `<a class="pj__media" href="${url}"><img src="${img(p.case, 'cover.webp')}" alt="${cap}" loading="lazy"></a>`
+        : `<a class="pj__media pj__media--empty" href="${url}" aria-label="${cap}">${icon(SVC_ICON[p.service])}</a>`
     return `
       <li class="pj" data-service="${p.service}">
         ${media}
@@ -333,7 +337,7 @@ function archive() {
           <p class="pj__title">${p.title}</p>
           <dl class="pj__facts"><div><dt>When</dt><dd>${p.period}</dd></div><div><dt>${p.service === 'research' ? 'Sample' : 'Stores'}</dt><dd>${p.stores === null ? '–' : fmt(p.stores)}</dd></div></dl>
           <p class="pj__where">${icon('pin')}${p.countries.join(' · ')}</p>
-          ${p.case ? `<a class="pj__case" href="/case-studies/${p.case}/">Read the case study ${icon('arrow')}</a>` : ''}
+          <a class="pj__case" href="${url}">${p.case ? 'Read the case study' : 'View project'} ${icon('arrow')}</a>
         </div>
       </li>`
   }
@@ -341,12 +345,12 @@ function archive() {
     <section class="archive" id="archive">
       <div class="wrap">
         <div class="section-head section-head--row">
-          <div><p class="label">Project archive</p><h2 class="h2">Every programme, on record.</h2></div>
-          <p class="archive__note">From Niche's own project log: when each programme ran, where, and how many stores it covered. Open a card with photos to see the shelves.</p>
+          <div><p class="label">Project archive</p><h2 class="h2">Project archive.</h2></div>
+          <p class="archive__note">A record of completed projects, with dates, countries and the number of stores covered. Select a project to view its details and photos.</p>
         </div>
         <ul class="archive__facts">
-          <li><b>${projects.length}</b>programmes</li>
-          <li><b>${fmt(stores)}</b>stores covered, programme by programme</li>
+          <li><b>${projects.length}</b>projects</li>
+          <li><b>${fmt(stores)}</b>stores covered in total</li>
           <li><b>${countries}</b>countries</li>
         </ul>
         <div class="chips chips--light" role="group" aria-label="Filter the archive" data-pj-filters>
@@ -354,7 +358,7 @@ function archive() {
           ${svcKeys.map(k => `<button class="chip" type="button" data-pf="${k}">${PROJECT_SERVICE[k]} <small>${projects.filter(p => p.service === k).length}</small></button>`).join('')}
         </div>
         <ul class="pgrid" data-pgrid>${projects.map(card).join('')}</ul>
-        <button class="btn btn--ghost-dark pgrid__more" type="button" data-pj-more>Show all programmes</button>
+        <button class="btn btn--ghost-dark pgrid__more" type="button" data-pj-more>Show all projects</button>
       </div>
     </section>`
 }
@@ -366,21 +370,21 @@ function casesIndex() {
       <div class="wrap">
         ${crumbs([['Case studies']])}
         <p class="label">Case studies</p>
-        <h1 class="phero__title">${cases.length} case studies. <em>${projects.length} programmes on record.</em></h1>
-        <p class="phero__lead">Audits, field forces, mystery shopping, research, activations, installations, production and logistics for the world's great brands. Every number comes from the programme itself.</p>
+        <h1 class="phero__title">Field marketing <em>case studies.</em></h1>
+        <p class="phero__lead">${cases.length} case studies and ${projects.length} archived projects covering retail audits, merchandising, mystery shopping, market research, activations, installation, production and logistics. All figures are taken from the projects themselves.</p>
       </div>
     </section>
     ${work.replace('class="work"', 'class="work work--page"')}
     <section class="allcases" id="all">
       <div class="wrap">
-        <div class="section-head section-head--row"><div><p class="label">All case studies</p><h2 class="h2">Browse by service.</h2></div></div>
-        <div class="chips chips--light" role="group" aria-label="Filter case studies" data-grid-filters>${FILTERS.map(([k, n], i) => `<button class="chip${i ? '' : ' is-on'}" type="button" data-gf="${k}">${n}</button>`).join('')}</div>
+        <div class="section-head section-head--row"><div><p class="label">All case studies</p><h2 class="h2">Filter by service.</h2></div></div>
+        <div class="chips chips--light" role="group" aria-label="Filter case studies" data-grid-filters>${FILTERS.filter(([k]) => k === 'all' || cases.some(c => c.service === k)).map(([k, n], i) => `<button class="chip${i ? '' : ' is-on'}" type="button" data-gf="${k}">${i ? n : 'All case studies'}</button>`).join('')}</div>
         <ul class="cgrid" data-cgrid>${cases.map(caseCard).join('')}</ul>
       </div>
     </section>
     ${archive()}
-    ${cta({ title: 'Want results like these?', text: 'Tell us your brief. We reply within one working day with a plan and a price.' })}`
-  return shell({ title: 'Case Studies | Field Marketing Work Across MENA | Niche', desc: `${cases.length} case studies and ${projects.length} more programmes on record: retail audits, mystery shopping, research, merchandising, activations, installation, production and logistics.`, path: '/case-studies/', page: 'cases', body })
+    ${cta({ title: 'Planning a similar project?', text: 'Share your brief and we will respond within one working day with a proposed approach and pricing.' })}`
+  return shell({ title: 'Field Marketing Case Studies | UAE, Saudi Arabia & MENA | Niche', desc: `${cases.length} case studies and ${projects.length} archived projects: retail audits, mystery shopping, research, merchandising, activations, installation, production and logistics.`, path: '/case-studies/', page: 'cases', body })
 }
 
 function casePage(c, i) {
@@ -397,48 +401,126 @@ function casePage(c, i) {
           <ul class="csh__pills"><li><a href="/case-studies/?s=${c.service}">${SERVICE_LABEL[c.service]}</a></li>${c.where ? c.where.split(', ').map(w => `<li>${icon('pin')}${w}</li>`).join('') : ''}</ul>
           <h1 class="phero__title">${c.brand}</h1>
           <p class="csh__sub">${c.title}</p>
+          <p class="csh__lead">${c.challenge}</p>
           <dl class="csh__stats">${c.stats.map(([b, s]) => `<div><dt>${s}</dt><dd>${b}</dd></div>`).join('')}</dl>
+          <div class="phero__btns">
+            <a class="btn btn--red btn--lg" href="/contact/?service=${svcs[0]?.slug || ''}">Request a proposal ${icon('arrow')}</a>
+            ${list.length > 1 ? `<a class="btn btn--ghost btn--lg" href="#gallery">View project photos</a>` : `<a class="btn btn--ghost btn--lg" href="#story">Scope of work</a>`}
+          </div>
         </div>
         ${list.length
-          ? `<figure class="csh__img"><img src="${img(c.slug, list.slice().sort((a, b) => b[1] * b[2] - a[1] * a[2])[0][0])}" alt="${esc(`${c.brand}: ${c.title}`)}"></figure>`
+          ? `<figure class="csh__img"><img src="${img(c.slug, list[0][0])}" alt="${esc(`${c.brand}: ${c.title}`)}"></figure>`
           : `<figure class="csh__img csh__img--empty" aria-hidden="true">${icon(SVC_ICON[c.service])}<span>${SERVICE_LABEL[c.service]}</span></figure>`}
       </div>
     </section>
 
-    <section class="story">
+    <section class="story" id="story">
       <div class="wrap story__grid">
         <ol class="story__steps">
-          <li><span>${icon('brief')}</span><div><p class="label">The challenge</p><p class="story__big">${c.challenge}</p></div></li>
           <li><span>${icon('users')}</span><div><p class="label">What we did</p><ul class="story__did">${c.did.map(d => `<li>${icon('check')}${d}</li>`).join('')}</ul></div></li>
           <li><span>${icon('dashboard')}</span><div><p class="label">The result</p><p class="story__big story__big--red">${c.result}</p></div></li>
         </ol>
         <aside class="story__side">
           <p class="label">Services used</p>
           <ul class="story__svcs">${svcs.map(s => `<li><a href="${svcUrl(s)}">${icon(s.icon)}<span><b>${s.name}</b><small>${s.line}</small></span>${icon('arrow', 'ico story__go')}</a></li>`).join('')}</ul>
-          <a class="btn btn--red" href="/contact/?service=${svcs[0]?.slug || ''}">Start a similar project ${icon('arrow')}</a>
+          <a class="btn btn--red" href="/contact/?service=${svcs[0]?.slug || ''}">Request a proposal ${icon('arrow')}</a>
         </aside>
       </div>
     </section>
 
     ${list.length > 1 ? `
-    <section class="infield infield--case">
+    <section class="infield infield--case" id="gallery">
       <div class="wrap">
-        <div class="section-head"><p class="label">Gallery</p><h2 class="h2">From the programme.</h2></div>
-        <div class="masonry" data-lightbox>${list.map(([f, w, h]) => `<a href="${img(c.slug, f)}" data-caption="${esc(`${c.brand}: ${c.title}`)}" style="--ar:${(w / h).toFixed(3)}"><img src="${img(c.slug, f)}" alt="${esc(c.brand)}" loading="lazy"></a>`).join('')}</div>
+        <div class="section-head"><p class="label">Gallery</p><h2 class="h2">Project photos.</h2></div>
+        <div class="masonry masonry--static">${list.map(([f, w, h]) => `<figure style="--ar:${(w / h).toFixed(3)}"><img src="${img(c.slug, f)}" alt="${esc(`${c.brand}: ${c.title}`)}" loading="lazy"></figure>`).join('')}</div>
       </div>
     </section>` : ''}
 
     <section class="more">
       <div class="wrap">
-        ${same.length ? `<div class="section-head section-head--row"><div><p class="label">More ${SERVICE_LABEL[c.service].toLowerCase()}</p><h2 class="h2">Related programmes.</h2></div><a class="link-more" href="/case-studies/?s=${c.service}">See all ${icon('arrow')}</a></div><ul class="cgrid cgrid--3">${same.map(caseCard).join('')}</ul>` : ''}
+        ${same.length ? `<div class="section-head section-head--row"><div><p class="label">More ${SERVICE_LABEL[c.service].toLowerCase()}</p><h2 class="h2">Related case studies.</h2></div><a class="link-more" href="/case-studies/?s=${c.service}">See all ${icon('arrow')}</a></div><ul class="cgrid cgrid--3">${same.map(caseCard).join('')}</ul>` : ''}
         <div class="pn">
           <a class="pn__a" href="${caseUrl(prev)}"><small>← Previous case</small><b>${prev.brand}</b></a>
           <a class="pn__a pn__a--next" href="${caseUrl(next)}"><small>Next case →</small><b>${next.brand}</b></a>
         </div>
       </div>
     </section>
-    ${cta({ title: 'Start a similar project.', href: `/contact/?service=${svcs[0]?.slug || ''}`, label: 'Get a proposal' })}`
+    ${cta({ title: 'Planning a similar project?', href: `/contact/?service=${svcs[0]?.slug || ''}`, label: 'Get a proposal' })}`
   return shell({ title: `${c.brand}: ${c.title} | Niche Case Study`, desc: `${c.challenge} ${c.result}`.slice(0, 155), path: caseUrl(c), page: 'case', body })
+}
+
+// An archive project without a case study: the facts from the project log and its photos.
+function projectPage(p, i) {
+  const list = standaloneProjects
+  const prev = list[(i - 1 + list.length) % list.length], next = list[(i + 1) % list.length]
+  const svc = svcBy[PRIMARY[p.service]]
+  const same = list.filter(x => x.service === p.service && x.slug !== p.slug).slice(0, 3)
+  const cap = esc(`${p.brand}: ${p.title}`)
+  const pimg = f => `/projects/${p.slug}/${f}`
+  const [stat, statLabel] = projectStat(p)
+  const card = x => `
+  <li data-service="${x.service}"><a class="cc${x.photos.length ? '' : ' cc--empty'}" href="/case-studies/${x.slug}/">
+    ${x.photos.length ? `<img src="/projects/${x.slug}/cover.webp" alt="" loading="lazy">` : `<span class="cc__ph" aria-hidden="true">${icon(SVC_ICON[x.service])}</span>`}
+    <span class="cc__pill">${SERVICE_LABEL[x.service]}</span>
+    <span class="cc__stat"><b>${projectStat(x)[0]}</b>${projectStat(x)[1]}</span>
+    <span class="cc__meta"><b>${x.brand}</b><span>${x.title}</span></span>
+  </a></li>`
+  const big = p.photos[0]   // 01 is the hand-picked lead photo
+  const body = `
+    <section class="phero phero--case">
+      ${p.photos.length ? `<div class="phero__bg" style="background-image:url('${pimg('cover.webp')}')"></div>` : ''}
+      <div class="wrap csh">
+        <div class="csh__copy">
+          ${crumbs([['Case studies', '/case-studies/'], [p.brand]])}
+          <ul class="csh__pills"><li><a href="/case-studies/?s=${p.service}">${SERVICE_LABEL[p.service]}</a></li>${p.countries.map(w => `<li>${icon('pin')}${w}</li>`).join('')}</ul>
+          <h1 class="phero__title">${p.brand}</h1>
+          <p class="csh__sub">${p.title}</p>
+          <p class="csh__lead">${p.title} for ${p.brand}${typeof p.stores === 'number' ? `, covering ${stat} ${statLabel}` : ''} in ${p.countries.join(', ')}.</p>
+          <dl class="csh__stats">${typeof p.stores === 'number' ? `<div><dt>${statLabel}</dt><dd>${stat}</dd></div>` : ''}<div><dt>countries</dt><dd>${p.countries.length}</dd></div><div><dt>period</dt><dd>${p.period}</dd></div></dl>
+          <div class="phero__btns">
+            <a class="btn btn--red btn--lg" href="/contact/?service=${svc?.slug || ''}">Request a proposal ${icon('arrow')}</a>
+            ${p.photos.length > 1 ? `<a class="btn btn--ghost btn--lg" href="#gallery">View project photos</a>` : svc ? `<a class="btn btn--ghost btn--lg" href="${svcUrl(svc)}">About ${svc.name.toLowerCase()}</a>` : ''}
+          </div>
+        </div>
+        ${big
+          ? `<figure class="csh__img"><img src="${pimg(big[0])}" alt="${cap}"></figure>`
+          : `<figure class="csh__img csh__img--empty" aria-hidden="true">${icon(SVC_ICON[p.service])}<span>${SERVICE_LABEL[p.service]}</span></figure>`}
+      </div>
+    </section>
+
+    <section class="story">
+      <div class="wrap story__grid">
+        <ol class="story__steps">
+          <li><span>${icon('pin')}</span><div><p class="label">Markets</p><p class="story__big">${p.countries.join(', ')}</p></div></li>
+          <li><span>${icon('calendar')}</span><div><p class="label">Period</p><p class="story__big">${p.period}</p></div></li>
+        </ol>
+        <aside class="story__side">
+          <p class="label">Service</p>
+          <ul class="story__svcs">${svc ? `<li><a href="${svcUrl(svc)}">${icon(svc.icon)}<span><b>${svc.name}</b><small>${svc.line}</small></span>${icon('arrow', 'ico story__go')}</a></li>` : ''}</ul>
+          <a class="btn btn--red" href="/contact/?service=${svc?.slug || ''}">Request a proposal ${icon('arrow')}</a>
+        </aside>
+      </div>
+    </section>
+
+    ${p.photos.length > 1 ? `
+    <section class="infield infield--case" id="gallery">
+      <div class="wrap">
+        <div class="section-head"><p class="label">Gallery</p><h2 class="h2">Project photos.</h2></div>
+        <div class="masonry masonry--static">${p.photos.map(([f, w, h]) => `<figure style="--ar:${(w / h).toFixed(3)}"><img src="${pimg(f)}" alt="${cap}" loading="lazy"></figure>`).join('')}</div>
+      </div>
+    </section>` : ''}
+
+    <section class="more">
+      <div class="wrap">
+        ${same.length ? `<div class="section-head section-head--row"><div><p class="label">More ${SERVICE_LABEL[p.service].toLowerCase()}</p><h2 class="h2">Related projects.</h2></div><a class="link-more" href="/case-studies/?p=${p.service}#archive">See all ${icon('arrow')}</a></div><ul class="cgrid cgrid--3">${same.map(card).join('')}</ul>` : ''}
+        <div class="pn">
+          <a class="pn__a" href="/case-studies/${prev.slug}/"><small>← Previous project</small><b>${prev.brand}</b></a>
+          <a class="pn__a pn__a--next" href="/case-studies/${next.slug}/"><small>Next project →</small><b>${next.brand}</b></a>
+        </div>
+      </div>
+    </section>
+    ${cta({ title: 'Planning a similar project?', href: `/contact/?service=${svc?.slug || ''}`, label: 'Get a proposal' })}`
+  return shell({ title: `${p.brand}: ${p.title} | Niche Project`, desc: `${p.title} for ${p.brand} in ${p.countries.join(', ')}, ${p.period}. Delivered by Niche Marketing Management.`.slice(0, 155), path: `/case-studies/${p.slug}/`, page: 'case', body })
 }
 
 function aboutPage() {
@@ -448,14 +530,14 @@ function aboutPage() {
       <div class="wrap">
         ${crumbs([['About']])}
         <p class="label">About Niche</p>
-        <h1 class="phero__title">The eyes and ears of great brands, <em>since 2003.</em></h1>
-        <p class="phero__lead">Niche Marketing Management is a privately owned field marketing company, founded and headquartered in Dubai. Our own trained teams audit, merchandise, promote and install for brands across the Middle East, North Africa and Asia.</p>
+        <h1 class="phero__title">A field marketing company, <em>established in 2003.</em></h1>
+        <p class="phero__lead">Niche Marketing Management is a privately owned field marketing company, founded and headquartered in Dubai. Our trained staff provide retail audits, merchandising, promotions and installation services for brands across the Middle East, North Africa and Asia.</p>
         <ol class="milestones">
           <li><b>2003</b><span>Founded in Dubai</span></li>
           <li><b>17</b><span>Countries in the network</span></li>
           <li><b>20+</b><span>Operational offices</span></li>
           <li><b>250+</b><span>People on the team</span></li>
-          <li><b>Today</b><span>One partner for MENA</span></li>
+          <li><b>Today</b><span>One contact across MENA</span></li>
         </ol>
       </div>
     </section>
@@ -467,7 +549,7 @@ function aboutPage() {
     <!--@how-->
     <!--@clients-->
     ${cta()}`
-  return shell({ title: 'About Niche Marketing Management | Field Marketing in MENA since 2003', desc: 'Privately owned field marketing company founded in Dubai in 2003. 250+ people, 20+ offices, 17 countries across MENA and Asia.', path: '/about/', page: 'about', body })
+  return shell({ title: 'About Niche Marketing Management | Field Marketing Company in Dubai', desc: 'Niche Marketing Management is a privately owned field marketing company founded in Dubai in 2003, with 250+ staff and 20+ offices in 17 countries.', path: '/about/', page: 'about', body })
 }
 
 function contactPage() {
@@ -479,7 +561,7 @@ function contactPage() {
           <div class="hq__map"><iframe src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d7432.19812453821!2d55.332878!3d25.269051!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3e5f5dcd76955db1%3A0xba643ed7ff92c1!2sNiche%20Star%20Advertising%20Billboards%20Contracting%20and%20Design%20LLC!5e1!3m2!1sen!2sae!4v1745681455603!5m2!1sen!2sae" title="Map: Niche head office, Al Khabaisi, Deira, Dubai" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe></div>
           <div class="hq__card">
             <p class="label">Head office</p>
-            <h2 class="hq__title">Dubai, <em>since 2003.</em></h2>
+            <h2 class="hq__title">Dubai head office.</h2>
             <p class="hq__addr">11A St, Al Khabaisi, Deira<br>Dubai, United Arab Emirates<br>PO Box 81605</p>
             <ul class="hq__list">
               <li>${icon('call')}<a href="tel:+97142978868">+971 4 297 8868</a></li>
@@ -489,29 +571,29 @@ function contactPage() {
             <a class="btn btn--red" href="https://www.google.com/maps/dir/?api=1&amp;destination=25.269051,55.332878" target="_blank" rel="noopener">Get directions ${icon('arrow')}</a>
           </div>
         </div>
-        <div class="section-head section-head--row"><div><p class="label">Offices</p><h2 class="h2">Wherever you need us.</h2></div><a class="link-more" href="/about/#network">About our network ${icon('arrow')}</a></div>
+        <div class="section-head section-head--row"><div><p class="label">Offices</p><h2 class="h2">Regional offices.</h2></div><a class="link-more" href="/about/#network">About our network ${icon('arrow')}</a></div>
         <div class="board" data-board></div>
       </div>
     </section>
     <section class="svfaq">
       <div class="wrap svfaq__grid">
-        <div class="section-head"><p class="label">Questions</p><h2 class="h2">Before you send a brief.</h2><p class="lead">Or browse our <a href="/services/">services</a> and <a href="/case-studies/">case studies</a>.</p></div>
+        <div class="section-head"><p class="label">Questions</p><h2 class="h2">Frequently asked questions.</h2><p class="lead">Or browse our <a href="/services/">services</a> and <a href="/case-studies/">case studies</a>.</p></div>
         ${faq(FAQ({ name: '' }))}
       </div>
     </section>`
-  return shell({ title: 'Contact Niche | Get a Field Marketing Proposal', desc: 'Send a brief to Niche Marketing Management in Dubai. We reply within one working day with a plan and a price. +971 4 297 8868 · info@nicheme.com', path: '/contact/', page: 'contact', body })
+  return shell({ title: 'Contact Niche Marketing Management | Dubai, UAE', desc: 'Contact Niche Marketing Management in Dubai to request a field marketing proposal. We respond within one working day. +971 4 297 8868 · info@nicheme.com', path: '/contact/', page: 'contact', body })
 }
 
 // Role families we hire for. Not live vacancies: openings follow the programmes.
 export const ROLES = [
-  ['merch', 'Merchandiser', 'Field', 'Keep shelves full, faced and on planogram in every store on your route.'],
-  ['audit', 'Retail auditor', 'Field', 'Check availability, pricing and displays, and report every visit with photos.'],
-  ['mystery', 'Mystery shopper', 'Field', 'Visit stores and showrooms as a customer and score the experience.'],
-  ['ambassador', 'Brand ambassador / promoter', 'Field', 'Represent great brands in store, at events and on sampling stands.'],
-  ['route', 'Field supervisor', 'Field', 'Lead a team on the road, check quality and keep routes on time.'],
-  ['install', 'Installation & production crew', 'Workshop', 'Build and install the displays, fixtures and POSM we make in-house.'],
-  ['dashboard', 'Data & reporting analyst', 'Office', 'Turn field data into client-ready reports within 24 hours.'],
-  ['handshake', 'Account & project manager', 'Office', 'Plan programmes with clients and keep every market on track.'],
+  ['merch', 'Merchandiser', 'Field', 'Maintain stock levels, facings and planogram compliance in assigned stores.'],
+  ['audit', 'Retail auditor', 'Field', 'Record availability, pricing and displays, and submit visit reports with photos.'],
+  ['mystery', 'Mystery shopper', 'Field', 'Visit stores and showrooms as a customer and evaluate the service provided.'],
+  ['ambassador', 'Brand ambassador / promoter', 'Field', 'Represent client brands in store, at events and during sampling campaigns.'],
+  ['route', 'Field supervisor', 'Field', 'Supervise field teams, check work quality and manage route schedules.'],
+  ['install', 'Installation & production crew', 'Workshop', 'Produce and install displays, fixtures and POSM made in-house.'],
+  ['dashboard', 'Data & reporting analyst', 'Office', 'Prepare client reports from field data within 24 hours.'],
+  ['handshake', 'Account & project manager', 'Office', 'Plan projects with clients and manage delivery across markets.'],
 ]
 const COUNTRIES17 = ['United Arab Emirates', 'Saudi Arabia', 'Qatar', 'Kuwait', 'Oman', 'Bahrain', 'Jordan', 'Lebanon', 'Syria', 'Iraq', 'Egypt', 'Morocco', 'Tunisia', 'Algeria', 'Yemen', 'Pakistan', 'Mauritius']
 
@@ -522,17 +604,17 @@ function careersPage() {
         <div>
           ${crumbs([['Careers']])}
           <p class="label">Careers</p>
-          <h1 class="phero__title">Be the eyes and ears <em>of great brands.</em></h1>
-          <p class="phero__lead">250+ people work directly for Niche in 17 countries: on the shop floor, on the road, in our workshop and in the Dubai data team that turns every visit into a report.</p>
+          <h1 class="phero__title">Careers in <em>field marketing.</em></h1>
+          <p class="phero__lead">Niche employs 250+ staff directly across 17 countries, in field, workshop and office roles, including our Dubai-based reporting team.</p>
           <div class="phero__btns">
             <a class="btn btn--red btn--lg" href="#apply">Apply now ${icon('arrow')}</a>
             <a class="btn btn--ghost btn--lg" href="#roles">See the roles</a>
           </div>
         </div>
         <div class="crh" aria-hidden="true">
-          <img class="crh__a" src="/work/mentos-air-action-sampling/02.webp" alt="">
-          <img class="crh__b" src="/work/natour-ghee-union-coop-activation/01.webp" alt="">
-          <img class="crh__c" src="/work/proyouth-spinneys-waitrose-activation/02.webp" alt="">
+          <img class="crh__a" src="/work/mentos-air-action-sampling/06.webp" alt="">
+          <img class="crh__b" src="/work/gorilla-energy-promotion-logistics/03.webp" alt="">
+          <img class="crh__c" src="/work/gorilla-energy-promotion-logistics/01.webp" alt="">
           <div class="crh__chip crh__chip--red"><b>250+</b><span>people, employed directly</span></div>
           <div class="crh__chip"><b>17</b><span>countries to work in</span></div>
         </div>
@@ -541,11 +623,11 @@ function careersPage() {
 
     <section class="perks">
       <div class="wrap">
-        <div class="section-head"><p class="label">Why Niche</p><h2 class="h2">A field team that stays together.</h2></div>
+        <div class="section-head"><p class="label">Why Niche</p><h2 class="h2">Working at Niche.</h2></div>
         <ul class="perks__grid">
-          <li>${icon('users')}<b>Employed by Niche</b><p>Our field teams work for us directly, not through an outside agency.</p></li>
-          <li>${icon('globe')}<b>17 countries, 20+ offices</b><p>Work close to home in any of our markets, from the Gulf to North Africa and Pakistan.</p></li>
-          <li>${icon('brief')}<b>Trained before the field</b><p>Every programme starts with training on the brand, the outlets and the reporting app.</p></li>
+          <li>${icon('users')}<b>Employed by Niche</b><p>Field staff are employed by Niche directly, not through a third-party agency.</p></li>
+          <li>${icon('globe')}<b>17 countries, 20+ offices</b><p>Opportunities across our markets in the Gulf, North Africa and Pakistan.</p></li>
+          <li>${icon('brief')}<b>Training provided</b><p>Each project begins with training on the brand, the outlets and the reporting app.</p></li>
           <li>${icon('calendar')}<b>Since 2003</b><p>A privately owned company, founded and headquartered in Dubai.</p></li>
         </ul>
       </div>
@@ -553,7 +635,7 @@ function careersPage() {
 
     <section class="roles" id="roles">
       <div class="wrap">
-        <div class="section-head section-head--row"><div><p class="label">Roles</p><h2 class="h2">Where you could fit in.</h2></div><p class="roles__note">Openings follow our programmes. Pick a role and a country, and we keep your CV on file for the next one.</p></div>
+        <div class="section-head section-head--row"><div><p class="label">Roles</p><h2 class="h2">Roles we recruit for.</h2></div><p class="roles__note">Vacancies depend on current projects. Select a role and country, and we will keep your CV on file for suitable openings.</p></div>
         <ul class="roles__grid">${ROLES.map(([ic, name, where, line], i) => `
           <li><a class="role" href="#apply" data-role="${esc(name)}" style="--k:${i}">
             <span class="role__top">${icon(ic, 'ico role__ico')}<em>${where}</em></span>
@@ -566,13 +648,13 @@ function careersPage() {
 
     <section class="how how--careers" id="how">
       <div class="wrap">
-        <div class="section-head"><p class="label">How hiring works</p><h2 class="h2">From CV to shop floor.</h2></div>
+        <div class="section-head"><p class="label">How hiring works</p><h2 class="h2">Recruitment process.</h2></div>
         <div class="steps__line" aria-hidden="true"><i data-steps-fill></i></div>
         <ol class="steps">
           <li><span>01</span>${icon('mail', 'step__ico')}<h3>Apply</h3><p>Send your details and CV. Tell us the role and the country.</p></li>
           <li><span>02</span>${icon('call', 'step__ico')}<h3>Meet us</h3><p>A call or a meeting with the team in your country.</p></li>
           <li><span>03</span>${icon('brief', 'step__ico')}<h3>Training</h3><p>The brand, the outlets, the standards and the reporting app.</p></li>
-          <li><span>04</span>${icon('store', 'step__ico')}<h3>In the field</h3><p>Your first route, with a supervisor close by.</p></li>
+          <li><span>04</span>${icon('store', 'step__ico')}<h3>In the field</h3><p>Your first assignment, supported by a supervisor.</p></li>
         </ol>
       </div>
     </section>
@@ -610,7 +692,7 @@ function careersPage() {
         </form>
       </div>
     </section>`
-  return shell({ title: 'Careers at Niche | Field Marketing Jobs in Dubai & MENA', desc: 'Join 250+ people at Niche Marketing Management: merchandisers, auditors, mystery shoppers, promoters, supervisors and office roles across 17 countries.', path: '/careers/', page: 'careers', body })
+  return shell({ title: 'Careers | Field Marketing Jobs in Dubai, UAE & MENA | Niche', desc: 'Field marketing jobs at Niche Marketing Management: merchandisers, retail auditors, mystery shoppers, promoters, supervisors and office roles in 17 countries.', path: '/careers/', page: 'careers', body })
 }
 
 // ---------------------------------------------------------------- write
@@ -621,6 +703,7 @@ export function writePages() {
     ...SVCS.map((s, i) => [`services/${s.slug}/index.html`, servicePage(s, i)]),
     ['case-studies/index.html', casesIndex()],
     ...cases.map((c, i) => [`case-studies/${c.slug}/index.html`, casePage(c, i)]),
+    ...standaloneProjects.map((p, i) => [`case-studies/${p.slug}/index.html`, projectPage(p, i)]),
     ['about/index.html', aboutPage()],
     ['contact/index.html', contactPage()],
     ['careers/index.html', careersPage()],
@@ -635,5 +718,7 @@ export function writePages() {
   return inputs
 }
 
-export const GENERATED = { header, 'services-grid': servicesGrid, cta: () => cta() }
+const workChips = () => `<div class="chips" role="group" aria-label="Filter projects">${FILTERS.map(([k, n], i) => `<button class="chip${i ? '' : ' is-on'}" type="button" data-filter="${k}" aria-pressed="${!i}">${i ? n : 'All'}</button>`).join('')}</div>`
+
+export const GENERATED = { header, 'services-grid': servicesGrid, cta: () => cta(), 'work-chips': workChips }
 export { existsSync }

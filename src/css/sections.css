@@ -236,7 +236,7 @@ section { position: relative; }
 .w3__track.is-focus .w3__line.on { stroke: var(--red); stroke-width: 2.2; }
 .w3__track.is-focus .w3__flow.on { opacity: 1; }
 
-.w3__card { position: absolute; width: 340px; height: 422px; border-radius: 20px; overflow: hidden; background: #1a1a1a; color: #fff; text-align: left; padding: 0; transform: translateZ(0); transition: transform .5s var(--ease), opacity .4s, box-shadow .4s; box-shadow: 0 30px 60px -30px rgba(0,0,0,.9), inset 0 0 0 1px rgba(255,255,255,.08); }
+.w3__card { display: block; text-decoration: none; -webkit-user-drag: none; position: absolute; width: 340px; height: 422px; border-radius: 20px; overflow: hidden; background: #1a1a1a; color: #fff; text-align: left; padding: 0; transform: translateZ(0); transition: transform .5s var(--ease), opacity .4s, box-shadow .4s; box-shadow: 0 30px 60px -30px rgba(0,0,0,.9), inset 0 0 0 1px rgba(255,255,255,.08); }
 .w3__card img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; filter: grayscale(1) brightness(.75); transition: filter .5s, transform .8s var(--ease); pointer-events: none; }
 .w3__card::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, rgba(10,10,10,.9) 18%, rgba(10,10,10,0) 62%); transition: background .4s; }
 .w3__pill { position: absolute; left: 16px; top: 16px; z-index: 1; font-size: 13px; font-weight: 500; background: rgba(10,10,10,.72); padding: 4px 10px; border-radius: 999px; box-shadow: inset 0 0 0 1px rgba(255,255,255,.15); }
