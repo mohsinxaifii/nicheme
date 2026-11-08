@@ -12,7 +12,7 @@ import { initSearch } from './modules/search.js'
 import {
   initNav, initAnchors, initHeroIntro, initCounters, initLogos, initReveals, initForm,
   initSteps, initActiveNav, initBento, initBoard, initGroup, initAccordion, initFooter,
-  initLightbox, initCaseGrid, initCountUps, initApply, initArchive,
+  initLightbox, initCaseGrid, initCountUps, initApply, initArchive, initMasonry,
 } from './modules/ui.js'
 
 // show focus rings only for keyboard users, never after a click or tap
@@ -53,6 +53,7 @@ initBoard(ctx)
 initGroup(ctx)
 initAccordion()
 initLightbox(ctx)
+initMasonry()
 initCaseGrid()
 initApply()
 initArchive()

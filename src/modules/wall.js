@@ -13,7 +13,7 @@ const FEATURED = new Set(['red-bull-perfect-store-audits', 'mentos-air-action-sa
 const href = c => `${BASE}case-studies/${c.slug}/`
 
 const ROWS = 2
-const SVC_ICON = { audits: 'audit', merch: 'merch', mystery: 'mystery', research: 'research', activation: 'promo', sampling: 'sampling', events: 'events', reporting: 'reporting', digital: 'digital' }
+const SVC_ICON = { audits: 'audit', merch: 'merch', mystery: 'mystery', research: 'research', activation: 'promo', sampling: 'sampling', events: 'events', reporting: 'reporting', digital: 'digital', production: 'production', install: 'install' }
 const CW = 340, CH = 422, GX = 84, GY = 56            // card size and gaps (px, wall space); keep in step with .w3__card in sections.css
 const CELLX = CW + GX, CELLY = CH + GY
 
@@ -45,8 +45,17 @@ export function initWall({ lenis, reduced }) {
     copies = copiesNeeded()
 
     // network: link each project to the next one of the same service
+    // network. Single-service tabs: each card to the next one. "All": the same neighbour chain,
+    // plus vertical links where a card sits over a same-service card in the other row. (Linking
+    // all same-service cards there made long curves that flew out of the section.)
     const links = []
-    Object.keys(SERVICE_LABEL).forEach(svc => {
+    if (filter === 'all') {
+      for (let k = 1; k < list.length; k++) links.push([list[k - 1], list[k], cases[list[k]].service])
+      for (const a of list) for (const b of list) {
+        const A = pos.get(a), B = pos.get(b)
+        if (A.y < B.y && Math.abs(A.x - B.x) <= CELLX * 0.6 && cases[a].service === cases[b].service) links.push([a, b, cases[a].service])
+      }
+    } else Object.keys(SERVICE_LABEL).forEach(svc => {
       const idx = list.filter(i => cases[i].service === svc)
       for (let k = 1; k < idx.length; k++) links.push([idx[k - 1], idx[k], svc])
     })
@@ -100,12 +109,8 @@ export function initWall({ lenis, reduced }) {
     paths.forEach(p => p.classList.toggle('on', !!svc && p.dataset.svc === svc))
     cards.forEach(c => c.classList.toggle('on', !!svc && (linked.has(+c.dataset.i) || c.dataset.service === svc)))
   }
-  track.addEventListener('pointerover', e => {
-    const c = e.target.closest('.w3__card')
-    const i = c ? +c.dataset.i : null
-    if (i !== focus) { focus = i; paint() }
-  })
-  track.addEventListener('pointerleave', () => { focus = null; paint() })
+  // Hovering a card only lifts that card (CSS), on every tab. The old "light up the
+  // whole category" highlight on All was removed: it restyled every card on each move.
 
   // how many copies of a set fill the stage (the plane is tilted and scaled on small screens)
   // The track's left edge always stays at least OFF px left of the plane (the tilted view shows
@@ -124,8 +129,7 @@ export function initWall({ lenis, reduced }) {
     filter = f
     chips.forEach(c => { const on = c.dataset.filter === f; c.classList.toggle('is-on', on); c.setAttribute('aria-pressed', on) })
     // the network highlight only exists on "All": say so in the hint
-    if (hint) hint.lastChild.textContent = !matchMedia('(hover: hover)').matches ? 'Drag to explore · tap a project to open it'
-      : f === 'all' ? 'Drag to explore · hover a project to see its network' : 'Drag to explore · select a project to open it'
+    if (hint) hint.lastChild.textContent = !matchMedia('(hover: hover)').matches ? 'Drag to explore · tap a project to open it' : 'Drag to explore · select a project to open it'
     const swap = () => {
       build(f)
       x = target = 0
@@ -168,10 +172,8 @@ export function initWall({ lenis, reduced }) {
   // only for keyboard focus: a mouse click also focuses the link, and must not move the wall
   track.addEventListener('focusin', e => {
     const c = e.target.closest('.w3__card'); if (!c || !document.documentElement.classList.contains('kbd') || c.tabIndex < 0) return
-    focus = +c.dataset.i; paint()
     target = -(pos.get(focus).x - stage.clientWidth * 0.35)
   })
-  track.addEventListener('focusout', () => { focus = null; paint() })
 
   let visible = false
   new IntersectionObserver(([e]) => { visible = e.isIntersecting; stage.classList.toggle('is-live', visible) }).observe(stage)

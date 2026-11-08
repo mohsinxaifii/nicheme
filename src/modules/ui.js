@@ -125,7 +125,7 @@ export function initReveals({ reduced }) {
 
 // ---------------------------------------------------------------- contact: brief builder
 // short chip labels, keyed by slug so moving a service between groups can't mislabel a chip
-const SHORT_BY = { 'retail-audits': 'Retail audits', 'mystery-shopping': 'Mystery shopping', 'market-research': 'Market research', 'real-time-reporting': 'Real-time reporting', merchandising: 'Merchandising', 'brand-ambassadors': 'Brand ambassadors', 'fixture-installation': 'Fixtures & installation', 'promotions-activations': 'Promotions & activations', 'product-sampling': 'Product sampling', 'events-roadshows': 'Events & roadshows', 'production-posm': 'Production & POSM', logistics: 'Logistics', 'digital-marketing': 'Digital marketing', 'vehicle-tracking': 'Vehicle tracking' }
+// the brief form uses the services' own names, like every other list on the site
 const GCC = ['784', '682', '634', '414', '512', '048']
 const NAMES = Object.fromEntries(COUNTRY_LIST().map(([id, en]) => [id, en]))
 function COUNTRY_LIST() {
@@ -137,7 +137,7 @@ export async function initForm({ reduced } = {}) {
   const form = $('[data-form]')
   if (!form) return
   const svcList = groups.flatMap(g => g.services)
-  const full = svcList.map(s => s.name), icons = svcList.map(s => s.icon), SHORT = svcList.map(s => SHORT_BY[s.slug] || s.name)
+  const full = svcList.map(s => s.name), icons = svcList.map(s => s.icon), SHORT = svcList.map(s => s.name)
   const svcPicked = new Set(), where = new Set()
 
   // 1. service chips
@@ -563,6 +563,10 @@ export function initCaseGrid() {
   const set = k => {
     $$('[data-gf]', bar).forEach(b => b.classList.toggle('is-on', b.dataset.gf === k))
     $$('li', grid).forEach(li => { li.hidden = k !== 'all' && li.dataset.service !== k })
+    // cards that hadn't scrolled into view still carry a pending scroll reveal (opacity 0);
+    // filtering moves them up without that reveal ever firing, so cancel it and show them
+    $$('li', grid).forEach(li => { gsap.getTweensOf(li).forEach(t => { t.scrollTrigger?.kill(); t.kill() }); gsap.set(li, { clearProps: 'opacity,transform' }) })
+    ScrollTrigger.refresh()
     $$('li:not([hidden])', grid).forEach((li, n) => li.animate([{ opacity: 0, transform: 'translateY(14px)' }, { opacity: 1, transform: 'none' }], { duration: 450, delay: Math.min(n, 10) * 30, fill: 'backwards' }))
     const u = new URL(location); k === 'all' ? u.searchParams.delete('s') : u.searchParams.set('s', k); history.replaceState(null, '', u)
   }
@@ -639,4 +643,37 @@ export function initArchive() {
   })
   const q = new URLSearchParams(location.search).get('p')
   set(q && $(`[data-pf="${q}"]`, bar) ? q : 'all')
+}
+
+// ---------------------------------------------------------------- masonry
+// CSS columns balance by height, so a set like 9 equal photos fills only 3 of 4
+// columns. Lay galleries out as real columns instead: each photo goes into the
+// currently shortest column (by aspect ratio), in order. Re-runs when the column
+// count changes. Without JS the CSS columns layout still applies.
+export function initMasonry() {
+  const grids = [...document.querySelectorAll('.masonry--static')]
+  if (!grids.length) return
+  const colsFor = w => w >= 1000 ? 4 : w >= 700 ? 3 : 2
+  const items = grids.map(g => [...g.querySelectorAll(':scope > figure')])
+  let last = 0
+  const layout = () => {
+    const base = colsFor(grids[0].clientWidth || innerWidth)
+    if (base === last) return
+    last = base
+    grids.forEach((g, gi) => {
+      const n = Math.min(base, items[gi].length)   // same column count on every page
+      const cols = Array.from({ length: n }, () => { const c = document.createElement('div'); c.className = 'masonry__col'; return c })
+      const h = new Array(n).fill(0)
+      for (const fig of items[gi]) {
+        const ar = parseFloat(getComputedStyle(fig).getPropertyValue('--ar')) || 1
+        const k = h.indexOf(Math.min(...h))
+        cols[k].appendChild(fig); h[k] += 1 / ar
+      }
+      g.replaceChildren(...cols)
+      g.classList.add('masonry--js')
+    })
+  }
+  layout()
+  let t = 0
+  addEventListener('resize', () => { clearTimeout(t); t = setTimeout(layout, 150) })
 }

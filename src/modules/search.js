@@ -24,7 +24,7 @@ const escHtml = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&l
 let INDEX = null
 async function buildIndex() {
   if (INDEX) return INDEX
-  const SVC_ICON = { audits: 'audit', merch: 'merch', mystery: 'mystery', research: 'research', activation: 'promo', sampling: 'sampling', events: 'events', reporting: 'reporting', digital: 'digital' }
+  const SVC_ICON = { audits: 'audit', merch: 'merch', mystery: 'mystery', research: 'research', activation: 'promo', sampling: 'sampling', events: 'events', reporting: 'reporting', digital: 'digital', production: 'production', install: 'install' }
   const items = []
   const add = it => items.push({ ...it, _t: norm(it.title), _s: norm(it.sub), _k: norm(it.keys) })
 
@@ -57,7 +57,7 @@ async function buildIndex() {
     const [stat, label] = projectStat(p)
     add({
       type: 'case', title: p.brand, sub: [p.title, p.countries.join(', ')].join(' · '),
-      href: `/case-studies/${p.slug}/`, icon: SVC_ICON[p.service], thumb: p.photos.length ? `/projects/${p.slug}/cover.webp` : null,
+      href: `/case-studies/${p.slug}/`, icon: SVC_ICON[p.service], thumb: p.photos.length ? `/projects/${p.slug}/cover.webp` : p.stockCover ? `/${p.stockCover}` : null,
       keys: [p.title, SERVICE_LABEL[p.service], p.countries.join(' '), p.countries.includes('KSA') ? 'saudi arabia' : '', (p.programmes || []).map(x => x.title).join(' '), stat, label].join(' '), rank: projectScore(p) / 200,
     })
   })

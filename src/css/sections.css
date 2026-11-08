@@ -6,7 +6,7 @@ section { position: relative; }
 .kicker { display: inline-flex; align-items: center; gap: 10px; font-size: 14px; color: rgba(255,255,255,.7); }
 .kicker__dot { width: 8px; height: 8px; border-radius: 50%; background: var(--red); animation: pulse 2s infinite; }
 @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(228,35,27,.6); } 70%, 100% { box-shadow: 0 0 0 10px rgba(228,35,27,0); } }
-.hero__title { font-size: clamp(44px, 5.4vw, 96px); line-height: .98; font-weight: 600; letter-spacing: -.045em; margin: 24px 0; }
+.hero__title { font-size: clamp(38px, 4.2vw, 78px); line-height: .98; font-weight: 600; letter-spacing: -.045em; margin: 24px 0; }
 .hero__title em { font-style: normal; color: var(--red); }
 .hero__title .line { display: block; overflow: hidden; padding-bottom: .08em; margin-bottom: -.08em; white-space: nowrap; }
 .hero__title .line > span { display: inline-block; }

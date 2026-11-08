@@ -4,22 +4,22 @@
 import { readFileSync, writeFileSync, mkdirSync, rmSync, existsSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
 import { groups, allServices } from '../src/data/services.js'
-import { cases, SERVICE_LABEL } from '../src/data/cases.js'
+import { cases, SERVICE_LABEL, SERVICE_SLUG } from '../src/data/cases.js'
 import { photos } from '../src/data/photos.js'
-import { projects, PROJECT_SERVICE } from '../src/data/projects.js'
+import { projects } from '../src/data/projects.js'
 import { icon } from '../src/data/icons.js'
-import { workItems, standaloneProjects, projectStat, casesByContent, projectsByContent, caseScore, projectScore, byScore, caseGallery, caseCover, programmesOf } from '../src/data/work.js'
+import { workItems, standaloneProjects, projectStat, casesByContent, projectsByContent, caseScore, projectScore, byScore, caseGallery, caseCover } from '../src/data/work.js'
 
 const ROOT = resolve(import.meta.dirname, '..')
 const SVCS = allServices()
 const svcBy = Object.fromEntries(SVCS.map(s => [s.slug, s]))
 const caseBy = Object.fromEntries(cases.map(c => [c.slug, c]))
-const PRIMARY = { audits: 'retail-audits', mystery: 'mystery-shopping', research: 'market-research', merch: 'merchandising', activation: 'promotions-activations', sampling: 'product-sampling', events: 'events-roadshows', reporting: 'real-time-reporting', digital: 'digital-marketing' }
+const PRIMARY = SERVICE_SLUG
 // filters follow the client's project folders; a service with no work yet is left out
 const FILTERS = [['all', 'All case studies'], ...Object.entries(SERVICE_LABEL).filter(([k]) => workItems.some(w => w.service === k))]
 const countOf = k => k === 'all' ? workItems.length : workItems.filter(w => w.service === k).length
 // icon for a case or project with no photo yet (placeholder until photos are added)
-const SVC_ICON = { audits: 'audit', merch: 'merch', mystery: 'mystery', research: 'research', activation: 'promo', sampling: 'sampling', events: 'events', reporting: 'reporting', digital: 'digital' }
+const SVC_ICON = { audits: 'audit', merch: 'merch', mystery: 'mystery', research: 'research', activation: 'promo', sampling: 'sampling', events: 'events', reporting: 'reporting', digital: 'digital', production: 'production', install: 'install' }
 const hasPhotos = slug => !!caseCover(slug)
 // archive projects per service page
 const PROJECT_FOR_SERVICE = { 'retail-audits': 'audits', 'mystery-shopping': 'mystery', 'market-research': 'research' }
@@ -155,7 +155,12 @@ const caseCard = c => { const w = workBy[c.slug]; return `
   </a></li>` }
 const workIndex = slug => workItems.findIndex(w => w.slug === slug)
 const prevNext = slug => { const i = workIndex(slug), n = workItems.length; return [workItems[(i - 1 + n) % n], workItems[(i + 1) % n]] }
-const relatedWork = (slug, service) => workItems.filter(w => w.service === service && w.slug !== slug).slice(0, 3)
+// Related case studies: same category, a different mix on every page. The order is seeded
+// by the page's slug, so each page is stable between builds but pages don't all repeat the
+// same three. Cards with photos are picked before placeholders.
+const seeded = str => { let h = 2166136261; for (const ch of str) h = Math.imul(h ^ ch.charCodeAt(0), 16777619); return (h >>> 0) / 4294967296 }
+const relatedWork = (slug, service) => workItems.filter(w => w.service === service && w.slug !== slug)
+  .map(w => [(w.cover ? 0 : 1) + seeded(slug + '|' + w.slug), w]).sort((a, b) => a[0] - b[0]).slice(0, 3).map(x => x[1])
 
 const FAQ = s => [
   ['Which countries do you cover?', 'Our own teams work in 17 countries from 20+ offices: the UAE, Saudi Arabia, Qatar, Kuwait, Oman, Bahrain, Jordan, Lebanon, Syria, Iraq, Egypt, Morocco, Tunisia, Algeria, Yemen, Pakistan and Mauritius.'],
@@ -163,18 +168,6 @@ const FAQ = s => [
   [`Can we start ${s.name.toLowerCase().includes('vehicle') ? 'small' : 'in one market'}?`, 'Yes. Programmes can begin in a single city and expand across the region, with one account contact and centralised billing.'],
   ['How do we request a proposal?', 'Send a short brief outlining the service, markets and timing. We respond within one working day with a proposed approach and pricing.'],
 ]
-// programmes behind a case study or merged project, from the project log (no dates)
-const programmes = (x, brand) => {
-  const list = programmesOf(x)
-  if (!list.length) return ''
-  return `
-    <section class="progs">
-      <div class="wrap">
-        <div class="section-head"><p class="label">Programmes</p><h2 class="h2">${list.length === 1 ? 'Programme on record.' : `${list.length} programmes for ${brand}.`}</h2></div>
-        <ul class="progs__list">${list.map(p => `<li><b>${p.title}</b><span>${icon('pin')}${p.countries.join(' · ')}</span><em>${typeof p.stores === 'number' ? `<strong>${fmt(p.stores)}</strong> stores` : ''}</em></li>`).join('')}</ul>
-      </div>
-    </section>`
-}
 const faq = list => `<div class="faq">${list.map(([q, a], i) => `<details${i === 0 ? ' open' : ''}><summary><span>${q}</span><i class="faq__plus"></i></summary><p>${a}</p></details>`).join('')}</div>`
 
 // ---------------------------------------------------------------- pages
@@ -265,7 +258,7 @@ function trackRecord(s) {
   return `
     <section class="track">
       <div class="wrap track__in">
-        <div><p class="label">Track record</p><h2 class="track__title">${list.length} ${PROJECT_SERVICE[key].toLowerCase()} projects completed.</h2></div>
+        <div><p class="label">Track record</p><h2 class="track__title">${list.length} ${SERVICE_LABEL[key].toLowerCase()} case studies.</h2></div>
         <ul class="track__brands">${brands.map(b => `<li>${b}</li>`).join('')}</ul>
         <a class="link-more" href="/case-studies/?s=${key}">View all projects ${icon('arrow')}</a>
       </div>
@@ -274,13 +267,14 @@ function trackRecord(s) {
 
 function servicePage(s, i) {
   const prev = SVCS[(i - 1 + SVCS.length) % SVCS.length], next = SVCS[(i + 1) % SVCS.length]
-  const rel = s.cases.map(sl => caseBy[sl]).filter(Boolean).sort(byScore(caseScore))
+  const rel = s.cases.map(sl => caseBy[sl]).filter(Boolean).sort((a, b) => workIndex(a.slug) - workIndex(b.slug))   // same order as the case studies page
   const svcKey = Object.keys(PRIMARY).find(k => PRIMARY[k] === s.slug)
   const relAll = [...rel, ...(svcKey ? workItems.filter(w => w.service === svcKey && !rel.some(c => c.slug === w.slug)) : [])]
   // photos from every related case study and archive project, taken in turn (one from each, then
   // the next round) so no single programme fills the strip
   const key = Object.keys(PRIMARY).find(k => PRIMARY[k] === s.slug)
   const sources = [
+    ...(s.gallery ? [{ c: { brand: s.gallery.by, title: s.name }, list: s.gallery.photos.map(([f, w, h]) => [`${s.gallery.dir}/${f}`, w, h]) }] : []),
     ...rel.map(c => ({ c, list: caseGallery(c.slug) })),
     ...(key ? projectsByContent.filter(p => p.service === key && !p.case && p.photos.length).map(p => ({ c: p, list: p.photos.map(([f, w, h]) => [`projects/${p.slug}/${f}`, w, h]) })) : []),
   ].filter(x => x.list.length)
@@ -300,7 +294,8 @@ function servicePage(s, i) {
           <p class="phero__lead">${s.body}</p>
           <div class="phero__btns">
             <a class="btn btn--red btn--lg" href="/contact/?service=${s.slug}">Get a proposal ${icon('arrow')}</a>
-            ${relAll.length ? `<a class="btn btn--ghost btn--lg" href="#work">View case studies</a>` : s.link ? `<a class="btn btn--ghost btn--lg" href="${s.link}" target="_blank" rel="noopener">Visit Connexis</a>` : ''}
+            ${relAll.length ? `<a class="btn btn--ghost btn--lg" href="#work">View case studies</a>` : ''}
+            ${s.link ? `<a class="btn btn--ghost btn--lg" href="${s.link}" target="_blank" rel="noopener">${s.linkLabel || 'Visit website'} ${icon('arrow')}</a>` : ''}
           </div>
         </div>
         <div class="svh__media">
@@ -319,7 +314,7 @@ function servicePage(s, i) {
     ${gallery.length ? `
     <section class="infield" id="photos">
       <div class="wrap">
-        <div class="section-head"><p class="label">In the field</p><h2 class="h2">Project photography.</h2><p class="lead">All photographs are taken from Niche client projects.</p></div>
+        <div class="section-head"><p class="label">In the field</p><h2 class="h2">Project photography.</h2><p class="lead">All photographs are taken from Niche Group projects and operations.</p></div>
         <div class="masonry masonry--static">${gallery.map(g => `<figure style="--ar:${(g.w / g.h).toFixed(3)}"><img src="/${g.src}" alt="${esc(`${g.c.brand}: ${g.c.title}`)}" loading="lazy"><figcaption>${g.c.brand}</figcaption></figure>`).join('')}</div>
       </div>
     </section>` : ''}
@@ -375,7 +370,7 @@ function casePage(c, i) {
   const same = relatedWork(c.slug, c.service)
   const body = `
     <section class="phero phero--case">
-      ${list.length ? `<div class="phero__bg" style="background-image:url('/${caseCover(c.slug)}')"></div>` : ''}
+      ${caseCover(c.slug) ? `<div class="phero__bg" style="background-image:url('/${caseCover(c.slug)}')"></div>` : ''}
       <div class="wrap csh">
         <div class="csh__copy">
           ${crumbs([['Case studies', '/case-studies/'], [c.brand]])}
@@ -389,8 +384,11 @@ function casePage(c, i) {
             ${list.length > 1 ? `<a class="btn btn--ghost btn--lg" href="#gallery">View project photos</a>` : `<a class="btn btn--ghost btn--lg" href="#story">Scope of work</a>`}
           </div>
         </div>
-        ${list.length
-          ? `<figure class="csh__img"><img src="/${list[0][0]}" alt="${esc(`${c.brand}: ${c.title}`)}"></figure>`
+        ${c.leadStock
+          ? `<figure class="csh__img csh__img--stock"><img src="/${c.leadStock}" alt="${esc(`${c.brand}: ${c.title}`)}"></figure>`
+          : list.length
+          ? `<figure class="csh__img${c.service === 'digital' ? ' csh__img--fit' : ''}" style="--ar:${(list[0][1] / list[0][2]).toFixed(3)}"><img src="/${list[0][0]}" alt="${esc(`${c.brand}: ${c.title}`)}"></figure>`
+          : c.stockCover ? `<figure class="csh__img csh__img--stock"><img src="/${c.stockCover}" alt="${esc(SERVICE_LABEL[c.service])}"></figure>`
           : `<figure class="csh__img csh__img--empty" aria-hidden="true">${icon(SVC_ICON[c.service])}<span>${SERVICE_LABEL[c.service]}</span></figure>`}
       </div>
     </section>
@@ -409,7 +407,6 @@ function casePage(c, i) {
       </div>
     </section>
 
-    ${programmes(c, c.brand)}
     ${list.length > 1 ? `
     <section class="infield infield--case" id="gallery">
       <div class="wrap">
@@ -431,6 +428,17 @@ function casePage(c, i) {
   return shell({ title: `${c.brand}: ${c.title} | Niche Case Study`, desc: `${c.challenge} ${c.result}`.slice(0, 155), path: caseUrl(c), page: 'case', body })
 }
 
+// Plain-English intro for a project page, e.g. "Niche carried out retail audits for Vega
+// across 100 stores in the UAE."
+const PLACE = { UAE: 'the UAE', KSA: 'Saudi Arabia' }
+const listText = a => a.length < 2 ? a.join('') : `${a.slice(0, -1).join(', ')} and ${a[a.length - 1]}`
+const projectLead = p => {
+  let what = (p.title.charAt(0).toLowerCase() + p.title.slice(1)).replace(/ & /g, ' and ')
+  if (/\baudit$|\bsurvey$/.test(what)) what = 'a ' + what   // singular: "a retail audit"
+  const where = listText(p.countries.map(c => PLACE[c] || c))
+  const scope = p.programmes ? ` through ${p.programmes.length} programmes` : typeof p.stores === 'number' ? ` across ${fmt(p.stores)} ${p.service === 'research' ? 'outlets' : 'stores'}` : ''
+  return `Niche carried out ${what} for ${p.brand}${scope} in ${where}.`
+}
 // An archive project without a case study: the facts from the project log and its photos.
 function projectPage(p, i) {
   const list = standaloneProjects
@@ -443,15 +451,15 @@ function projectPage(p, i) {
   const big = p.photos[0]   // 01 is the hand-picked lead photo
   const body = `
     <section class="phero phero--case">
-      ${p.photos.length ? `<div class="phero__bg" style="background-image:url('${pimg('cover.webp')}')"></div>` : ''}
+      ${p.photos.length ? `<div class="phero__bg" style="background-image:url('${pimg('cover.webp')}')"></div>` : p.stockCover ? `<div class="phero__bg" style="background-image:url('/${p.stockCover}')"></div>` : ''}
       <div class="wrap csh">
         <div class="csh__copy">
           ${crumbs([['Case studies', '/case-studies/'], [p.brand]])}
           <ul class="csh__pills"><li><a href="/case-studies/?s=${p.service}">${SERVICE_LABEL[p.service]}</a></li>${p.countries.map(w => `<li>${icon('pin')}${w}</li>`).join('')}</ul>
           <h1 class="phero__title">${p.brand}</h1>
           <p class="csh__sub">${p.title}</p>
-          <p class="csh__lead">${p.title} for ${p.brand}${p.programmes ? `, across ${p.programmes.length} programmes` : typeof p.stores === 'number' ? `, covering ${stat} ${statLabel}` : ''} in ${p.countries.join(', ')}.</p>
-          <dl class="csh__stats">${p.programmes || typeof p.stores === 'number' ? `<div><dt>${statLabel}</dt><dd>${stat}</dd></div>` : ''}<div><dt>countries</dt><dd>${p.countries.length}</dd></div><div><dt>service</dt><dd>${SERVICE_LABEL[p.service].split(' ')[0]}</dd></div></dl>
+          <p class="csh__lead">${projectLead(p)}</p>
+          <dl class="csh__stats">${p.programmes || typeof p.stores === 'number' ? `<div><dt>${statLabel}</dt><dd>${stat}</dd></div>` : ''}<div><dt>countries</dt><dd>${p.countries.length}</dd></div></dl>
           <div class="phero__btns">
             <a class="btn btn--red btn--lg" href="/contact/?service=${svc?.slug || ''}">Request a proposal ${icon('arrow')}</a>
             ${p.photos.length > 1 ? `<a class="btn btn--ghost btn--lg" href="#gallery">View project photos</a>` : svc ? `<a class="btn btn--ghost btn--lg" href="${svcUrl(svc)}">About ${svc.name.toLowerCase()}</a>` : ''}
@@ -459,6 +467,7 @@ function projectPage(p, i) {
         </div>
         ${big
           ? `<figure class="csh__img"><img src="${pimg(big[0])}" alt="${cap}"></figure>`
+          : p.stockCover ? `<figure class="csh__img csh__img--stock"><img src="/${p.stockCover}" alt="${esc(SERVICE_LABEL[p.service])}"></figure>`
           : `<figure class="csh__img csh__img--empty" aria-hidden="true">${icon(SVC_ICON[p.service])}<span>${SERVICE_LABEL[p.service]}</span></figure>`}
       </div>
     </section>
@@ -477,7 +486,6 @@ function projectPage(p, i) {
       </div>
     </section>
 
-    ${programmes(p, p.brand)}
     ${p.photos.length > 1 ? `
     <section class="infield infield--case" id="gallery">
       <div class="wrap">
@@ -496,7 +504,7 @@ function projectPage(p, i) {
       </div>
     </section>
     ${cta({ title: 'Planning a similar project?', href: `/contact/?service=${svc?.slug || ''}`, label: 'Get a proposal' })}`
-  return shell({ title: `${p.brand}: ${p.title} | Niche Case Study`, desc: `${p.title} for ${p.brand} in ${p.countries.join(', ')}. Delivered by Niche Marketing Management.`.slice(0, 155), path: `/case-studies/${p.slug}/`, page: 'case', body })
+  return shell({ title: `${p.brand}: ${p.title} | Niche Case Study`, desc: projectLead(p).slice(0, 155), path: `/case-studies/${p.slug}/`, page: 'case', body })
 }
 
 function aboutPage() {
@@ -572,6 +580,27 @@ export const ROLES = [
   ['handshake', 'Account & project manager', 'Office', 'Plan projects with clients and manage delivery across markets.'],
 ]
 const COUNTRIES17 = ['United Arab Emirates', 'Saudi Arabia', 'Qatar', 'Kuwait', 'Oman', 'Bahrain', 'Jordan', 'Lebanon', 'Syria', 'Iraq', 'Egypt', 'Morocco', 'Tunisia', 'Algeria', 'Yemen', 'Pakistan', 'Mauritius']
+
+// Attribution for openly licensed photos (CC BY / BY-SA). The licences require a credit;
+// it lives here, linked from the footer, instead of on the images themselves.
+function creditsPage() {
+  const list = cases.filter(c => c.stockCredit)
+  const body = `
+    <section class="phero">
+      <div class="wrap">
+        ${crumbs([['Image credits']])}
+        <p class="label">Image credits</p>
+        <h1 class="phero__title">Image credits.</h1>
+        <p class="phero__lead">Some case study images are used under Creative Commons licences.</p>
+      </div>
+    </section>
+    <section class="svfaq">
+      <div class="wrap">
+        <ul class="credits">${list.map(c => `<li><b>${c.brand}</b><span><a href="${c.stockCredit[1]}" target="_blank" rel="noopener">${c.stockCredit[0]}</a></span></li>`).join('')}</ul>
+      </div>
+    </section>`
+  return shell({ title: 'Image Credits | Niche', desc: 'Credits for images used under Creative Commons licences.', path: '/credits/', page: 'credits', body })
+}
 
 function careersPage() {
   const body = `
@@ -673,7 +702,7 @@ function careersPage() {
 
 // ---------------------------------------------------------------- write
 export function writePages() {
-  for (const d of ['services', 'case-studies', 'about', 'contact', 'careers']) rmSync(resolve(ROOT, d), { recursive: true, force: true })
+  for (const d of ['services', 'case-studies', 'about', 'contact', 'careers', 'credits']) rmSync(resolve(ROOT, d), { recursive: true, force: true })
   const out = [
     ['services/index.html', servicesIndex()],
     ...SVCS.map((s, i) => [`services/${s.slug}/index.html`, servicePage(s, i)]),
@@ -683,6 +712,7 @@ export function writePages() {
     ['about/index.html', aboutPage()],
     ['contact/index.html', contactPage()],
     ['careers/index.html', careersPage()],
+    ['credits/index.html', creditsPage()],
   ]
   const inputs = { main: resolve(ROOT, 'index.html') }
   for (const [file, html] of out) {
