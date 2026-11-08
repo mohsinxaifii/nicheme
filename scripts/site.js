@@ -8,7 +8,7 @@ import { cases, SERVICE_LABEL } from '../src/data/cases.js'
 import { photos } from '../src/data/photos.js'
 import { projects, PROJECT_SERVICE } from '../src/data/projects.js'
 import { icon } from '../src/data/icons.js'
-import { workItems, standaloneProjects, projectStat } from '../src/data/work.js'
+import { workItems, standaloneProjects, projectStat, casesByContent, projectsByContent, caseScore, projectScore, byScore } from '../src/data/work.js'
 
 const ROOT = resolve(import.meta.dirname, '..')
 const SVCS = allServices()
@@ -255,7 +255,7 @@ function trackRecord(s) {
 
 function servicePage(s, i) {
   const prev = SVCS[(i - 1 + SVCS.length) % SVCS.length], next = SVCS[(i + 1) % SVCS.length]
-  const rel = s.cases.map(sl => caseBy[sl]).filter(Boolean)
+  const rel = s.cases.map(sl => caseBy[sl]).filter(Boolean).sort(byScore(caseScore))
   const gallery = rel.flatMap(c => (photos[c.slug] || []).map(([f, w, h]) => ({ c, f, w, h }))).slice(0, 12)
   const siblings = groups[s.gi].services.filter(x => x.slug !== s.slug)
   const hero = s.photo ? `/${s.photo}` : coverOf(s) ? `/${coverOf(s)}` : null
@@ -358,7 +358,7 @@ function archive() {
           <button class="chip is-on" type="button" data-pf="all">All <small>${projects.length}</small></button>
           ${svcKeys.map(k => `<button class="chip" type="button" data-pf="${k}">${PROJECT_SERVICE[k]} <small>${projects.filter(p => p.service === k).length}</small></button>`).join('')}
         </div>
-        <ul class="pgrid" data-pgrid>${projects.map(card).join('')}</ul>
+        <ul class="pgrid" data-pgrid>${projectsByContent.map(card).join('')}</ul>
         <button class="btn btn--ghost-dark pgrid__more" type="button" data-pj-more>Show all projects</button>
       </div>
     </section>`
@@ -380,7 +380,7 @@ function casesIndex() {
       <div class="wrap">
         <div class="section-head section-head--row"><div><p class="label">All case studies</p><h2 class="h2">Filter by service.</h2></div></div>
         <div class="chips chips--light" role="group" aria-label="Filter case studies" data-grid-filters>${FILTERS.filter(([k]) => k === 'all' || cases.some(c => c.service === k)).map(([k, n], i) => `<button class="chip${i ? '' : ' is-on'}" type="button" data-gf="${k}">${i ? n : 'All case studies'}</button>`).join('')}</div>
-        <ul class="cgrid" data-cgrid>${cases.map(caseCard).join('')}</ul>
+        <ul class="cgrid" data-cgrid>${casesByContent.map(caseCard).join('')}</ul>
       </div>
     </section>
     ${archive()}
@@ -392,7 +392,7 @@ function casePage(c, i) {
   const list = photos[c.slug] || []
   const svcs = servicesForCase(c.slug)
   const prev = cases[(i - 1 + cases.length) % cases.length], next = cases[(i + 1) % cases.length]
-  const same = cases.filter(x => x.service === c.service && x.slug !== c.slug).slice(0, 3)
+  const same = casesByContent.filter(x => x.service === c.service && x.slug !== c.slug).slice(0, 3)
   const body = `
     <section class="phero phero--case">
       ${list.length ? `<div class="phero__bg" style="background-image:url('${img(c.slug, 'cover.webp')}')"></div>` : ''}
@@ -455,7 +455,7 @@ function projectPage(p, i) {
   const list = standaloneProjects
   const prev = list[(i - 1 + list.length) % list.length], next = list[(i + 1) % list.length]
   const svc = svcBy[PRIMARY[p.service]]
-  const same = list.filter(x => x.service === p.service && x.slug !== p.slug).slice(0, 3)
+  const same = list.filter(x => x.service === p.service && x.slug !== p.slug).sort(byScore(projectScore)).slice(0, 3)
   const cap = esc(`${p.brand}: ${p.title}`)
   const pimg = f => `/projects/${p.slug}/${f}`
   const [stat, statLabel] = projectStat(p)

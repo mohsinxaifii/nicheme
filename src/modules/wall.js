@@ -32,9 +32,7 @@ export function initWall({ lenis, reduced }) {
   let list = [], pos = new Map(), setW = 0, copies = 2, cards = [], paths = [], focus = null
   function build(filter) {
     list = cases.map((c, i) => i).filter(i => filter === 'all' || cases[i].service === filter)
-    // spread cases still waiting for photos evenly between the ones that have them
-    const pic = list.filter(i => cases[i].cover), bare = list.filter(i => !cases[i].cover)
-    list = [...pic.map((i, k) => [k / pic.length, i]), ...bare.map((i, k) => [(k + 0.5) / bare.length, i])].sort((x, y) => x[0] - y[0]).map(x => x[1])
+    // workItems is already ordered by content: photo cards first, placeholders last
     // every tab: same rows, same card size; small sets repeat to fill the rows
     const rows = ROWS
     const cols = Math.ceil(list.length / rows)
