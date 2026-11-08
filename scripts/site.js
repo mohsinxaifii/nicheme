@@ -287,13 +287,14 @@ function servicePage(s, i) {
     </section>
 
     ${gallery.length ? `
-    <section class="infield" id="work">
+    <section class="infield" id="photos">
       <div class="wrap">
         <div class="section-head"><p class="label">In the field</p><h2 class="h2">Project photography.</h2><p class="lead">All photographs are taken from Niche client projects.</p></div>
         <div class="masonry masonry--static">${gallery.map(g => `<figure style="--ar:${(g.w / g.h).toFixed(3)}"><img src="${img(g.c.slug, g.f)}" alt="${esc(`${g.c.brand}: ${g.c.title}`)}" loading="lazy"><figcaption>${g.c.brand}</figcaption></figure>`).join('')}</div>
       </div>
-    </section>
-    <section class="relcases">
+    </section>` : ''}
+    ${rel.length ? `
+    <section class="relcases" id="work">
       <div class="wrap">
         <div class="section-head section-head--row"><div><p class="label">Case studies</p><h2 class="h2">Related case studies.</h2></div><a class="link-more" href="/case-studies/">All case studies ${icon('arrow')}</a></div>
         <ul class="cgrid">${rel.map(caseCard).join('')}</ul>
