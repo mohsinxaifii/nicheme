@@ -315,7 +315,9 @@ export function initLangSwitch() {
   const btn = $('[data-lang-switch]')
   if (!btn) return
   const alt = document.querySelector(`link[rel="alternate"][hreflang="${btn.dataset.langSwitch}"]`)
-  if (alt) btn.href = new URL(alt.href).pathname + location.search + location.hash
+  // the alternate is the canonical nicheme.com URL; re-root its path on whatever
+  // base this build is served from (/nicheme/ on GitHub Pages, / on a custom domain)
+  if (alt) btn.href = import.meta.env.BASE_URL.replace(/\/$/, '') + new URL(alt.href).pathname + location.search + location.hash
 }
 
 export function initActiveNav() {

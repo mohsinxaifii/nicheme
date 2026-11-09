@@ -3,8 +3,11 @@ import { readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { writePages, GENERATED } from './scripts/site.js'
 
-// GitHub Pages serves the site from /nicheme/; everywhere else it lives at the root.
-const base = process.env.GITHUB_ACTIONS ? '/nicheme/' : '/'
+// Base path the site is served from. The deploy workflow passes BASE_PATH from
+// actions/configure-pages: "/nicheme" on <user>.github.io/nicheme, "" once a custom
+// domain is set in Settings -> Pages. Locally it's the root.
+const base = (process.env.BASE_PATH || '').replace(/\/+$/, '') + '/'
+const reBase = base.slice(1).replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 
 // Every page is generated from the data files (scripts/site.js) and shares
 // partials: <!--@name--> pulls src/partials/name.html or a generated block.
@@ -33,8 +36,8 @@ export default defineConfig({
       transformIndexHtml: {
         order: 'post',
         handler: html => base === '/' ? html : html
-          .replace(/(href|src|data-prev)="\/(?!\/|nicheme\/)/g, `$1="${base}`)
-          .replace(/url\('\/(?!nicheme\/)/g, `url('${base}`),
+          .replace(new RegExp(`(href|src|data-prev)="/(?!/|${reBase})`, 'g'), `$1="${base}`)
+          .replace(new RegExp(`url\\('/(?!${reBase})`, 'g'), `url('${base}`),
       },
     },
   ],
