@@ -47,6 +47,7 @@ export function initNav({ lenis }) {
   lenis ? lenis.on('scroll', e => onScroll(e.scroll)) : addEventListener('scroll', () => onScroll(scrollY))
 
   const burger = $('[data-burger]'), menu = $('[data-menu]')
+  menu.setAttribute('data-lenis-prevent', '')   // stopped Lenis eats touch/wheel; let the menu scroll natively
   const setMenu = on => {
     menu.hidden = !on
     burger.setAttribute('aria-expanded', on)

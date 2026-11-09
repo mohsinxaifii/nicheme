@@ -161,7 +161,8 @@ html.kbd :focus-visible { outline: 2px solid var(--red); outline-offset: 3px; }
 .drop--icons a:hover .ico { background: var(--red); color: #fff; }
 .drop--icons span small { display: block; background: none; padding: 0; margin-top: 2px; font-weight: 400; }
 
-.menu { position: fixed; inset: 0; z-index: 45; background: var(--ink); color: #fff; padding: calc(var(--nav-h) + 30px) var(--gutter) 32px; display: flex; flex-direction: column; justify-content: space-between; overflow-y: auto; }
+.menu { position: fixed; inset: 0; z-index: 45; background: var(--ink); color: #fff; padding: calc(var(--nav-h) + 30px) var(--gutter) 32px; display: flex; flex-direction: column; justify-content: space-between; overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; }
+html:has(body.menu-open) { overflow: hidden; }
 .menu[hidden] { display: none; }
 .menu nav { display: flex; flex-direction: column; }
 .menu summary, .menu__link { display: flex; justify-content: space-between; align-items: center; font-size: clamp(30px, 8vw, 46px); font-weight: 500; letter-spacing: -.03em; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,.12); cursor: pointer; list-style: none; }
