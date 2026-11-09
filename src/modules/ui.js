@@ -2,9 +2,27 @@ import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { groups } from '../data/services.js'
 import { icon } from '../data/icons.js'
+import { AR_SERVICES } from '../data/ar.js'
 
 const $ = (s, r = document) => r.querySelector(s)
 const $$ = (s, r = document) => [...r.querySelectorAll(s)]
+
+// ---------------------------------------------------------------- Web3Forms
+// Both forms (the contact brief and the careers application) submit here instead
+// of a backend of our own: Web3Forms relays the POST to info@nicheme.com by email.
+// The key is a public "form id", safe in client code — see https://web3forms.com/.
+const WEB3FORMS_KEY = '0c011e1a-9d15-4da8-bb3e-636ba583b132'
+async function submitToWeb3Forms(fd) {
+  fd.append('access_key', WEB3FORMS_KEY)
+  try {
+    const res = await fetch('https://api.web3forms.com/submit', { method: 'POST', body: fd, headers: { Accept: 'application/json' } })
+    const data = await res.json().catch(() => ({}))
+    return res.ok && data.success
+  } catch (e) { return false }
+}
+// The bundle is shared between languages; runtime copy (chip labels, the form's
+// live summary) checks the page's own lang, set server-side on <html>.
+const isAr = () => document.documentElement.lang === 'ar'
 
 // ---------------------------------------------------------------- toast
 let toastTimer
@@ -127,17 +145,25 @@ export function initReveals({ reduced }) {
 // short chip labels, keyed by slug so moving a service between groups can't mislabel a chip
 // the brief form uses the services' own names, like every other list on the site
 const GCC = ['784', '682', '634', '414', '512', '048']
-const NAMES = Object.fromEntries(COUNTRY_LIST().map(([id, en]) => [id, en]))
+const COUNTRY_LIST_EN = [['784', 'UAE'], ['682', 'KSA'], ['634', 'Qatar'], ['414', 'Kuwait'], ['512', 'Oman'], ['048', 'Bahrain'], ['400', 'Jordan'], ['422', 'Lebanon'], ['760', 'Syria'], ['368', 'Iraq'], ['818', 'Egypt'], ['504', 'Morocco'], ['788', 'Tunisia'], ['012', 'Algeria'], ['887', 'Yemen'], ['586', 'Pakistan'], ['480', 'Mauritius']]
+const COUNTRY_AR = { '784': 'الإمارات', '682': 'السعودية', '634': 'قطر', '414': 'الكويت', '512': 'عُمان', '048': 'البحرين', '400': 'الأردن', '422': 'لبنان', '760': 'سوريا', '368': 'العراق', '818': 'مصر', '504': 'المغرب', '788': 'تونس', '012': 'الجزائر', '887': 'اليمن', '586': 'باكستان', '480': 'موريشيوس' }
+const NAMES = Object.fromEntries(COUNTRY_LIST_EN.map(([id, en]) => [id, en]))
 function COUNTRY_LIST() {
-  return [['784', 'UAE'], ['682', 'KSA'], ['634', 'Qatar'], ['414', 'Kuwait'], ['512', 'Oman'], ['048', 'Bahrain'], ['400', 'Jordan'], ['422', 'Lebanon'], ['760', 'Syria'], ['368', 'Iraq'], ['818', 'Egypt'], ['504', 'Morocco'], ['788', 'Tunisia'], ['012', 'Algeria'], ['887', 'Yemen'], ['586', 'Pakistan'], ['480', 'Mauritius']]
+  return isAr() ? COUNTRY_LIST_EN.map(([id]) => [id, COUNTRY_AR[id]]) : COUNTRY_LIST_EN
 }
-const listText = a => a.length < 2 ? a.join('') : `${a.slice(0, -1).join(', ')} and ${a[a.length - 1]}`
+const listText = a => isAr()
+  ? (a.length < 2 ? a.join('') : `${a.slice(0, -1).join('، ')} و${a[a.length - 1]}`)
+  : (a.length < 2 ? a.join('') : `${a.slice(0, -1).join(', ')} and ${a[a.length - 1]}`)
 
 export async function initForm({ reduced } = {}) {
   const form = $('[data-form]')
   if (!form) return
   const svcList = groups.flatMap(g => g.services)
-  const full = svcList.map(s => s.name), icons = svcList.map(s => s.icon), SHORT = svcList.map(s => s.name)
+  const ar = isAr()
+  const svcName = s => ar && AR_SERVICES[s.slug] ? AR_SERVICES[s.slug].name : s.name
+  // `full` keeps the English name: the ?service= query param and the niche:service
+  // event (fired from English service pages) both carry the English name as the key.
+  const full = svcList.map(s => s.name), icons = svcList.map(s => s.icon), SHORT = svcList.map(svcName)
   const svcPicked = new Set(), where = new Set()
 
   // 1. service chips
@@ -155,11 +181,12 @@ export async function initForm({ reduced } = {}) {
   // 2. map picker
   const pick = $('[data-pick]', form)
   const { COUNTRIES, CITIES } = await import('../data/mena.js')
+  const NAMES_L = Object.fromEntries(COUNTRY_LIST())
   pick.innerHTML = `<svg viewBox="40 30 880 330">${COUNTRIES.map(c => c.net
-      ? `<path d="${c.d}" class="net" data-id="${c.id}"><title>${NAMES[c.id]}</title></path>`
+      ? `<path d="${c.d}" class="net" data-id="${c.id}"><title>${NAMES_L[c.id]}</title></path>`
       : `<path d="${c.d}"/>`).join('')}
-    <circle cx="${CITIES.manama[0]}" cy="${CITIES.manama[1]}" r="7" class="net dot" data-id="048"><title>Bahrain</title></circle>
-    <circle cx="${CITIES.portlouis[0]}" cy="${CITIES.portlouis[1] - 0}" r="9" class="net dot" data-id="480"><title>Mauritius</title></circle></svg>
+    <circle cx="${CITIES.manama[0]}" cy="${CITIES.manama[1]}" r="7" class="net dot" data-id="048"><title>${NAMES_L['048']}</title></circle>
+    <circle cx="${CITIES.portlouis[0]}" cy="${CITIES.portlouis[1] - 0}" r="9" class="net dot" data-id="480"><title>${NAMES_L['480']}</title></circle></svg>
     <span class="pick__tip" data-pick-tip></span>`
   const tip = $('[data-pick-tip]', pick)
   const paint = () => $$('.net', pick).forEach(p => p.classList.toggle('is-on', where.has(p.dataset.id)))
@@ -167,7 +194,7 @@ export async function initForm({ reduced } = {}) {
   pick.addEventListener('click', e => { const p = e.target.closest('.net'); if (p) toggle(p.dataset.id) })
   pick.addEventListener('pointermove', e => {
     const p = e.target.closest('.net'), r = pick.getBoundingClientRect()
-    tip.textContent = p ? NAMES[p.dataset.id] : ''
+    tip.textContent = p ? NAMES_L[p.dataset.id] : ''
     tip.classList.toggle('is-on', !!p)
     tip.style.transform = `translate(${e.clientX - r.left + 12}px, ${e.clientY - r.top - 30}px)`
   })
@@ -185,11 +212,13 @@ export async function initForm({ reduced } = {}) {
   function update() {
     const svcs = [...svcPicked].sort((a, b) => a - b).map(i => SHORT[i])
     const places = COUNTRY_LIST().filter(([id]) => where.has(id)).map(([, n]) => n)
-    list.textContent = places.length ? (places.length === 17 ? 'All 17 countries' : listText(places)) : 'No countries yet'
-    const svcTxt = svcs.length ? listText(svcs).toLowerCase().replace(/^./, c => c.toUpperCase()) : 'Field marketing'
+    const all17 = ar ? 'الدول الـ17 جميعها' : 'All 17 countries'
+    list.textContent = places.length ? (places.length === 17 ? all17 : listText(places)) : (ar ? 'لم تُحدَّد أي دولة بعد' : 'No countries yet')
+    const svcTxt = ar ? listText(svcs) : (svcs.length ? listText(svcs).toLowerCase().replace(/^./, c => c.toUpperCase()) : 'Field marketing')
+    const placesTxt = places.length ? (places.length === 17 ? (ar ? 'الدول الـ17 جميعها' : 'all 17 countries') : listText(places)) : (ar ? 'أسواقكم' : 'your markets')
     sum.innerHTML = svcs.length || places.length
-      ? `<b>${svcTxt}</b> in <b>${places.length ? (places.length === 17 ? 'all 17 countries' : listText(places)) : 'your markets'}</b>.`
-      : 'Pick a service and a country to start your brief.'
+      ? (ar ? `<b>${svcTxt || 'التسويق الميداني'}</b> في <b>${placesTxt}</b>.` : `<b>${svcTxt}</b> in <b>${placesTxt}</b>.`)
+      : (ar ? 'اختاروا خدمة ودولة لبدء الطلب.' : 'Pick a service and a country to start your brief.')
     const who = ['name', 'company', 'email'].every(n => form.elements[n].value.trim())
     ;[svcs.length > 0, places.length > 0, who].forEach((ok, i) => bars[i].classList.toggle('is-on', ok))
   }
@@ -220,24 +249,43 @@ export async function initForm({ reduced } = {}) {
     }, 2200)
   }
 
-  form.addEventListener('submit', e => {
+  form.addEventListener('submit', async e => {
     e.preventDefault()
+    if (form.elements.botcheck?.checked) return    // honeypot tripped: silently drop
     let ok = true
     $$('[required]', form).forEach(i => {
       const bad = !i.value.trim() || (i.type === 'email' && !/^\S+@\S+\.\S+$/.test(i.value))
       i.closest('.field').classList.toggle('is-bad', bad)
       if (bad) ok = false
     })
-    if (!ok) { toast('Please add your name, company and work email.'); form.querySelector('.is-bad input')?.focus(); return }
+    if (!ok) { toast(ar ? 'يرجى إدخال الاسم والشركة والبريد الإلكتروني للعمل.' : 'Please add your name, company and work email.'); form.querySelector('.is-bad input')?.focus(); return }
     const fd = new FormData(form)
+    // The brief always mails in English (full, not SHORT): it lands in the team's
+    // own inbox, regardless of which language the visitor filled the form in.
     const svcs = [...svcPicked].map(i => full[i]).join(', ') || 'Not specified'
-    const places = COUNTRY_LIST().filter(([id]) => where.has(id)).map(([, n]) => n).join(', ') || 'Not specified'
+    const places = COUNTRY_LIST_EN.filter(([id]) => where.has(id)).map(([, n]) => n).join(', ') || 'Not specified'
     const body = `Name: ${fd.get('name')}\nCompany: ${fd.get('company')}\nEmail: ${fd.get('email')}\nPhone: ${fd.get('phone')}\nServices: ${svcs}\nCountries: ${places}\n\n${fd.get('message')}`
-    toast('Thank you. Opening your email app to send the brief.')
-    const done = $('[data-done]', form)
-    if (done) { done.hidden = false; done.animate([{ opacity: 0, transform: 'translateY(10px)' }, { opacity: 1, transform: 'none' }], { duration: 400 }) }
-    // TODO: swap for the real endpoint (CRM / email service) before launch.
-    setTimeout(() => { location.href = `mailto:info@nicheme.com?subject=${encodeURIComponent(`Brief: ${svcs}`)}&body=${encodeURIComponent(body)}` }, 700)
+    fd.set('services', svcs)
+    fd.set('countries', places)
+    fd.append('subject', `New brief: ${svcs}`)
+    fd.append('from_name', fd.get('name') || 'Website visitor')
+    fd.append('message', body)
+    fd.append('page', location.href)
+    const btn = form.querySelector('[type="submit"]')
+    btn.disabled = true
+    const sent = await submitToWeb3Forms(fd)
+    btn.disabled = false
+    if (sent) {
+      form.reset(); svcPicked.clear(); where.clear()
+      $$('.chip2.is-on', form).forEach(b => b.classList.remove('is-on'))
+      paint(); update()
+      toast(ar ? 'شكراً لكم. استلمنا طلبكم وسنعود إليكم خلال يوم عمل واحد.' : 'Thank you. We have your brief and will reply within one working day.')
+      const done = $('[data-done]', form)
+      if (done) { done.hidden = false; done.animate([{ opacity: 0, transform: 'translateY(10px)' }, { opacity: 1, transform: 'none' }], { duration: 400 }) }
+    } else {
+      toast(ar ? 'تعذّر الإرسال. يجري فتح تطبيق البريد كبديل.' : "Couldn't send that. Opening your email app instead.")
+      setTimeout(() => { location.href = `mailto:info@nicheme.com?subject=${encodeURIComponent(`Brief: ${svcs}`)}&body=${encodeURIComponent(body)}` }, 600)
+    }
   })
   update()
 }
@@ -259,6 +307,16 @@ export function initSteps({ reduced }) {
 // ---------------------------------------------------------------- nav: current page + mega menus
 // Menus open on hover (with a short grace period so the pointer can travel),
 // on focus for keyboard users, and on tap for touch screens.
+// The header is one shared partial per language, so it cannot know which page it is
+// on. The language button points at the other language's home page; if this page has
+// a translation, the <link rel="alternate"> in the head names it, so use that instead.
+export function initLangSwitch() {
+  const btn = $('[data-lang-switch]')
+  if (!btn) return
+  const alt = document.querySelector(`link[rel="alternate"][hreflang="${btn.dataset.langSwitch}"]`)
+  if (alt) btn.href = new URL(alt.href).pathname + location.search + location.hash
+}
+
 export function initActiveNav() {
   const page = document.body.dataset.page
   const key = { home: 'home', services: 'services', service: 'services', cases: 'case-studies', case: 'case-studies', about: 'about', contact: 'contact', careers: 'careers' }[page]
@@ -596,23 +654,37 @@ export function initApply() {
     const a = e.target.closest('[data-role]')
     if (a) form.elements.role.value = a.dataset.role
   })
+  const ar = isAr()
   form.addEventListener('change', e => e.target.closest('.field')?.classList.remove('is-bad'))
-  form.addEventListener('submit', e => {
+  form.addEventListener('submit', async e => {
     e.preventDefault()
+    if (form.elements.botcheck?.checked) return    // honeypot tripped: silently drop
     let ok = true
     $$('[required]', form).forEach(i => {
       const bad = !i.value.trim() || (i.type === 'email' && !/^\S+@\S+\.\S+$/.test(i.value))
       i.closest('.field').classList.toggle('is-bad', bad)
       if (bad) ok = false
     })
-    if (!ok) { toast('Please add your name, email, country and role.'); form.querySelector('.is-bad input, .is-bad select')?.focus(); return }
+    if (!ok) { toast(ar ? 'يرجى إدخال الاسم والبريد الإلكتروني والدولة والوظيفة.' : 'Please add your name, email, country and role.'); form.querySelector('.is-bad input, .is-bad select')?.focus(); return }
     const fd = new FormData(form)
-    const body = `Name: ${fd.get('name')}\nEmail: ${fd.get('email')}\nPhone: ${fd.get('phone')}\nCountry: ${fd.get('country')}\nRole: ${fd.get('role')}\nLink: ${fd.get('link')}\n\n${fd.get('message')}\n\n(CV attached)`
-    toast('Thank you. Opening your email app. Attach your CV, then send.')
-    const done = $('[data-done]', form)
-    if (done) { done.hidden = false; done.animate([{ opacity: 0, transform: 'translateY(10px)' }, { opacity: 1, transform: 'none' }], { duration: 400 }) }
-    // TODO: swap for a careers inbox or ATS endpoint before launch.
-    setTimeout(() => { location.href = `mailto:info@nicheme.com?subject=${encodeURIComponent(`Careers: ${fd.get('role')}, ${fd.get('country')}`)}&body=${encodeURIComponent(body)}` }, 700)
+    const body = `Name: ${fd.get('name')}\nEmail: ${fd.get('email')}\nPhone: ${fd.get('phone')}\nCountry: ${fd.get('country')}\nRole: ${fd.get('role')}\nLink: ${fd.get('link') || 'Not given'}\n\n${fd.get('message')}`
+    fd.append('subject', `Careers: ${fd.get('role')}, ${fd.get('country')}`)
+    fd.append('from_name', fd.get('name') || 'Applicant')
+    fd.append('message', body)
+    fd.append('page', location.href)
+    const btn = form.querySelector('[type="submit"]')
+    btn.disabled = true
+    const sent = await submitToWeb3Forms(fd)
+    btn.disabled = false
+    if (sent) {
+      toast(ar ? 'شكراً لكم. استلمنا طلبكم.' : 'Thank you. We have your application.')
+      form.reset()
+      const done = $('[data-done]', form)
+      if (done) { done.hidden = false; done.animate([{ opacity: 0, transform: 'translateY(10px)' }, { opacity: 1, transform: 'none' }], { duration: 400 }) }
+    } else {
+      toast(ar ? 'تعذّر الإرسال. يجري فتح تطبيق البريد كبديل.' : "Couldn't send that. Opening your email app instead.")
+      setTimeout(() => { location.href = `mailto:info@nicheme.com?subject=${encodeURIComponent(`Careers: ${fd.get('role')}, ${fd.get('country')}`)}&body=${encodeURIComponent(body)}` }, 600)
+    }
   })
 }
 

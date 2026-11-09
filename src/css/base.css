@@ -44,6 +44,14 @@ html { -webkit-tap-highlight-color: transparent; }
 html.kbd :focus-visible { outline: 2px solid var(--red); outline-offset: 3px; }
 
 .skip { position: fixed; left: 12px; top: -60px; z-index: 200; background: var(--red); color: #fff; padding: 10px 14px; border-radius: 6px; }
+
+/* Honeypot: off-screen (not display:none, which some bots skip) rather than hidden,
+   so a scripted filler still finds and fills it; a human never tabs to it. */
+.hp { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; }
+/* Screen-reader-only: present in the accessibility tree, invisible on screen. Used
+   for a page's real H1 where the visible heading has to stay a styled H2 (it is a
+   shared partial also used mid-page elsewhere, under that page's own H1). */
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; }
 .skip:focus { top: 12px; }
 .wrap { max-width: var(--max); margin-inline: auto; padding-inline: var(--gutter); }
 
@@ -174,7 +182,7 @@ html.kbd :focus-visible { outline: 2px solid var(--red); outline-offset: 3px; }
 @media (max-width: 640px) {
   .nav { inset: 10px 0 auto; padding: 0 10px; }
   .nav .btn--sm, .nav__lang { display: none; }
-  .nav__bar { height: 56px; padding-left: 18px; }
+  .nav__bar { height: 56px; padding-inline-start: 18px; }
 }
 @media (max-width: 1080px) { .nav__burger { display: block; } }
 
@@ -205,7 +213,7 @@ html.kbd :focus-visible { outline: 2px solid var(--red); outline-offset: 3px; }
 .nav__search:hover .ico { transform: rotate(-12deg) scale(1.08); }
 @media (max-width: 1380px) { .nav__search-txt { display: none; } }
 @media (max-width: 1080px) { .nav__search kbd { display: none; } .nav__search { width: 44px; height: 44px; padding: 0; justify-content: center; box-shadow: none; background: rgba(127,127,127,.18); } }
-.menu__search { display: flex; align-items: center; gap: 12px; width: 100%; margin-bottom: 14px; padding: 14px 18px; border-radius: 16px; background: rgba(255,255,255,.08); color: rgba(255,255,255,.7); font-size: 17px; text-align: left; }
+.menu__search { display: flex; align-items: center; gap: 12px; width: 100%; margin-bottom: 14px; padding: 14px 18px; border-radius: 16px; background: rgba(255,255,255,.08); color: rgba(255,255,255,.7); font-size: 17px; text-align: start; }
 .menu__search .ico { width: 20px; height: 20px; }
 
 html.srch-open { overflow: hidden; }
@@ -236,7 +244,7 @@ html.srch-open { overflow: hidden; }
 .srch__more { font-size: 11px; letter-spacing: .04em; text-transform: none; color: rgba(255,255,255,.6); padding: 3px 8px; border-radius: 999px; transition: color .2s, background .2s; }
 .srch__more:hover { color: #fff; background: rgba(255,255,255,.1); }
 .srch__row { position: relative; display: flex; align-items: center; gap: 14px; padding: 9px 12px; border-radius: 14px; color: #fff; transition: background .15s; }
-.srch__row::before { content: ''; position: absolute; left: 0; top: 12px; bottom: 12px; width: 3px; border-radius: 3px; background: var(--red); transform: scaleY(0); transition: transform .25s var(--ease); }
+.srch__row::before { content: ''; position: absolute; inset-inline-start: 0; top: 12px; bottom: 12px; width: 3px; border-radius: 3px; background: var(--red); transform: scaleY(0); transition: transform .25s var(--ease); }
 .srch__row.is-active { background: rgba(255,255,255,.07); }
 .srch__row.is-active::before { transform: none; }
 .srch__thumb { flex: none; width: 48px; height: 48px; border-radius: 12px; overflow: hidden; background: #1e1e1e; display: grid; place-items: center; }
@@ -256,12 +264,12 @@ html.srch-open { overflow: hidden; }
 .srch__row--cta { margin-top: 14px; }
 .srch__row--cta > .ico { width: 22px; height: 22px; margin: 0 13px; color: var(--red); }
 .srch__foot { display: flex; align-items: center; gap: 16px; padding: 11px 20px; font-size: 12px; color: rgba(255,255,255,.45); border-top: 1px solid rgba(255,255,255,.08); }
-.srch__foot kbd { font: 600 11px/1 inherit; font-family: inherit; display: inline-grid; place-items: center; min-width: 20px; height: 20px; padding: 0 5px; margin-right: 3px; border-radius: 6px; background: rgba(255,255,255,.08); color: rgba(255,255,255,.75); }
-.srch__count { margin-left: auto; font-variant-numeric: tabular-nums; }
+.srch__foot kbd { font: 600 11px/1 inherit; font-family: inherit; display: inline-grid; place-items: center; min-width: 20px; height: 20px; padding: 0 5px; margin-inline-end: 3px; border-radius: 6px; background: rgba(255,255,255,.08); color: rgba(255,255,255,.75); }
+.srch__count { margin-inline-start: auto; font-variant-numeric: tabular-nums; }
 @media (max-width: 640px) {
   .srch { padding: 10px 8px; }
   .srch__panel { border-radius: 22px; max-height: calc(100svh - 20px); }
-  .srch__bar { height: 60px; padding-left: 18px; }
+  .srch__bar { height: 60px; padding-inline-start: 18px; }
   .srch__input { font-size: 17px; }
   .srch__type { display: none; }
   .srch__foot span:not(.srch__count) { display: none; }

@@ -43,11 +43,11 @@ export const allCases = [
     result: "More than 15,250 samples were handed out, with over 20% of shoppers going on to buy.",
   },
   {
-    slug: 'labour-camp-carnival-of-games', leadStock: 'stock/tug-of-war.webp', brand: 'Labour Camp Carnival', title: 'Carnival of Games', service: 'events',
-    where: 'UAE', geo: [25.3463, 55.4209], stat: '17+', statLabel: 'labour camps',
-    stats: [['17+', 'labour camps'], ['3 hr', 'activations'], ['10+', 'brands']],
+    slug: 'labour-camp-carnival-of-games', leadStock: 'stock/tug-of-war.webp', brand: 'Labour Accommodation Carnival', title: 'Carnival of Games', service: 'events',
+    where: 'UAE', geo: [25.3463, 55.4209], stat: '17+', statLabel: 'labour accommodations',
+    stats: [['17+', 'labour accommodations'], ['3 hr', 'activations'], ['10+', 'brands']],
     challenge: "Several consumer brands wanted to reach blue-collar workers in the UAE in a way that was relevant and enjoyable.",
-    did: ['A carnival in each camp with games, prizes and talent shows', 'Product displays, sampling and live sales', 'Branding on flyers, posters, backdrops, tents and ground'],
+    did: ['A carnival in each labour accommodation with games, prizes and talent shows', 'Product displays, sampling and live sales', 'Branding on flyers, posters, backdrops, tents and ground'],
     result: "Greater awareness among workers for Ujala, Medimix, Dabur, Campa Cola, Badshah, Botim, Remitly, Everyuth, Nycil, e& money and other brands.",
   },
   {
@@ -197,7 +197,7 @@ export const allCases = [
     result: "Outlet-level data that supported retail execution planning over five years.",
   },
   {
-    slug: 'kent-digital-activation', stockCover: 'stock/tablet-hands.webp', brand: 'Kent', title: 'Digital Activation Support', service: 'reporting',
+    slug: 'kent-digital-activation', stockCover: 'stock/tablet-hands.webp', brand: 'Kent', title: 'Digital Activation Support', service: 'digital',
     where: '', geo: DXB, stat: 'App', statLabel: 'from sign-up to instant win',
     stats: [['App', 'for the activation'], ['Personalised', 'drink mixes'], ['Instant win', 'quiz']],
     challenge: "Kent needed a personalised activation to run smoothly for every participant, from sign-up to prize.",
@@ -472,10 +472,10 @@ export const allCases = [
     result: "Branded promotion counters and shelving units, ready for store.",
   },
   {
-    slug: "jet-aviation-dubai", brand: "JET Aviation", title: "Wall Branding with Acrylic Frames", service: "production",
+    slug: "jet-aviation-dubai", brand: "Jet Aviation", title: "Wall Branding with Acrylic Frames", service: "production",
     where: "UAE", geo: DXB, stat: "Wall", statLabel: "branding",
     stats: [["Wall", "branding"], ["Acrylic", "frames"], ["Dubai", "UAE"]],
-    challenge: "JET Aviation wanted a gallery wall for its Dubai facility.",
+    challenge: "Jet Aviation wanted a gallery wall for its Dubai facility.",
     did: ["\"Air, Crafted\" wall graphics", "Photography in acrylic frames", "Installation", "Location: Dubai"],
     result: "A finished gallery wall with framed photography and wall graphics.",
   },

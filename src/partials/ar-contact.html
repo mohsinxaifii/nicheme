@@ -1,0 +1,61 @@
+    <!-- CONTACT: brief builder (Arabic) -->
+    <section class="contact" id="contact" aria-labelledby="contact-title">
+      <div class="wrap contact__grid">
+        <div class="contact__intro">
+          <p class="label">اتصل بنا</p>
+          <h2 id="contact-title" class="contact__title">اطلبوا <span class="rot" data-rot><span>عرض سعر.</span></span></h2>
+          <p class="lead">أكملوا الطلب في ثلاث خطوات. نردّ خلال يوم عمل واحد بخطة عمل مقترحة والتسعير.</p>
+          <div class="contact__time"><i class="kicker__dot"></i><span>الساعة الآن <b data-clock="Asia/Dubai">--:--</b> في مكتبنا الرئيسي بدبي</span></div>
+          <ul class="contact__direct">
+            <li><a href="tel:+97142978868"><i data-icon="call"></i><span><small>اتصال</small>+971 4 297 8868</span></a></li>
+            <li><a href="mailto:info@nicheme.com"><i data-icon="mail"></i><span><small>البريد الإلكتروني</small>info@nicheme.com</span></a></li>
+            <li><span class="contact__addr"><i data-icon="pin"></i><span><small>الزيارة</small>بلوك B، الطابق الميزانين، بناية الدلال، شارع 11A، الخبيصي، ديرة، دبي</span></span></li>
+          </ul>
+        </div>
+
+        <form class="brief" data-form novalidate>
+          <input type="checkbox" name="botcheck" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+          <div class="brief__steps" aria-hidden="true"><i data-step-bar="1"></i><i data-step-bar="2"></i><i data-step-bar="3"></i></div>
+
+          <fieldset class="brief__block">
+            <legend><span>01</span>ما الذي تحتاجونه؟</legend>
+            <div class="chips2" data-svc-chips></div>
+          </fieldset>
+
+          <fieldset class="brief__block">
+            <legend><span>02</span>في أي أسواق؟ <small>اختاروا الدول على الخريطة</small></legend>
+            <div class="brief__where">
+              <div class="pick" data-pick></div>
+              <div class="pick__side">
+                <div class="pick__quick">
+                  <button type="button" class="chip2" data-quick="gcc">دول الخليج</button>
+                  <button type="button" class="chip2" data-quick="all">الدول الـ17</button>
+                  <button type="button" class="chip2 chip2--ghost" data-quick="none">مسح</button>
+                </div>
+                <p class="pick__list" data-pick-list>لم تُحدَّد أي دولة بعد</p>
+              </div>
+            </div>
+          </fieldset>
+
+          <fieldset class="brief__block">
+            <legend><span>03</span>من أنتم؟</legend>
+            <div class="form__row">
+              <label class="field"><input name="name" autocomplete="name" required placeholder=" "><span>الاسم</span></label>
+              <label class="field"><input name="company" autocomplete="organization" required placeholder=" "><span>الشركة</span></label>
+            </div>
+            <div class="form__row">
+              <label class="field"><input name="email" type="email" autocomplete="email" required placeholder=" "><span>البريد الإلكتروني للعمل</span></label>
+              <label class="field"><input name="phone" type="tel" autocomplete="tel" placeholder=" "><span>رقم الهاتف (اختياري)</span></label>
+            </div>
+            <label class="field"><textarea name="message" rows="2" placeholder=" "></textarea><span>أي تفاصيل أخرى؟ المنافذ، التوقيت، مؤشرات الأداء</span></label>
+          </fieldset>
+
+          <div class="brief__foot">
+            <p class="brief__sum" data-sum>اختاروا خدمة ودولة لبدء الطلب.</p>
+            <button class="btn btn--red btn--lg" type="submit">إرسال الطلب <i data-icon="arrow"></i></button>
+          </div>
+          <div class="form__done" data-done hidden><i data-icon="check"></i><b>تم إرسال الطلب</b><span>الطلب مسجَّل لدينا، وسنردّ خلال يوم عمل واحد.</span></div>
+          <p class="brief__legal">بإرسال هذا الطلب، فإنكم توافقون على <a href="/privacy/">إشعار الخصوصية</a> الخاص بنا.</p>
+        </form>
+      </div>
+    </section>

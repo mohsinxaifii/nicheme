@@ -1,0 +1,115 @@
+/* Arabic / RTL layer. Loaded on /ar/ pages only, after the other stylesheets.
+   The main sheets use logical properties, so most of the layout mirrors by itself;
+   this file covers the parts that cannot: the Arabic typeface, directional icons,
+   JS-positioned elements, and the 3D wall, which keeps its own LTR coordinate space. */
+
+/* ---------------------------------------------------------------- type */
+/* Inter Tight has no Arabic glyphs. IBM Plex Sans Arabic matches its proportions
+   and keeps Latin brand names (Niche, Red Bull, Carrefour) consistent. */
+:root[lang="ar"] {
+  --font: 'IBM Plex Sans Arabic', 'Inter Tight', system-ui, sans-serif;
+}
+
+/* Arabic is cursive: negative tracking breaks the joins and looks wrong at any size.
+   Latin runs inside Arabic text (brand names, Niche Star) keep their own spacing. */
+[lang="ar"] h1, [lang="ar"] h2, [lang="ar"] h3, [lang="ar"] h4,
+[lang="ar"] .h1, [lang="ar"] .h2, [lang="ar"] .h3,
+[lang="ar"] .bt__ghost, [lang="ar"] .phero__ghost, [lang="ar"] .stat__n,
+[lang="ar"] .btn, [lang="ar"] .chip, [lang="ar"] .chip2 {
+  letter-spacing: normal;
+}
+/* Arabic sits lower in its em box and needs more leading than Inter Tight. */
+[lang="ar"] h1, [lang="ar"] .h1 { line-height: 1.22; }
+[lang="ar"] h2, [lang="ar"] .h2 { line-height: 1.28; }
+[lang="ar"] p, [lang="ar"] li { line-height: 1.85; }
+
+/* Keep numerals, phone numbers, emails and URLs in Latin order inside Arabic text. */
+[dir="rtl"] .num, [dir="rtl"] .stat__n, [dir="rtl"] kbd,
+[dir="rtl"] a[href^="tel:"], [dir="rtl"] a[href^="mailto:"] {
+  direction: ltr;
+  unicode-bidi: isolate;
+}
+
+/* ---------------------------------------------------------------- icons */
+/* Arrows and chevrons point along the reading direction, so they flip.
+   Round, vertical and pictorial icons must not. */
+[dir="rtl"] .btn .ico, [dir="rtl"] .mega__all .ico, [dir="rtl"] .menu__all .ico,
+[dir="rtl"] .menu__cta .ico, [dir="rtl"] .link .ico, [dir="rtl"] .card__go .ico,
+[dir="rtl"] .svc__go .ico, [dir="rtl"] .crumbs .ico {
+  transform: scaleX(-1);
+}
+/* the chevron on nav items rotates, not mirrors, so leave it */
+[dir="rtl"] .nav__top .chev, [dir="rtl"] summary .chev { transform: none; }
+
+/* breadcrumb separators read the other way */
+[dir="rtl"] .crumbs { direction: rtl; }
+
+/* ---------------------------------------------------------------- JS-positioned */
+/* These are placed by script with transform: translate(x,y) measured from the
+   element's own top-left (left:0;top:0), so the anchor must stay physical left/top
+   in every direction — overriding it to right:0 would shift the translated element
+   by its own width, since the script's x,y no longer land on the edge it assumes. */
+
+/* The country picker and the hero map are SVG maps of a real place: mirroring them
+   would move Morocco to the Gulf. They stay LTR inside an RTL page. */
+[dir="rtl"] .pick svg, [dir="rtl"] .hmap, [dir="rtl"] .hero__globe { direction: ltr; }
+
+/* ---------------------------------------------------------------- hero */
+/* The globe is full-bleed behind the hero and the copy is kept readable by a
+   one-sided scrim. In RTL the copy moves to the other side, so the scrim does too. */
+[dir="rtl"] .hero::before {
+  background: linear-gradient(270deg, rgba(10,10,10,.9) 0%, rgba(10,10,10,.5) 32%, rgba(10,10,10,0) 50%);
+}
+/* textPath does not lay out in an RTL context, so the badge keeps its own direction */
+[dir="rtl"] .hero__badge { direction: ltr; left: auto; right: 50%; }
+
+/* ---------------------------------------------------------------- 3D wall */
+/* The wall positions cards and draws its connector lines in its own LTR space,
+   and its cards carry English case-study titles. Flipping it would break both. */
+[dir="rtl"] .w3, [dir="rtl"] .w3__plane, [dir="rtl"] .w3__net { direction: ltr; }
+[dir="rtl"] .w3__pill, [dir="rtl"] .w3__meta, [dir="rtl"] .w3__stat { text-align: left; }
+/* the drag hint still belongs on the reading side */
+[dir="rtl"] .w3__hint, [dir="rtl"] .hero__drag { direction: rtl; }
+
+/* ---------------------------------------------------------------- odds and ends */
+/* skip link, lightbox close and the search row marker follow the reading side */
+[dir="rtl"] .skip { left: auto; right: 12px; }
+[dir="rtl"] .lb__x { right: auto; left: 18px; }
+[dir="rtl"] .srch__row::before { left: auto; right: 0; }
+[dir="rtl"] .milestones li::before { left: auto; right: 0; }
+
+/* the vertical accordion label reads bottom-to-top in Latin; Arabic reads the other way */
+[dir="rtl"] .acc__v { writing-mode: vertical-rl; transform: translateX(50%); left: auto; right: 50%; }
+[dir="rtl"] .acc button > .ico { left: auto; right: 50%; margin-inline-start: 0; margin-inline-end: -22px; }
+[dir="rtl"] .acc li.is-on button > .ico { right: 22px; margin-inline-end: 0; }
+[dir="rtl"] .acc__body { left: 28px; right: 28px; }
+@media (max-width: 900px) {
+  [dir="rtl"] .acc__v { writing-mode: horizontal-tb; transform: none; left: auto; right: 80px; }
+  [dir="rtl"] .acc button > .ico,
+  [dir="rtl"] .acc li.is-on button > .ico { left: auto; right: 18px; margin-inline-end: 0; }
+  [dir="rtl"] .acc__body { left: 20px; right: 20px; }
+}
+
+/* decorative collage: mirror it so it still leans into the text block */
+[dir="rtl"] .crh__a { left: auto; right: 4%; transform: rotate(5deg); }
+[dir="rtl"] .crh__b { right: auto; left: 6%; transform: rotate(-4deg); }
+[dir="rtl"] .crh__c { left: auto; right: 34%; transform: rotate(1deg); }
+[dir="rtl"] .crh__chip--red { left: auto; right: 0; }
+[dir="rtl"] .crh__chip:not(.crh__chip--red) { right: auto; left: 2%; }
+[dir="rtl"] .chip-float--a { left: auto; right: -28px; }
+[dir="rtl"] .chip-float--b { right: auto; left: -24px; }
+[dir="rtl"] .chip-float--c { left: auto; right: 24px; }
+@media (max-width: 700px) {
+  [dir="rtl"] .chip-float--a { right: 8px; }
+  [dir="rtl"] .chip-float--b { left: 8px; }
+}
+@media (max-width: 560px) {
+  [dir="rtl"] .chip-float--a { right: 10px; }
+  [dir="rtl"] .chip-float--b { left: 10px; }
+}
+
+/* the intro curtain's meta row and skip button */
+[dir="rtl"] .intro__skip { right: auto; left: var(--edge); }
+
+/* the logo marquee scrolls on a transform the script owns; direction must not flip it */
+[dir="rtl"] .logos, [dir="rtl"] .logos__track { direction: ltr; }

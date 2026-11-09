@@ -1,6 +1,7 @@
 import './css/base.css'
 import './css/sections.css'
 import './css/pages.css'
+import './css/rtl.css'
 import Lenis from 'lenis'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
@@ -11,7 +12,7 @@ import { initTransitions } from './modules/transition.js'
 import { initSearch } from './modules/search.js'
 import {
   initNav, initAnchors, initHeroIntro, initCounters, initLogos, initReveals, initForm,
-  initSteps, initActiveNav, initBento, initBoard, initGroup, initAccordion, initFooter,
+  initSteps, initActiveNav, initLangSwitch, initBento, initBoard, initGroup, initAccordion, initFooter,
   initLightbox, initCaseGrid, initCountUps, initApply, initArchive, initMasonry,
 } from './modules/ui.js'
 
@@ -40,6 +41,7 @@ initTransitions(ctx)
 initNav(ctx)
 initSearch(ctx)
 initActiveNav()
+initLangSwitch()
 initAnchors(ctx)
 initCounters(ctx)
 initCountUps(ctx)

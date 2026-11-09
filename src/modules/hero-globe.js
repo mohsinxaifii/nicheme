@@ -55,6 +55,7 @@ export function initHeroGlobe({ root, canvas, reduced }) {
   const tip = root.querySelector('[data-tip]')
 
   // ---- layout
+  const rtl = document.documentElement.dir === 'rtl'
   let W = 0, H = 0, dpr = 1, R = 300, cx = 0, cy = 0, mobile = false, dirty = true
   function resize() {
     const r = root.getBoundingClientRect()
@@ -62,7 +63,10 @@ export function initHeroGlobe({ root, canvas, reduced }) {
     dpr = Math.min(devicePixelRatio, 2)
     for (const c of [canvas, over]) { c.width = W * dpr; c.height = H * dpr; c.style.width = `${W}px`; c.style.height = `${H}px` }
     R = mobile ? W * 0.82 : Math.max(H * 0.64, W * 0.33)
-    cx = mobile ? W * 0.36 : W * 0.71
+    // The hero copy sits on the reading side, so the globe is offset to the other
+    // one. Mirror the offset in RTL; the map itself is never flipped.
+    const f = mobile ? 0.36 : 0.71
+    cx = W * (rtl ? 1 - f : f)
     cy = mobile ? H * 0.34 : H * 0.6
     dirty = true
     for (const p of [front, back]) p.scale(R).translate([cx, cy])
@@ -176,7 +180,7 @@ export function initHeroGlobe({ root, canvas, reduced }) {
     ctx.clearRect(0, 0, W, H)
 
     // sphere body + rim
-    const g = ctx.createRadialGradient(cx - R * 0.3, cy - R * 0.35, R * 0.1, cx, cy, R)
+    const g = ctx.createRadialGradient(cx + (rtl ? 1 : -1) * R * 0.3, cy - R * 0.35, R * 0.1, cx, cy, R)
     g.addColorStop(0, 'rgba(255,255,255,0.05)'); g.addColorStop(1, 'rgba(255,255,255,0.01)')
     ctx.beginPath(); pf({ type: 'Sphere' }); ctx.fillStyle = g; ctx.fill()
     ctx.lineWidth = 1; ctx.strokeStyle = 'rgba(255,255,255,0.14)'; ctx.stroke()
