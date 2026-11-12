@@ -23,20 +23,6 @@ section { position: relative; }
 .hero__drag span { width: 28px; height: 16px; border-radius: 999px; box-shadow: inset 0 0 0 1px rgba(255,255,255,.4); position: relative; }
 .hero__drag span::after { content: ''; position: absolute; top: 4px; inset-inline-start: 4px; width: 8px; height: 8px; border-radius: 50%; background: #fff; animation: dragHint 2.4s var(--ease) infinite; }
 @keyframes dragHint { 50% { transform: translateX(12px); } }
-.hmap__chip.is-hidden { opacity: 0 !important; }
-.hmap__chip { position: absolute; z-index: 2; pointer-events: none; opacity: 0; transform: translate(16px, -110%) scale(.94); transition: opacity .3s, transform .45s var(--ease); }
-.hmap__chip.is-left { transform: translate(calc(-100% - 16px), -110%) scale(.94); }
-.hmap__chip.is-on { opacity: 1; transform: translate(16px, -110%); }
-.hmap__chip.is-left.is-on { transform: translate(calc(-100% - 16px), -110%); }
-.hmap__chip.is-below.is-on { transform: translate(16px, 14px); }
-.hmap__chip.is-left.is-below.is-on { transform: translate(calc(-100% - 16px), 14px); }
-.ping { display: flex; gap: 10px; align-items: flex-start; padding: 10px 14px 10px 12px; border-radius: 12px; background: #fff; color: var(--ink); font-size: 14px; font-weight: 500; line-height: 1.3; white-space: nowrap; box-shadow: 0 16px 36px -10px rgba(0,0,0,.5); }
-.ping::before { content: ''; flex: none; width: 10px; height: 10px; margin: 5px 2px 0; border-radius: 50%; background: var(--red); box-shadow: 0 0 0 4px rgba(228,35,27,.18); }
-.ping > span { font-weight: 600; }
-.ping small { display: block; font-size: 12px; font-weight: 400; color: var(--grey-600); margin-top: 2px; }
-.hmap__tip { position: absolute; left: 0; top: 0; z-index: 3; pointer-events: none; background: #fff; color: var(--ink); padding: 8px 12px; border-radius: 8px; display: flex; gap: 10px; align-items: baseline; opacity: 0; transition: opacity .15s; white-space: nowrap; box-shadow: 0 10px 24px rgba(0,0,0,.35); }
-.hmap__tip.is-on { opacity: 1; }
-.hmap__tip b { font-size: 14px; font-weight: 600; }
 .hero__badge { position: absolute; left: 50%; bottom: 9%; z-index: 2; width: 112px; height: 112px; }
 .hero__badge-bg { fill: var(--red); }
 .hero__badge-ring { transform-origin: 60px 60px; animation: spin 16s linear infinite; }
@@ -50,7 +36,6 @@ section { position: relative; }
   .hero { padding-top: 62svh; align-items: end; }
   .hero::before { background: linear-gradient(0deg, rgba(10,10,10,.97) 38%, rgba(10,10,10,0) 62%); }
   .hero__badge, .hero__drag { display: none; }
-  .hmap__chip .ping { font-size: 12px; padding: 7px 10px; }
 }
 
 /* PROOF (about + stats strip) */
