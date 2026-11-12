@@ -1,6 +1,6 @@
 // Hero: a large transparent globe that bleeds off the screen. It spins in and
 // settles on MENA; drag to rotate and it springs back. Niche's 17 countries
-// fill red outward from Dubai, sonar pulses ripple from each city, hovering a
+// fill red outward from Dubai with a still dot on each city, hovering a
 // country lights it up. No text or popups on the globe.
 import { geoOrthographic, geoPath, geoGraticule10, geoContains, geoDistance } from 'd3-geo'
 import { feature } from 'topojson-client'
@@ -173,19 +173,11 @@ export function initHeroGlobe({ root, canvas, reduced }) {
     octx.setTransform(dpr, 0, 0, dpr, 0, 0)
     octx.clearRect(0, 0, W, H)
     const ctx = octx
-    // cities: dots + sonar pulses
+    // cities: still dots
     for (const [k, c] of Object.entries(CITIES)) {
       if (geoDistance(c, [-rot.l, -rot.p]) > Math.PI / 2 - 0.05) continue
       const [x, y] = front(c)
       const hq = k === 'dubai'
-      if (!reduced) {
-        for (const off of [0, 2.4]) {
-          const ph = ((t + off - geoDistance(c, CITIES.dubai) * 1.5) % 4.8 + 4.8) % 4.8 / 4.8
-          if (t < 1.4) continue
-          ctx.beginPath(); ctx.arc(x, y, 4 + ph * (hq ? 46 : 30), 0, Math.PI * 2)
-          ctx.strokeStyle = `rgba(255,255,255,${0.5 * (1 - ph)})`; ctx.lineWidth = 1; ctx.stroke()
-        }
-      }
       ctx.beginPath(); ctx.arc(x, y, hq ? 5.5 : 3.2, 0, Math.PI * 2)
       ctx.fillStyle = '#fff'; ctx.fill()
       if (hq) { ctx.lineWidth = 3; ctx.strokeStyle = '#E4231B'; ctx.stroke() }
