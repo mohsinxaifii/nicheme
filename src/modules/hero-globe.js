@@ -1,8 +1,7 @@
 // Hero: a large transparent globe that bleeds off the screen. It spins in and
 // settles on MENA; drag to rotate and it springs back. Niche's 17 countries
 // fill red outward from Dubai, sonar pulses ripple from each city, hovering a
-// country lights it up, and a tour highlights each country in turn with its
-// main city's name written on the map beside the dot (no popups).
+// country lights it up, and a tour highlights each country in turn (no text or popups).
 import { geoOrthographic, geoPath, geoGraticule10, geoContains, geoDistance } from 'd3-geo'
 import { feature } from 'topojson-client'
 import world from 'world-atlas/countries-110m.json'
@@ -19,7 +18,7 @@ const CITIES = {
   baghdad: [44.37, 33.32], cairo: [31.24, 30.04], casablanca: [-7.59, 33.57], tunis: [10.18, 36.81], algiers: [3.06, 36.75],
   sanaa: [44.19, 15.37], karachi: [67.0, 24.86], portlouis: [57.5, -20.16],
 }
-// The tour lights each country in turn and labels its main city on the map.
+// The tour lights each country in turn and marks its main city's dot red.
 const TOUR = [
   ['784', 'dubai', 'Dubai · HQ', 'Asia/Dubai'], ['682', 'riyadh', 'Riyadh', 'Asia/Riyadh'], ['634', 'doha', 'Doha', 'Asia/Qatar'],
   ['414', 'kuwait', 'Kuwait City', 'Asia/Kuwait'], ['512', 'muscat', 'Muscat', 'Asia/Muscat'], ['048', 'manama', 'Manama', 'Asia/Bahrain'],
@@ -110,11 +109,11 @@ export function initHeroGlobe({ root, canvas, reduced }) {
   }
 
   // ---- tour: highlight a country, label its city on the canvas
-  let tourI = 0, pinned = null, pinnedId = null, pinnedName = '', pinnedAt = 0
+  let tourI = 0, pinned = null, pinnedId = null
   function nextChip() {
     if (document.hidden) return
-    const [id, key, city] = TOUR[tourI++ % TOUR.length]
-    pinned = key; pinnedId = id; pinnedName = city.replace(' · HQ', ''); pinnedAt = performance.now(); dirty = true
+    const [id, key] = TOUR[tourI++ % TOUR.length]
+    pinned = key; pinnedId = id; dirty = true
   }
 
   // ---- draw
@@ -142,7 +141,7 @@ export function initHeroGlobe({ root, canvas, reduced }) {
     } else dirty = true
     const revealing = !reduced && t < 0.9 + 1.6 + 0.6
     if (dirty || revealing) { drawGlobe(t); dirty = false }
-    drawOverlay(t, now)
+    drawOverlay(t)
     requestAnimationFrame(frame)
   }
 
@@ -187,7 +186,7 @@ export function initHeroGlobe({ root, canvas, reduced }) {
 
   }
 
-  function drawOverlay(t, now) {
+  function drawOverlay(t) {
     octx.setTransform(dpr, 0, 0, dpr, 0, 0)
     octx.clearRect(0, 0, W, H)
     const ctx = octx
@@ -210,12 +209,6 @@ export function initHeroGlobe({ root, canvas, reduced }) {
       if (hq) {
         ctx.font = '600 14px "Inter Tight", sans-serif'; ctx.fillStyle = '#fff'
         ctx.fillText('Dubai', x + 12, y + 18)
-      } else if (k === pinned) {
-        // fade the touring city's name in and out next to its dot
-        const e = (now - pinnedAt) / 1000
-        const a = reduced ? 1 : Math.max(0, Math.min(1, e / 0.35, (3 - e) / 0.35))
-        ctx.font = '500 13px "Inter Tight", sans-serif'; ctx.fillStyle = `rgba(255,255,255,${0.9 * a})`
-        ctx.fillText(pinnedName, x + 10, y - 8)
       }
     }
   }
