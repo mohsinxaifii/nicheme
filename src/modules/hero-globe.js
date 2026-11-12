@@ -1,7 +1,7 @@
 // Hero: a large transparent globe that bleeds off the screen. It spins in and
 // settles on MENA; drag to rotate and it springs back. Niche's 17 countries
 // fill red outward from Dubai, sonar pulses ripple from each city, hovering a
-// country lights it up, and a tour highlights each country in turn (no text or popups).
+// country lights it up. No text or popups on the globe.
 import { geoOrthographic, geoPath, geoGraticule10, geoContains, geoDistance } from 'd3-geo'
 import { feature } from 'topojson-client'
 import world from 'world-atlas/countries-110m.json'
@@ -18,15 +18,6 @@ const CITIES = {
   baghdad: [44.37, 33.32], cairo: [31.24, 30.04], casablanca: [-7.59, 33.57], tunis: [10.18, 36.81], algiers: [3.06, 36.75],
   sanaa: [44.19, 15.37], karachi: [67.0, 24.86], portlouis: [57.5, -20.16],
 }
-// The tour lights each country in turn and marks its main city's dot red.
-const TOUR = [
-  ['784', 'dubai', 'Dubai · HQ', 'Asia/Dubai'], ['682', 'riyadh', 'Riyadh', 'Asia/Riyadh'], ['634', 'doha', 'Doha', 'Asia/Qatar'],
-  ['414', 'kuwait', 'Kuwait City', 'Asia/Kuwait'], ['512', 'muscat', 'Muscat', 'Asia/Muscat'], ['048', 'manama', 'Manama', 'Asia/Bahrain'],
-  ['818', 'cairo', 'Cairo', 'Africa/Cairo'], ['400', 'amman', 'Amman', 'Asia/Amman'], ['422', 'beirut', 'Beirut', 'Asia/Beirut'],
-  ['368', 'baghdad', 'Baghdad', 'Asia/Baghdad'], ['760', 'damascus', 'Damascus', 'Asia/Damascus'], ['887', 'sanaa', "Sana'a", 'Asia/Aden'],
-  ['586', 'karachi', 'Karachi', 'Asia/Karachi'], ['504', 'casablanca', 'Casablanca', 'Africa/Casablanca'], ['788', 'tunis', 'Tunis', 'Africa/Tunis'],
-  ['012', 'algiers', 'Algiers', 'Africa/Algiers'], ['480', 'portlouis', 'Port Louis', 'Indian/Mauritius'],
-]
 
 export function initHeroGlobe({ root, canvas, reduced }) {
   const ctx = canvas.getContext('2d')
@@ -108,14 +99,6 @@ export function initHeroGlobe({ root, canvas, reduced }) {
     hovered = f
   }
 
-  // ---- tour: highlight a country, label its city on the canvas
-  let tourI = 0, pinned = null, pinnedId = null
-  function nextChip() {
-    if (document.hidden) return
-    const [id, key] = TOUR[tourI++ % TOUR.length]
-    pinned = key; pinnedId = id; dirty = true
-  }
-
   // ---- draw
   // one draw loop only: it stops off-screen and restarts once when the globe comes back
   let visible = true, looping = false
@@ -179,7 +162,7 @@ export function initHeroGlobe({ root, canvas, reduced }) {
       const a = reduced ? 1 : Math.max(0, Math.min(1, (t - 0.9 - f.delay) / 0.6))
       if (a <= 0) continue
       ctx.beginPath(); pf(f)
-      ctx.fillStyle = f === hovered || f.id === pinnedId ? `rgba(255,70,60,${a})` : `rgba(228,35,27,${0.92 * a})`
+      ctx.fillStyle = f === hovered ? `rgba(255,70,60,${a})` : `rgba(228,35,27,${0.92 * a})`
       ctx.fill()
       ctx.strokeStyle = `rgba(255,255,255,${0.4 * a})`; ctx.lineWidth = 0.8; ctx.stroke()
     }
@@ -203,13 +186,12 @@ export function initHeroGlobe({ root, canvas, reduced }) {
           ctx.strokeStyle = `rgba(255,255,255,${0.5 * (1 - ph)})`; ctx.lineWidth = 1; ctx.stroke()
         }
       }
-      ctx.beginPath(); ctx.arc(x, y, hq ? 5.5 : k === pinned ? 5 : 3.2, 0, Math.PI * 2)
-      ctx.fillStyle = k === pinned && !hq ? '#E4231B' : '#fff'; ctx.fill()
+      ctx.beginPath(); ctx.arc(x, y, hq ? 5.5 : 3.2, 0, Math.PI * 2)
+      ctx.fillStyle = '#fff'; ctx.fill()
       if (hq) { ctx.lineWidth = 3; ctx.strokeStyle = '#E4231B'; ctx.stroke() }
     }
   }
   start()
-  setTimeout(() => { nextChip(); if (!reduced) setInterval(nextChip, 3000) }, reduced ? 0 : 2600)
 
   return { setScroll() {} }   // kept for callers; scrolling no longer turns the globe
 }
