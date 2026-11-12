@@ -143,7 +143,7 @@ export function header() {
       <a href="${L('/careers/')}" class="menu__link">${t('Careers')}</a>
       <a href="${L('/contact/')}" class="menu__cta">${t('Get a proposal')} ${icon('arrow')}</a>
     </nav>
-    <p class="menu__foot">+971 4 297 8868 · info@nicheme.com<br>${t('B Block, M Floor, Al Dalal Building, 11A St, Al Khabaisi, Deira, Dubai')}</p>
+    <p class="menu__foot">+971 4 297 8868 · info@nicheme.com<br>${t('Al Dalal Building, B Block, M Floor, 11A St, Al Khabaisi, Deira, Dubai')}</p>
   </div>`
 }
 
@@ -625,7 +625,7 @@ function contactPage() {
           <div class="hq__card">
             <p class="label">${t('Head office')}</p>
             <h2 class="hq__title">${t('Dubai head office.')}</h2>
-            <p class="hq__addr">${LANG === 'ar' ? 'بلوك B، الطابق الميزانين، بناية الدلال<br>شارع 11A، الخبيصي، ديرة<br>دبي، الإمارات العربية المتحدة<br>ص.ب 81605' : 'B Block, M Floor, Al Dalal Building<br>11A St, Al Khabaisi, Deira<br>Dubai, United Arab Emirates<br>PO Box 81605'}</p>
+            <p class="hq__addr">${LANG === 'ar' ? 'بناية الدلال، بلوك B، الطابق الميزانين<br>شارع 11A، الخبيصي، ديرة<br>دبي، الإمارات العربية المتحدة<br>ص.ب 81605' : 'Al Dalal Building, B Block, M Floor<br>11A St, Al Khabaisi, Deira<br>Dubai, United Arab Emirates<br>PO Box 81605'}</p>
             <ul class="hq__list">
               <li>${icon('call')}<a href="tel:+97142978868">+971 4 297 8868</a></li>
               <li>${icon('mail')}<a href="mailto:info@nicheme.com">info@nicheme.com</a></li>
@@ -696,7 +696,7 @@ function privacyPage() {
         <h2 class="h2">Cookies and browser storage</h2>
         <p>This site does not use advertising or tracking cookies. It stores a small amount of data in your browser (such as whether you have seen the intro animation, or your chosen filters) to make the site work smoothly; this stays on your device and is never sent to us.</p>
         <h2 class="h2">Contact</h2>
-        <p>Niche Marketing Management, B Block, M Floor, Al Dalal Building, 11A St, Al Khabaisi, Deira, Dubai, UAE. <a href="mailto:info@nicheme.com">info@nicheme.com</a> &middot; <a href="tel:+97142978868">+971 4 297 8868</a>.</p>
+        <p>Niche Marketing Management, Al Dalal Building, B Block, M Floor, 11A St, Al Khabaisi, Deira, Dubai, UAE. <a href="mailto:info@nicheme.com">info@nicheme.com</a> &middot; <a href="tel:+97142978868">+971 4 297 8868</a>.</p>
       </div>
     </section>`
   return shell({ title: 'Privacy Notice | Niche Marketing Management', desc: 'What personal data the Niche Marketing Management website collects through its forms, how it is used, and how to contact us about it.', path: '/privacy/', page: 'privacy', body })
@@ -783,12 +783,13 @@ function careersPage() {
       </div>
     </section>
 
-    <section class="apply" id="apply" aria-labelledby="apply-title">
+    <section class="apply" id="apply" aria-labelledby="apply-title" data-mode="job">
       <div class="wrap apply__grid">
         <div class="apply__intro">
           <p class="label">${t('Apply')}</p>
-          <h2 id="apply-title" class="h2">${t('Send us your CV.')}</h2>
-          <p class="lead">${t('Fill in the form below. Share a LinkedIn or CV link if you have one, and we will take it from there.')}</p>
+          <h2 id="apply-title" class="h2"><span class="only-job">${t('Send us your CV.')}</span><span class="only-partner">${t('Partner with Niche.')}</span></h2>
+          <p class="lead only-job">${t('Fill in the form below. Share a LinkedIn or CV link if you have one, and we will take it from there.')}</p>
+          <p class="lead only-partner">${t('Tell us about your company and product, and the markets you want to reach. Our team will get back to you.')}</p>
           <ul class="contact__direct">
             <li><a href="mailto:info@nicheme.com?subject=Careers"><i data-icon="mail"></i><span><small>${t('Email')}</small>info@nicheme.com</span></a></li>
             <li><a href="tel:+97142978868"><i data-icon="call"></i><span><small>${t('Head office')}</small>+971 4 297 8868</span></a></li>
@@ -796,25 +797,50 @@ function careersPage() {
         </div>
         <form class="brief apply__form" data-apply novalidate>
           <input type="checkbox" name="botcheck" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
-          <div class="form__row">
-            <label class="field"><input name="name" autocomplete="name" required placeholder=" "><span>${t('Full name')}</span></label>
-            <label class="field"><input name="email" type="email" autocomplete="email" required placeholder=" "><span>${t('Email')}</span></label>
+          <div class="apply__ask">
+            <p id="apply-as">${t('What brings you here?')}</p>
+            <div class="apply__mode" role="group" aria-labelledby="apply-as">
+              <button type="button" data-mode="job" aria-pressed="true">${icon('users', 'ico apply__ico')}<span><b>${t('Join the team')}</b><small>${t('Field, workshop and office roles')}</small></span><i class="apply__tick">${icon('check')}</i></button>
+              <button type="button" data-mode="partner" aria-pressed="false">${icon('handshake', 'ico apply__ico')}<span><b>${t('Become a product partner')}</b><small>${t('Bring your product to market with Niche')}</small></span><i class="apply__tick">${icon('check')}</i></button>
+            </div>
           </div>
-          <div class="form__row">
-            <label class="field"><input name="phone" type="tel" autocomplete="tel" placeholder=" "><span>${t('Phone (optional)')}</span></label>
-            <label class="field field--select"><select name="country" required><option value="" selected disabled></option>${COUNTRIES17.map(c => `<option>${t(c)}</option>`).join('')}</select><span>${t('Country')}</span></label>
-          </div>
-          <div class="form__row">
-            <label class="field field--select"><select name="role" required><option value="" selected disabled></option>${ROLES.map(r => `<option>${t(r[1])}</option>`).join('')}<option>${t('Something else')}</option></select><span>${t('Role')}</span></label>
-            <label class="field"><input name="link" type="url" placeholder=" "><span>${t('LinkedIn or CV link (optional)')}</span></label>
-          </div>
-          <label class="field"><textarea name="message" rows="3" placeholder=" "></textarea><span>${t('Languages, experience, when you can start')}</span></label>
+          <fieldset class="apply__set" data-set="job">
+            <div class="form__row">
+              <label class="field"><input name="name" autocomplete="name" required placeholder=" "><span>${t('Full name')}</span></label>
+              <label class="field"><input name="email" type="email" autocomplete="email" required placeholder=" "><span>${t('Email')}</span></label>
+            </div>
+            <div class="form__row">
+              <label class="field"><input name="phone" type="tel" autocomplete="tel" placeholder=" "><span>${t('Phone (optional)')}</span></label>
+              <label class="field field--select"><select name="country" required><option value="" selected disabled></option>${COUNTRIES17.map(c => `<option>${t(c)}</option>`).join('')}</select><span>${t('Country')}</span></label>
+            </div>
+            <div class="form__row">
+              <label class="field field--select"><select name="role" required><option value="" selected disabled></option>${ROLES.map(r => `<option>${t(r[1])}</option>`).join('')}<option>${t('Something else')}</option></select><span>${t('Role')}</span></label>
+              <label class="field"><input name="link" type="url" placeholder=" "><span>${t('LinkedIn or CV link (optional)')}</span></label>
+            </div>
+            <label class="field"><textarea name="message" rows="3" placeholder=" "></textarea><span>${t('Languages, experience, when you can start')}</span></label>
+          </fieldset>
+          <fieldset class="apply__set" data-set="partner" disabled>
+            <div class="form__row">
+              <label class="field"><input name="company" autocomplete="organization" required placeholder=" "><span>${t('Company name')}</span></label>
+              <label class="field"><input name="name" autocomplete="name" required placeholder=" "><span>${t('Contact person')}</span></label>
+            </div>
+            <div class="form__row">
+              <label class="field"><input name="email" type="email" autocomplete="email" required placeholder=" "><span>${t('Email')}</span></label>
+              <label class="field"><input name="phone" type="tel" autocomplete="tel" placeholder=" "><span>${t('Phone (optional)')}</span></label>
+            </div>
+            <div class="form__row">
+              <label class="field"><input name="product" required placeholder=" "><span>${t('Product or brand')}</span></label>
+              <label class="field field--select"><select name="country" required><option value="" selected disabled></option>${COUNTRIES17.map(c => `<option>${t(c)}</option>`).join('')}</select><span>${t('Country')}</span></label>
+            </div>
+            <label class="field"><input name="link" type="url" placeholder=" "><span>${t('Website (optional)')}</span></label>
+            <label class="field"><textarea name="message" rows="3" placeholder=" "></textarea><span>${t('Your product, the markets and the support you need')}</span></label>
+          </fieldset>
           <div class="brief__foot">
-            <p class="brief__sum">${t('We read every application and reply if there is a fit.')}</p>
-            <button class="btn btn--red btn--lg" type="submit">${t('Send application')} <i data-icon="arrow"></i></button>
+            <p class="brief__sum"><span class="only-job">${t('We read every application and reply if there is a fit.')}</span><span class="only-partner">${t('We read every enquiry and reply within a few working days.')}</span></p>
+            <button class="btn btn--red btn--lg" type="submit"><span class="only-job">${t('Send application')}</span><span class="only-partner">${t('Send enquiry')}</span> <i data-icon="arrow"></i></button>
           </div>
-          <div class="form__done" data-done hidden><i data-icon="check"></i><b>${t('Application sent')}</b><span>${t('We have it on file and will reach out if there is a fit.')}</span></div>
-          <p class="brief__legal">${t('Niche never charges a fee at any stage of recruitment.')} ${LANG === 'ar' ? 'بإرسال هذا الطلب، فإنكم توافقون على' : 'By applying, you agree to our'} <a href="/privacy/">${t('privacy notice')}</a>${LANG === 'ar' ? ' الخاص بنا.' : '.'}</p>
+          <div class="form__done" data-done hidden><i data-icon="check"></i><b><span class="only-job">${t('Application sent')}</span><span class="only-partner">${t('Enquiry sent')}</span></b><span>${t('We have it on file and will reach out if there is a fit.')}</span></div>
+          <p class="brief__legal"><span class="only-job">${t('Niche never charges a fee at any stage of recruitment.')} </span>${LANG === 'ar' ? 'بإرسال هذا الطلب، فإنكم توافقون على' : 'By sending this, you agree to our'} <a href="/privacy/">${t('privacy notice')}</a>${LANG === 'ar' ? ' الخاص بنا.' : '.'}</p>
         </form>
       </div>
     </section>`

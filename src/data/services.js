@@ -196,7 +196,7 @@ export const groups = [
         name: 'Digital Marketing & Video',
         slug: 'digital-marketing',
         icon: 'digital',
-        cases: ['ade-properties', 'umbrella-home-healthcare', 'hive-640', 'arhan-restaurant', 'yomly', 'mas-du-roseau', 'tab-deal', 'enstara', 'kent-digital-activation'],
+        cases: ['ade-properties', 'umbrella-home-healthcare', 'hive-640', 'arhan-restaurant', 'mas-du-roseau', 'tab-deal'],
         photo: 'work/ade-properties/01.webp',
         seo: 'Digital Marketing, Social Media & Website Design',
         meta: 'Digital marketing in Dubai and the UAE: website design, social media content and ads, Google Ads, SEO and monthly analytics reporting.',

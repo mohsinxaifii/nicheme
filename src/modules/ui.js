@@ -649,44 +649,67 @@ export function initCountUps({ reduced }) {
 }
 
 // ---------------------------------------------------------------- careers: apply form
-// Role cards pre-select the role. Submitting opens an email with everything filled in.
+// One form, two audiences: job applicants and product partners (companies). The toggle
+// swaps the field set; the hidden set is disabled so it is neither validated nor sent.
+// Role cards pre-select the role; #partner in the URL opens the partner form.
 export function initApply() {
   const form = $('[data-apply]')
   if (!form) return
+  const section = form.closest('.apply')
+  const ar = isAr()
+  let mode = 'job'
+  const setMode = m => {
+    mode = m
+    section.dataset.mode = m
+    $$('button[data-mode]', form).forEach(b => b.setAttribute('aria-pressed', String(b.dataset.mode === m)))
+    $$('[data-set]', form).forEach(f => { f.disabled = f.dataset.set !== m })
+    $$('.is-bad', form).forEach(f => f.classList.remove('is-bad'))
+    const done = $('[data-done]', form); if (done) done.hidden = true
+  }
+  form.addEventListener('click', e => { const b = e.target.closest('button[data-mode]'); if (b) setMode(b.dataset.mode) })
   document.addEventListener('click', e => {
     const a = e.target.closest('[data-role]')
-    if (a) form.elements.role.value = a.dataset.role
+    if (a) { setMode('job'); $('[data-set="job"]', form).elements.role.value = a.dataset.role }
   })
-  const ar = isAr()
+  if (location.hash === '#partner') setMode('partner')
   form.addEventListener('change', e => e.target.closest('.field')?.classList.remove('is-bad'))
   form.addEventListener('submit', async e => {
     e.preventDefault()
     if (form.elements.botcheck?.checked) return    // honeypot tripped: silently drop
+    const partner = mode === 'partner'
     let ok = true
-    $$('[required]', form).forEach(i => {
+    $$('[required]', form).filter(i => !i.matches(':disabled')).forEach(i => {
       const bad = !i.value.trim() || (i.type === 'email' && !/^\S+@\S+\.\S+$/.test(i.value))
       i.closest('.field').classList.toggle('is-bad', bad)
       if (bad) ok = false
     })
-    if (!ok) { toast(ar ? 'يرجى إدخال الاسم والبريد الإلكتروني والدولة والوظيفة.' : 'Please add your name, email, country and role.'); form.querySelector('.is-bad input, .is-bad select')?.focus(); return }
+    if (!ok) {
+      toast(partner
+        ? (ar ? 'يرجى إدخال اسم الشركة والشخص المسؤول والبريد الإلكتروني والمنتج والدولة.' : 'Please add your company, contact name, email, product and country.')
+        : (ar ? 'يرجى إدخال الاسم والبريد الإلكتروني والدولة والوظيفة.' : 'Please add your name, email, country and role.'))
+      form.querySelector('.is-bad input, .is-bad select')?.focus(); return
+    }
     const fd = new FormData(form)
-    const body = `Name: ${fd.get('name')}\nEmail: ${fd.get('email')}\nPhone: ${fd.get('phone')}\nCountry: ${fd.get('country')}\nRole: ${fd.get('role')}\nLink: ${fd.get('link') || 'Not given'}\n\n${fd.get('message')}`
-    fd.append('subject', `Careers: ${fd.get('role')}, ${fd.get('country')}`)
-    fd.append('from_name', fd.get('name') || 'Applicant')
-    fd.append('message', body)
+    const body = partner
+      ? `Type: Product partner\nCompany: ${fd.get('company')}\nContact: ${fd.get('name')}\nEmail: ${fd.get('email')}\nPhone: ${fd.get('phone')}\nProduct/brand: ${fd.get('product')}\nCountry: ${fd.get('country')}\nWebsite: ${fd.get('link') || 'Not given'}\n\n${fd.get('message')}`
+      : `Type: Job applicant\nName: ${fd.get('name')}\nEmail: ${fd.get('email')}\nPhone: ${fd.get('phone')}\nCountry: ${fd.get('country')}\nRole: ${fd.get('role')}\nLink: ${fd.get('link') || 'Not given'}\n\n${fd.get('message')}`
+    const subject = partner ? `Product partner: ${fd.get('company')}, ${fd.get('country')}` : `Careers: ${fd.get('role')}, ${fd.get('country')}`
+    fd.append('subject', subject)
+    fd.append('from_name', fd.get('name') || (partner ? 'Product partner' : 'Applicant'))
+    fd.set('message', body)
     fd.append('page', location.href)
     const btn = form.querySelector('[type="submit"]')
     btn.disabled = true
     const sent = await submitToWeb3Forms(fd)
     btn.disabled = false
     if (sent) {
-      toast(ar ? 'شكراً لكم. استلمنا طلبكم.' : 'Thank you. We have your application.')
+      toast(partner ? (ar ? 'شكراً لكم. استلمنا استفساركم.' : 'Thank you. We have your enquiry.') : (ar ? 'شكراً لكم. استلمنا طلبكم.' : 'Thank you. We have your application.'))
       form.reset()
       const done = $('[data-done]', form)
       if (done) { done.hidden = false; done.animate([{ opacity: 0, transform: 'translateY(10px)' }, { opacity: 1, transform: 'none' }], { duration: 400 }) }
     } else {
       toast(ar ? 'تعذّر الإرسال. يجري فتح تطبيق البريد كبديل.' : "Couldn't send that. Opening your email app instead.")
-      setTimeout(() => { location.href = `mailto:info@nicheme.com?subject=${encodeURIComponent(`Careers: ${fd.get('role')}, ${fd.get('country')}`)}&body=${encodeURIComponent(body)}` }, 600)
+      setTimeout(() => { location.href = `mailto:info@nicheme.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}` }, 600)
     }
   })
 }
