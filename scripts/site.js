@@ -109,6 +109,13 @@ export function header() {
         <li><a href="${L('/about/')}#how">${icon('route')}<span>${t('How we work')}<small>${t('Brief to report in four steps')}</small></span></a></li>
       </ul>
     </div>`
+  const careers = `
+    <div class="mega mega--sm mega--about" data-mega role="menu">
+      <ul class="drop drop--icons">
+        <li><a href="${L('/careers/')}#apply">${icon('users')}<span>${t('Join the team')}<small>${t('Field, workshop and office roles')}</small></span></a></li>
+        <li><a href="${L('/careers/')}#partner">${icon('handshake')}<span>${t('Become a product partner')}<small>${t('Bring your product to market with Niche')}</small></span></a></li>
+      </ul>
+    </div>`
   return `
   <header class="nav" data-nav>
     <div class="nav__bar">
@@ -119,7 +126,7 @@ export function header() {
         <div class="nav__item" data-item><a class="nav__top" href="${L('/services/')}" data-nav-key="services" aria-haspopup="true">${t('Services')} ${chev}</a>${mega}</div>
         <div class="nav__item" data-item><a class="nav__top" href="/case-studies/" data-nav-key="case-studies" aria-haspopup="true">${t('Case studies')} ${chev}</a>${work}</div>
         <div class="nav__item"><a class="nav__top" href="${L('/contact/')}" data-nav-key="contact">${t('Contact')}</a></div>
-        <div class="nav__item"><a class="nav__top" href="${L('/careers/')}" data-nav-key="careers">${t('Careers')}</a></div>
+        <div class="nav__item" data-item><a class="nav__top" href="${L('/careers/')}" data-nav-key="careers" aria-haspopup="true">${t('Careers')} ${chev}</a>${careers}</div>
       </nav>
       <div class="nav__right">
         <button class="nav__search" type="button" data-search-open aria-label="${t('Search the site')}" aria-keyshortcuts="Control+K Meta+K /">${icon('search')}<span class="nav__search-txt">${t('Search')}</span><kbd data-search-key>Ctrl K</kbd></button>
@@ -140,7 +147,7 @@ export function header() {
       </details>
       <details><summary>${t('Case studies')} ${chev}</summary><ul>${FILTERS.map(([k]) => `<li><a href="/case-studies/${k === 'all' ? '' : `?s=${k}`}">${k === 'all' ? t('All case studies') : svcLabel(k)}</a></li>`).join('')}</ul></details>
       <a href="${L('/contact/')}" class="menu__link">${t('Contact')}</a>
-      <a href="${L('/careers/')}" class="menu__link">${t('Careers')}</a>
+      <details><summary>${t('Careers')} ${chev}</summary><ul><li><a href="${L('/careers/')}#apply">${t('Join the team')}</a></li><li><a href="${L('/careers/')}#partner">${t('Become a product partner')}</a></li></ul></details>
       <a href="${L('/contact/')}" class="menu__cta">${t('Get a proposal')} ${icon('arrow')}</a>
     </nav>
     <p class="menu__foot">+971 4 297 8868 · info@nicheme.com<br>${t('Al Dalal Building, B Block, M Floor, 11A St, Al Khabaisi, Deira, Dubai')}</p>
@@ -784,6 +791,7 @@ function careersPage() {
     </section>
 
     <section class="apply" id="apply" aria-labelledby="apply-title" data-mode="job">
+      <span id="partner" class="apply__anchor" aria-hidden="true"></span>
       <div class="wrap apply__grid">
         <div class="apply__intro">
           <p class="label">${t('Apply')}</p>

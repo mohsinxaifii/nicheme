@@ -62,15 +62,19 @@ export function initNav({ lenis }) {
 // ---------------------------------------------------------------- anchors via lenis
 export function initAnchors({ lenis }) {
   document.addEventListener('click', e => {
-    const a = e.target.closest('a[href^="#"]')
+    // same-page anchors: "#id", or "/this/page/#id" (nav links)
+    const a = e.target.closest('a[href*="#"]')
     if (!a || e.defaultPrevented) return
-    const id = a.getAttribute('href')
+    const url = new URL(a.href, location.href)
+    if (url.origin !== location.origin || url.pathname !== location.pathname) return
+    const id = url.hash
     if (id.length < 2 || id.startsWith('#case/')) return
     const el = document.querySelector(id)
     if (!el) return
     e.preventDefault()
     lenis ? lenis.scrollTo(el, { duration: 1.2 }) : el.scrollIntoView({ behavior: 'smooth' })
     history.replaceState(null, '', id)
+    dispatchEvent(new CustomEvent('niche:anchor', { detail: id }))
   })
 }
 
@@ -671,7 +675,10 @@ export function initApply() {
     const a = e.target.closest('[data-role]')
     if (a) { setMode('job'); $('[data-set="job"]', form).elements.role.value = a.dataset.role }
   })
-  if (location.hash === '#partner') setMode('partner')
+  // #partner opens the partner form, #apply the job form (from the nav's Careers menu)
+  const fromHash = h => { if (h === '#partner') setMode('partner'); else if (h === '#apply') setMode('job') }
+  fromHash(location.hash)
+  addEventListener('niche:anchor', e => fromHash(e.detail))
   form.addEventListener('change', e => e.target.closest('.field')?.classList.remove('is-bad'))
   form.addEventListener('submit', async e => {
     e.preventDefault()
