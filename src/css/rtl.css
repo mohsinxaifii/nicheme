@@ -60,6 +60,8 @@
 [dir="rtl"] .hero::before {
   background: linear-gradient(270deg, rgba(10,10,10,.9) 0%, rgba(10,10,10,.5) 32%, rgba(10,10,10,0) 50%);
 }
+[dir="rtl"] .hero__globe { -webkit-mask-image: linear-gradient(270deg, transparent 38%, #000 62%); mask-image: linear-gradient(270deg, transparent 38%, #000 62%); }
+@media (max-width: 960px) { [dir="rtl"] .hero__globe { -webkit-mask-image: linear-gradient(180deg, #000 40%, transparent 64%); mask-image: linear-gradient(180deg, #000 40%, transparent 64%); } }
 /* textPath does not lay out in an RTL context, so the badge keeps its own direction */
 [dir="rtl"] .hero__badge { direction: ltr; left: auto; right: 50%; }
 

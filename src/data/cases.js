@@ -197,14 +197,6 @@ export const allCases = [
     result: "Outlet-level data that supported retail execution planning over five years.",
   },
   {
-    slug: 'kent-digital-activation', stockCover: 'stock/tablet-hands.webp', brand: 'Kent', title: 'Digital Activation Support', service: 'digital',
-    where: '', geo: DXB, stat: 'App', statLabel: 'from sign-up to instant win',
-    stats: [['App', 'for the activation'], ['Personalised', 'drink mixes'], ['Instant win', 'quiz']],
-    challenge: "Kent needed a personalised activation to run smoothly for every participant, from sign-up to prize.",
-    did: ['An app to manage participant consent, registration and table selection', 'Recorded personalised drink mixes', 'Returning participants could retrieve their previous selections', 'Sent orders for printing', 'A country-specific quiz with automated scoring for an instant-win activity'],
-    result: "A single digital process from consent to instant win, with every selection recorded.",
-  },
-  {
     slug: 'london-dairy-mystery-shopping', stockCover: 'stock/ice-cream-parlour.webp', brand: 'London Dairy', title: 'Mystery Shopping Programme', service: 'mystery',
     where: '', geo: DXB, stat: 'Parlours', statLabel: 'scored outlet by outlet',
     stats: [['Parlours', 'visited'], ['Outlet', 'scorecards'], ['Service', 'to ambience']],
@@ -271,14 +263,6 @@ export const allCases = [
     result: "A consistent set of social media creatives for the restaurant's channels.",
   },
   {
-    slug: 'enstara', brand: 'Enstara', title: 'Corporate Brochure', service: 'digital',
-    where: 'UAE', geo: DXB, stat: 'Print', statLabel: 'corporate brochure',
-    stats: [['Brochure', 'design'], ['5', 'service lines'], ['HR', 'consultancy']],
-    challenge: "Enstara, a Dubai HR consultancy, wanted to explain all of its services in a single printed piece.",
-    did: ['Tri-fold corporate brochure design', 'Sections for recruitment, training, specialised HR services and employee wellness', 'Icon set and layout in the Enstara brand colours'],
-    result: "A corporate brochure presenting all five Enstara service lines.",
-  },
-  {
     slug: 'hive-640', brand: 'Hive 640', title: 'Social Media Campaign', service: 'digital',
     where: 'UAE', geo: DXB, stat: 'Social', statLabel: 'media campaign',
     stats: [['Social', 'media'], ['App', 'downloads'], ['UAE', 'market']],
@@ -301,14 +285,6 @@ export const allCases = [
     challenge: "Tab Deal wanted to introduce its online bartering web app to new users.",
     did: ['Social media campaign for the web app launch', 'Posts explaining how online bartering works', 'English and Arabic versions of each creative'],
     result: "A bilingual launch campaign for the Tab Deal web app.",
-  },
-  {
-    slug: 'yomly', brand: 'Yomly', title: 'Social Media Content', service: 'digital',
-    where: 'UAE', geo: DXB, stat: 'Social', statLabel: 'media content',
-    stats: [['Social', 'media'], ['HR', 'software'], ['UAE', 'market']],
-    challenge: "Yomly wanted to promote its HR and payroll software to businesses in the UAE.",
-    did: ['Social media posts for HR, payroll and leave management features', 'Creatives for recruitment and employee data tools', 'Consistent templates in the Yomly brand colours'],
-    result: "A series of social media posts covering the software's main features.",
   },
   // ---- added Nov 2026: Niche Star Advertising profile (production, POSM, signage, shop fitting)
   {
