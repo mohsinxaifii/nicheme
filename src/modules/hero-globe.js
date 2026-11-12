@@ -206,10 +206,6 @@ export function initHeroGlobe({ root, canvas, reduced }) {
       ctx.beginPath(); ctx.arc(x, y, hq ? 5.5 : k === pinned ? 5 : 3.2, 0, Math.PI * 2)
       ctx.fillStyle = k === pinned && !hq ? '#E4231B' : '#fff'; ctx.fill()
       if (hq) { ctx.lineWidth = 3; ctx.strokeStyle = '#E4231B'; ctx.stroke() }
-      if (hq) {
-        ctx.font = '600 14px "Inter Tight", sans-serif'; ctx.fillStyle = '#fff'
-        ctx.fillText('Dubai', x + 12, y + 18)
-      }
     }
   }
   start()
