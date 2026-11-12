@@ -1,10 +1,13 @@
-# Builds the site with Vite and publishes dist/ to GitHub Pages on every
-# push to main. In the repo: Settings -> Pages -> Source: "GitHub Actions".
+# Builds both versions of the site and publishes them to GitHub Pages together:
+#   main     -> <pages url>/       (e.g. https://<user>.github.io/nicheme/)
+#   main_v2  -> <pages url>/v2/    (e.g. https://<user>.github.io/nicheme/v2/)
+# Runs on every push to either branch. Keep this file the same on both branches.
+# In the repo: Settings -> Pages -> Source: "GitHub Actions".
 name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: [main]
+    branches: [main, main_v2]
   workflow_dispatch:
 
 permissions:
@@ -21,23 +24,48 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: main
+          path: site-main
+
+      - uses: actions/checkout@v4
+        with:
+          ref: main_v2
+          path: site-v2
 
       - uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
-
-      - run: npm ci
+          cache-dependency-path: |
+            site-main/package-lock.json
+            site-v2/package-lock.json
 
       # base_path is "/nicheme" on github.io and "" on a custom domain
       - id: pages
         uses: actions/configure-pages@v5
-      - run: npm run build
+
+      - name: Build main (site root)
+        working-directory: site-main
+        run: npm ci && npm run build
         env:
           BASE_PATH: ${{ steps.pages.outputs.base_path }}
+
+      - name: Build main_v2 (/v2/)
+        working-directory: site-v2
+        run: npm ci && npm run build
+        env:
+          BASE_PATH: ${{ steps.pages.outputs.base_path }}/v2
+
+      - name: Combine
+        run: |
+          mkdir out
+          cp -r site-main/dist/. out/
+          cp -r site-v2/dist out/v2
+
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: dist
+          path: out
 
   deploy:
     needs: build
