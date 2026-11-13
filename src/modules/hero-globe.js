@@ -44,6 +44,13 @@ export function initHeroGlobe({ root, canvas, reduced }) {
     const f = mobile ? 0.36 : 0.71
     cx = W * (rtl ? 1 - f : f)
     cy = mobile ? H * 0.34 : H * 0.6
+    if (mobile) {
+      // phones: size the globe so every network country fits between the nav and the
+      // copy (which starts at the hero's padding-top, where the fade sits); side padding covers the drift
+      const cut = parseFloat(getComputedStyle(root.parentElement).paddingTop) || H * 0.52
+      front.rotate(HOME).fitExtent([[28, 84], [W - 28, cut - 70]], { type: 'FeatureCollection', features: net })
+      R = front.scale(); [cx, cy] = front.translate()
+    }
     dirty = true
     for (const p of [front, back]) p.scale(R).translate([cx, cy])
   }
@@ -109,7 +116,7 @@ export function initHeroGlobe({ root, canvas, reduced }) {
       // drift eases in after the spin-in settles; a ~50s sway of ±8° lon, ±2° lat
       const ease = reduced ? 0 : Math.min(1, Math.max(0, (t - 3.5) / 4))
       const sway = t * (Math.PI * 2 / 50)
-      const tl = HOME[0] + Math.sin(sway) * 8 * ease, tp = HOME[1] + Math.sin(sway * 0.7) * 2 * ease
+      const tl = HOME[0] + Math.sin(sway) * (mobile ? 4 : 8) * ease, tp = HOME[1] + Math.sin(sway * 0.7) * 2 * ease
       const damp = Math.pow(0.9, k)
       vel.l = vel.l * damp + (tl - rot.l) * 0.012 * k
       vel.p = vel.p * damp + (tp - rot.p) * 0.012 * k

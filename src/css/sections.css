@@ -34,10 +34,11 @@ section { position: relative; }
 @media (max-width: 960px) {
   .hero { grid-template-columns: 1fr; padding-top: calc(var(--nav-h) + 48px); gap: 36px; }
   .hero__title .line { white-space: normal; }
-  .hero { padding-top: 62svh; align-items: end; }
-  .hero::before { background: linear-gradient(0deg, rgba(10,10,10,.97) 38%, rgba(10,10,10,0) 62%); }
+  /* --cut is where the copy starts; the globe fits above it (hero-globe.js reads padding-top) and fades out across it */
+  .hero { --cut: 52svh; padding-top: var(--cut); align-items: end; }
+  .hero::before { background: linear-gradient(180deg, rgba(10,10,10,0) calc(var(--cut) - 60px), rgba(10,10,10,.97) calc(var(--cut) + 30px)); }
   .hero__badge, .hero__drag { display: none; }
-  .hero__globe { -webkit-mask-image: linear-gradient(180deg, #000 40%, transparent 64%); mask-image: linear-gradient(180deg, #000 40%, transparent 64%); }
+  .hero__globe { -webkit-mask-image: linear-gradient(180deg, #000 calc(var(--cut) - 70px), transparent calc(var(--cut) + 40px)); mask-image: linear-gradient(180deg, #000 calc(var(--cut) - 70px), transparent calc(var(--cut) + 40px)); }
 }
 
 /* PROOF (about + stats strip) */
