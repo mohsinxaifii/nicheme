@@ -653,9 +653,10 @@ export function initCountUps({ reduced }) {
 }
 
 // ---------------------------------------------------------------- careers: apply form
-// One form, two audiences: job applicants and product partners (companies). The toggle
-// swaps the field set; the hidden set is disabled so it is neither validated nor sent.
-// Role cards pre-select the role; #partner in the URL opens the partner form.
+// One form, two audiences: job applicants and promoters (hired per promotion for stalls,
+// sampling and in-store activations). The toggle swaps the field set; the hidden set is
+// disabled so it is neither validated nor sent. Role cards pre-select the role (the promoter
+// card opens the promoter form); #promoter in the URL opens the promoter form.
 export function initApply() {
   const form = $('[data-apply]')
   if (!form) return
@@ -673,17 +674,19 @@ export function initApply() {
   form.addEventListener('click', e => { const b = e.target.closest('button[data-mode]'); if (b) setMode(b.dataset.mode) })
   document.addEventListener('click', e => {
     const a = e.target.closest('[data-role]')
-    if (a) { setMode('job'); $('[data-set="job"]', form).elements.role.value = a.dataset.role }
+    if (!a) return
+    if (a.dataset.applyMode === 'promoter') { setMode('promoter'); return }
+    setMode('job'); $('[data-set="job"]', form).elements.role.value = a.dataset.role
   })
-  // #partner opens the partner form, #apply the job form (from the nav's Careers menu)
-  const fromHash = h => { if (h === '#partner') setMode('partner'); else if (h === '#apply') setMode('job') }
+  // #promoter opens the promoter form, #apply the job form (from the nav's Careers menu)
+  const fromHash = h => { if (h === '#promoter') setMode('promoter'); else if (h === '#apply') setMode('job') }
   fromHash(location.hash)
   addEventListener('niche:anchor', e => fromHash(e.detail))
   form.addEventListener('change', e => e.target.closest('.field')?.classList.remove('is-bad'))
   form.addEventListener('submit', async e => {
     e.preventDefault()
     if (form.elements.botcheck?.checked) return    // honeypot tripped: silently drop
-    const partner = mode === 'partner'
+    const promoter = mode === 'promoter'
     let ok = true
     $$('[required]', form).filter(i => !i.matches(':disabled')).forEach(i => {
       const bad = !i.value.trim() || (i.type === 'email' && !/^\S+@\S+\.\S+$/.test(i.value))
@@ -691,18 +694,18 @@ export function initApply() {
       if (bad) ok = false
     })
     if (!ok) {
-      toast(partner
-        ? (ar ? 'يرجى إدخال اسم الشركة والشخص المسؤول والبريد الإلكتروني والمنتج والدولة.' : 'Please add your company, contact name, email, product and country.')
+      toast(promoter
+        ? (ar ? 'يرجى إدخال الاسم والهاتف والبريد الإلكتروني والدولة والمدينة واللغات.' : 'Please add your name, phone, email, country, city and languages.')
         : (ar ? 'يرجى إدخال الاسم والبريد الإلكتروني والدولة والوظيفة.' : 'Please add your name, email, country and role.'))
       form.querySelector('.is-bad input, .is-bad select')?.focus(); return
     }
     const fd = new FormData(form)
-    const body = partner
-      ? `Type: Product partner\nCompany: ${fd.get('company')}\nContact: ${fd.get('name')}\nEmail: ${fd.get('email')}\nPhone: ${fd.get('phone')}\nProduct/brand: ${fd.get('product')}\nCountry: ${fd.get('country')}\nWebsite: ${fd.get('link') || 'Not given'}\n\n${fd.get('message')}`
+    const body = promoter
+      ? `Type: Promoter\nName: ${fd.get('name')}\nPhone/WhatsApp: ${fd.get('phone')}\nEmail: ${fd.get('email')}\nCountry: ${fd.get('country')}\nCity: ${fd.get('city')}\nLanguages: ${fd.get('languages')}\n\n${fd.get('message')}`
       : `Type: Job applicant\nName: ${fd.get('name')}\nEmail: ${fd.get('email')}\nPhone: ${fd.get('phone')}\nCountry: ${fd.get('country')}\nRole: ${fd.get('role')}\nLink: ${fd.get('link') || 'Not given'}\n\n${fd.get('message')}`
-    const subject = partner ? `Product partner: ${fd.get('company')}, ${fd.get('country')}` : `Careers: ${fd.get('role')}, ${fd.get('country')}`
+    const subject = promoter ? `Promoter: ${fd.get('name')}, ${fd.get('city')}, ${fd.get('country')}` : `Careers: ${fd.get('role')}, ${fd.get('country')}`
     fd.append('subject', subject)
-    fd.append('from_name', fd.get('name') || (partner ? 'Product partner' : 'Applicant'))
+    fd.append('from_name', fd.get('name') || (promoter ? 'Promoter' : 'Applicant'))
     fd.set('message', body)
     fd.append('page', location.href)
     const btn = form.querySelector('[type="submit"]')
@@ -710,7 +713,7 @@ export function initApply() {
     const sent = await submitToWeb3Forms(fd)
     btn.disabled = false
     if (sent) {
-      toast(partner ? (ar ? 'شكراً لكم. استلمنا استفساركم.' : 'Thank you. We have your enquiry.') : (ar ? 'شكراً لكم. استلمنا طلبكم.' : 'Thank you. We have your application.'))
+      toast(ar ? 'شكراً لكم. استلمنا طلبكم.' : 'Thank you. We have your application.')
       form.reset()
       const done = $('[data-done]', form)
       if (done) { done.hidden = false; done.animate([{ opacity: 0, transform: 'translateY(10px)' }, { opacity: 1, transform: 'none' }], { duration: 400 }) }

@@ -113,7 +113,7 @@ export function header() {
     <div class="mega mega--sm mega--about" data-mega role="menu">
       <ul class="drop drop--icons">
         <li><a href="${L('/careers/')}#apply">${icon('users')}<span>${t('Join the team')}<small>${t('Field, workshop and office roles')}</small></span></a></li>
-        <li><a href="${L('/careers/')}#partner">${icon('handshake')}<span>${t('Become a product partner')}<small>${t('Bring your product to market with Niche')}</small></span></a></li>
+        <li><a href="${L('/careers/')}#promoter">${icon('promo')}<span>${t('Work as a promoter')}<small>${t('Stalls, sampling and in-store promotions')}</small></span></a></li>
       </ul>
     </div>`
   return `
@@ -147,7 +147,7 @@ export function header() {
       </details>
       <details><summary>${t('Case studies')} ${chev}</summary><ul>${FILTERS.map(([k]) => `<li><a href="/case-studies/${k === 'all' ? '' : `?s=${k}`}">${k === 'all' ? t('All case studies') : svcLabel(k)}</a></li>`).join('')}</ul></details>
       <a href="${L('/contact/')}" class="menu__link">${t('Contact')}</a>
-      <details><summary>${t('Careers')} ${chev}</summary><ul><li><a href="${L('/careers/')}#apply">${t('Join the team')}</a></li><li><a href="${L('/careers/')}#partner">${t('Become a product partner')}</a></li></ul></details>
+      <details><summary>${t('Careers')} ${chev}</summary><ul><li><a href="${L('/careers/')}#apply">${t('Join the team')}</a></li><li><a href="${L('/careers/')}#promoter">${t('Work as a promoter')}</a></li></ul></details>
       <a href="${L('/contact/')}" class="menu__cta">${t('Get a proposal')} ${icon('arrow')}</a>
     </nav>
     <p class="menu__foot">+971 4 297 8868 · info@nicheme.com<br>${t('Al Dalal Building, B Block, M Floor, 11A St, Al Khabaisi, Deira, Dubai')}</p>
@@ -768,7 +768,7 @@ function careersPage() {
       <div class="wrap">
         <div class="section-head section-head--row"><div><p class="label">${t('Roles')}</p><h2 class="h2">${t('Roles we recruit for.')}</h2></div><p class="roles__note">${t('Vacancies depend on current projects. Select a role and country, and we will keep your CV on file for suitable openings.')}</p></div>
         <ul class="roles__grid">${ROLES.map(([ic, name, where, line], i) => `
-          <li><a class="role" href="#apply" data-role="${esc(name)}" style="--k:${i}">
+          <li><a class="role" href="#apply" data-role="${esc(name)}"${ic === 'ambassador' ? ' data-apply-mode="promoter"' : ''} style="--k:${i}">
             <span class="role__top">${icon(ic, 'ico role__ico')}<em>${t(where)}</em></span>
             <b>${t(name)}</b><span class="role__line">${t(line)}</span>
             <span class="role__go">${t('Apply')} ${icon('arrow')}</span>
@@ -791,13 +791,13 @@ function careersPage() {
     </section>
 
     <section class="apply" id="apply" aria-labelledby="apply-title" data-mode="job">
-      <span id="partner" class="apply__anchor" aria-hidden="true"></span>
+      <span id="promoter" class="apply__anchor" aria-hidden="true"></span>
       <div class="wrap apply__grid">
         <div class="apply__intro">
           <p class="label">${t('Apply')}</p>
-          <h2 id="apply-title" class="h2"><span class="only-job">${t('Send us your CV.')}</span><span class="only-partner">${t('Partner with Niche.')}</span></h2>
+          <h2 id="apply-title" class="h2"><span class="only-job">${t('Send us your CV.')}</span><span class="only-promoter">${t('Become a Niche promoter.')}</span></h2>
           <p class="lead only-job">${t('Fill in the form below. Share a LinkedIn or CV link if you have one, and we will take it from there.')}</p>
-          <p class="lead only-partner">${t('Tell us about your company and product, and the markets you want to reach. Our team will get back to you.')}</p>
+          <p class="lead only-promoter">${t('Tell us where you are based, the languages you speak and when you are free. We will contact you when a stall, sampling or in-store promotion comes up near you.')}</p>
           <ul class="contact__direct">
             <li><a href="mailto:info@nicheme.com?subject=Careers"><i data-icon="mail"></i><span><small>${t('Email')}</small>info@nicheme.com</span></a></li>
             <li><a href="tel:+97142978868"><i data-icon="call"></i><span><small>${t('Head office')}</small>+971 4 297 8868</span></a></li>
@@ -809,7 +809,7 @@ function careersPage() {
             <p id="apply-as">${t('What brings you here?')}</p>
             <div class="apply__mode" role="group" aria-labelledby="apply-as">
               <button type="button" data-mode="job" aria-pressed="true">${icon('users', 'ico apply__ico')}<span><b>${t('Join the team')}</b><small>${t('Field, workshop and office roles')}</small></span><i class="apply__tick">${icon('check')}</i></button>
-              <button type="button" data-mode="partner" aria-pressed="false">${icon('handshake', 'ico apply__ico')}<span><b>${t('Become a product partner')}</b><small>${t('Bring your product to market with Niche')}</small></span><i class="apply__tick">${icon('check')}</i></button>
+              <button type="button" data-mode="promoter" aria-pressed="false">${icon('promo', 'ico apply__ico')}<span><b>${t('Work as a promoter')}</b><small>${t('Stalls, sampling and in-store promotions')}</small></span><i class="apply__tick">${icon('check')}</i></button>
             </div>
           </div>
           <fieldset class="apply__set" data-set="job">
@@ -827,28 +827,27 @@ function careersPage() {
             </div>
             <label class="field"><textarea name="message" rows="3" placeholder=" "></textarea><span>${t('Languages, experience, when you can start')}</span></label>
           </fieldset>
-          <fieldset class="apply__set" data-set="partner" disabled>
+          <fieldset class="apply__set" data-set="promoter" disabled>
             <div class="form__row">
-              <label class="field"><input name="company" autocomplete="organization" required placeholder=" "><span>${t('Company name')}</span></label>
-              <label class="field"><input name="name" autocomplete="name" required placeholder=" "><span>${t('Contact person')}</span></label>
+              <label class="field"><input name="name" autocomplete="name" required placeholder=" "><span>${t('Full name')}</span></label>
+              <label class="field"><input name="phone" type="tel" autocomplete="tel" required placeholder=" "><span>${t('Phone / WhatsApp')}</span></label>
             </div>
             <div class="form__row">
               <label class="field"><input name="email" type="email" autocomplete="email" required placeholder=" "><span>${t('Email')}</span></label>
-              <label class="field"><input name="phone" type="tel" autocomplete="tel" placeholder=" "><span>${t('Phone (optional)')}</span></label>
-            </div>
-            <div class="form__row">
-              <label class="field"><input name="product" required placeholder=" "><span>${t('Product or brand')}</span></label>
               <label class="field field--select"><select name="country" required><option value="" selected disabled></option>${COUNTRIES17.map(c => `<option>${t(c)}</option>`).join('')}</select><span>${t('Country')}</span></label>
             </div>
-            <label class="field"><input name="link" type="url" placeholder=" "><span>${t('Website (optional)')}</span></label>
-            <label class="field"><textarea name="message" rows="3" placeholder=" "></textarea><span>${t('Your product, the markets and the support you need')}</span></label>
+            <div class="form__row">
+              <label class="field"><input name="city" autocomplete="address-level2" required placeholder=" "><span>${t('City')}</span></label>
+              <label class="field"><input name="languages" required placeholder=" "><span>${t('Languages you speak')}</span></label>
+            </div>
+            <label class="field"><textarea name="message" rows="3" placeholder=" "></textarea><span>${t('Promotion experience and when you are available')}</span></label>
           </fieldset>
           <div class="brief__foot">
-            <p class="brief__sum"><span class="only-job">${t('We read every application and reply if there is a fit.')}</span><span class="only-partner">${t('We read every enquiry and reply within a few working days.')}</span></p>
-            <button class="btn btn--red btn--lg" type="submit"><span class="only-job">${t('Send application')}</span><span class="only-partner">${t('Send enquiry')}</span> <i data-icon="arrow"></i></button>
+            <p class="brief__sum"><span class="only-job">${t('We read every application and reply if there is a fit.')}</span><span class="only-promoter">${t('We keep promoter profiles on file and call when a promotion comes up in your city.')}</span></p>
+            <button class="btn btn--red btn--lg" type="submit">${t('Send application')} <i data-icon="arrow"></i></button>
           </div>
-          <div class="form__done" data-done hidden><i data-icon="check"></i><b><span class="only-job">${t('Application sent')}</span><span class="only-partner">${t('Enquiry sent')}</span></b><span>${t('We have it on file and will reach out if there is a fit.')}</span></div>
-          <p class="brief__legal"><span class="only-job">${t('Niche never charges a fee at any stage of recruitment.')} </span>${LANG === 'ar' ? 'بإرسال هذا الطلب، فإنكم توافقون على' : 'By sending this, you agree to our'} <a href="/privacy/">${t('privacy notice')}</a>${LANG === 'ar' ? ' الخاص بنا.' : '.'}</p>
+          <div class="form__done" data-done hidden><i data-icon="check"></i><b>${t('Application sent')}</b><span>${t('We have it on file and will reach out if there is a fit.')}</span></div>
+          <p class="brief__legal">${t('Niche never charges a fee at any stage of recruitment.')} ${LANG === 'ar' ? 'بإرسال هذا الطلب، فإنكم توافقون على' : 'By sending this, you agree to our'} <a href="/privacy/">${t('privacy notice')}</a>${LANG === 'ar' ? ' الخاص بنا.' : '.'}</p>
         </form>
       </div>
     </section>`
