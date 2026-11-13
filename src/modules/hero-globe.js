@@ -1,6 +1,6 @@
 // Hero: a large transparent globe that bleeds off the screen. It spins in and
 // settles on MENA, then drifts slowly around it; drag to rotate and it springs back. Niche's 17 countries
-// fill red outward from Dubai, hovering a country lights it up. No text or popups on the globe.
+// fill red outward from Dubai, hovering a country lights it up and, on desktop, shows its name by the cursor.
 import { geoOrthographic, geoPath, geoGraticule10, geoContains, geoDistance } from 'd3-geo'
 import { feature } from 'topojson-client'
 import world from 'world-atlas/countries-110m.json'
@@ -71,7 +71,7 @@ export function initHeroGlobe({ root, canvas, reduced }) {
       last = [e.clientX, e.clientY]
       return
     }
-    hover(x, y)
+    if (e.pointerType === 'mouse' && !mobile) hover(x, y)
   })
   const release = () => { dragging = false; canvas.classList.remove('is-drag') }
   canvas.addEventListener('pointerup', release)
@@ -79,8 +79,10 @@ export function initHeroGlobe({ root, canvas, reduced }) {
   canvas.addEventListener('pointerleave', () => { if (hovered) dirty = true; hovered = null })
 
   // ---- hover a network country
-  let hovered = null
+  let hovered = null, mouse = [0, 0]
   function hover(x, y) {
+    if (hovered && (x !== mouse[0] || y !== mouse[1])) dirty = true   // label follows the cursor
+    mouse = [x, y]
     const ll = front.invert([x, y])
     const onGlobe = Math.hypot(x - cx, y - cy) < R
     const f = onGlobe && ll ? net.find(c => geoContains(c, ll)) : null
@@ -160,6 +162,20 @@ export function initHeroGlobe({ root, canvas, reduced }) {
       ctx.strokeStyle = `rgba(255,255,255,${0.55 * a})`; ctx.lineWidth = 0.9; ctx.stroke()
     }
     ctx.setLineDash([]); ctx.lineCap = 'butt'
+
+    // country name by the cursor (desktop hover only)
+    if (hovered && !dragging) {
+      const name = NETWORK[hovered.id]
+      ctx.font = `500 13px ${getComputedStyle(root).fontFamily}`
+      const tw = ctx.measureText(name).width, pw = tw + 20, ph = 28
+      let x = mouse[0] + (rtl ? -16 - pw : 16), y = mouse[1] - ph - 10
+      x = Math.max(4, Math.min(W - pw - 4, x)); y = Math.max(4, y)
+      ctx.beginPath(); ctx.roundRect(x, y, pw, ph, 6)
+      ctx.fillStyle = 'rgba(10,10,10,0.88)'; ctx.fill()
+      ctx.strokeStyle = 'rgba(255,255,255,0.18)'; ctx.lineWidth = 1; ctx.stroke()
+      ctx.fillStyle = '#fff'; ctx.textBaseline = 'middle'; ctx.textAlign = 'left'
+      ctx.fillText(name, x + 10, y + ph / 2 + 0.5)
+    }
 
   }
 
